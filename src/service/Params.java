@@ -1,4 +1,4 @@
-package jetty;
+package service;
 
 import javax.ws.rs.core.MediaType;
 
