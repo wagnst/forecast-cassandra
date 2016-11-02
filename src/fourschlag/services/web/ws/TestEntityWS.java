@@ -1,6 +1,6 @@
-package service.web;
+package fourschlag.services.web;
 
-import service.TestEntityService;
+import fourschlag.services.TestEntityService;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/entities")
+@Path("/fourschlag/entities")
 public class WebServices {
 
     TestEntityService testEntityService = new TestEntityService();
@@ -18,7 +18,11 @@ public class WebServices {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        return Response.ok(testEntityService.getAll(), Params.MEDIATYPE).build();
+        try {
+            return Response.ok(testEntityService.getAll(), Params.MEDIATYPE).build();
+        } finally {
+            testEntityService.closeConnection();
+        }
     }
 
     @GET

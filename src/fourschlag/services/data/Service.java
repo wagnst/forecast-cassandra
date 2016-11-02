@@ -1,7 +1,7 @@
-package service;
+package fourschlag.services;
 
 import com.datastax.driver.core.Session;
-import service.db.CassandraConnection;
+import fourschlag.services.db.CassandraConnection;
 
 public class Service {
 
@@ -31,5 +31,9 @@ public class Service {
 
     public String getIp() {
         return this.ip;
+    }
+
+    public void closeConnection() {
+        this.connection.closeConnection();
     }
 }

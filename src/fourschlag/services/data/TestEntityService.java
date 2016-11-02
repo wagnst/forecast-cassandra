@@ -1,13 +1,12 @@
-package service;
+package fourschlag.services;
 
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-import entities.TestEntity;
-import entities.accessors.TestEntityAccessor;
+import fourschlag.entities.TestEntity;
+import fourschlag.entities.accessors.TestEntityAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class TestEntityService extends Service {
 
