@@ -1,76 +1,92 @@
 package service;
 
-
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
 import entities.TestEntity;
+import entities.accessors.TestEntityAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestEntityService {
 
-    public static List<TestEntity> get() {
-        List<TestEntity> list = new ArrayList<>();
+public class TestEntityService extends Service {
 
-        CassandraConnection connection = new CassandraConnection("141.19.145.144", "keyspace2");
-        Session session = connection.getSession();
+    private TestEntityAccessor accessor;
 
-        MappingManager manager = new MappingManager(session);
-        Mapper<TestEntity> mapper = manager.mapper(entities.TestEntity.class);
+    public TestEntityService() {
+        super("141.19.145.142", "keyspace2");
+        MappingManager manager = new MappingManager(this.getSession());
+        accessor = manager.createAccessor(TestEntityAccessor.class);
+    }
 
-        try {
-            ResultSet rs = session.execute("SELECT * FROM test");
-            Result<TestEntity> testResults = mapper.map(rs);
-            for (TestEntity e : testResults) {
-                list.add(e);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            connection.closeConnection();
+    public List<TestEntity> getAll() {
+        List<TestEntity> resultList = new ArrayList<>();
+        Result<TestEntity> testEntities = accessor.getAll();
+
+        for (TestEntity e : testEntities) {
+            resultList.add(e);
         }
-        return list;
+
+        return resultList;
     }
 
-    @Accessor
-    public interface TestAccessorAll {
-        @Query("SELECT * FROM test")
-        Result<TestEntity> getAll();
+    public TestEntity getById(String id) {
+        TestEntity testEntities = accessor.getById(id);
+        return testEntities;
     }
 
-    @Accessor
-    public interface TestAccessorOne {
-        @Query("SELECT * FROM test WHERE key=:key")
-        Result<TestEntity> getOne(@Param("key") String key);
+    public List<TestEntity> getByName(String name) {
+        List<TestEntity> resultList = new ArrayList<>();
+        Result<TestEntity> testEntities = accessor.getByName(name);
+
+        for (TestEntity e : testEntities) {
+            resultList.add(e);
+        }
+
+        return resultList;
     }
 
-    public static Result<TestEntity> getAllTest() {
-        TestAccessorAll accessor = getMappingManager().createAccessor(TestAccessorAll.class);
-        Result<TestEntity> result = accessor.getAll();
+    public List<TestEntity> getByAge(int age) {
+        List<TestEntity> resultList = new ArrayList<>();
+        Result<TestEntity> testEntities = accessor.getByAge(age);
 
-        return result;
+        for (TestEntity e : testEntities) {
+            resultList.add(e);
+        }
+
+        return resultList;
     }
 
-    public static Result<TestEntity> getOneTest(String key) {
-        TestAccessorOne accessor = getMappingManager().createAccessor(TestAccessorOne.class);
-        Result<TestEntity> result = accessor.getOne(key);
+    /*
+    public static List<TestEntity> getAllTest() {
+        List<TestEntity> resultList = new ArrayList<>();
+        Mapper<TestEntity> mapper = getMappingManager().mapper(TestEntity.class);
+        //prepare the statement
+        Statement statement = QueryBuilder.select().all().from("test");
 
-        return result;
+        ResultSet results = getMappingManager().getSession().execute(statement);
+        // use auto mapper of datastax
+        Result<TestEntity> result = mapper.map(results);
+
+        resultList.addAll(result.all());
+
+        return resultList;
     }
 
-    private static MappingManager getMappingManager() {
-        CassandraConnection connection = new CassandraConnection("141.19.145.144", "keyspace2");
-        Session session = connection.getSession();
+    public static List<TestEntity> getOneTest(String key) {
+        List<TestEntity> resultList = new ArrayList<>();
+        Mapper<TestEntity> mapper = getMappingManager().mapper(TestEntity.class);
+        //prepare the statement
+        Statement statement = QueryBuilder.select().all().from("test")
+                .where(eq("key", key));
 
-        MappingManager manager = new MappingManager(session);
+        ResultSet results = getMappingManager().getSession().execute(statement);
+        // use auto mapper of datastax
+        Result<TestEntity> result = mapper.map(results);
 
-        return manager;
+        resultList.addAll(result.all());
+
+        return resultList;
     }
+    */
 }
