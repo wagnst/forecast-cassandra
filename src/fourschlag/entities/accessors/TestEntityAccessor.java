@@ -1,10 +1,10 @@
-package entities.accessors;
+package fourschlag.entities.accessors;
 
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
-import entities.TestEntity;
+import fourschlag.entities.TestEntity;
 
 @Accessor
 public interface TestEntityAccessor {

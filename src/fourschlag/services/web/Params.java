@@ -1,4 +1,4 @@
-package service.web;
+package fourschlag.services.web;
 
 import javax.ws.rs.core.MediaType;
 

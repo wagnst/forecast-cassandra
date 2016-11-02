@@ -1,4 +1,4 @@
-package service.db;
+package fourschlag.services.db;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;

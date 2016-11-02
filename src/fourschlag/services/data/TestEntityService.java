@@ -1,4 +1,4 @@
-package fourschlag.services;
+package fourschlag.services.data;
 
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
@@ -55,37 +55,4 @@ public class TestEntityService extends Service {
 
         return resultList;
     }
-
-    /*
-    public static List<TestEntity> getAllTest() {
-        List<TestEntity> resultList = new ArrayList<>();
-        Mapper<TestEntity> mapper = getMappingManager().mapper(TestEntity.class);
-        //prepare the statement
-        Statement statement = QueryBuilder.select().all().from("test");
-
-        ResultSet results = getMappingManager().getSession().execute(statement);
-        // use auto mapper of datastax
-        Result<TestEntity> result = mapper.map(results);
-
-        resultList.addAll(result.all());
-
-        return resultList;
-    }
-
-    public static List<TestEntity> getOneTest(String key) {
-        List<TestEntity> resultList = new ArrayList<>();
-        Mapper<TestEntity> mapper = getMappingManager().mapper(TestEntity.class);
-        //prepare the statement
-        Statement statement = QueryBuilder.select().all().from("test")
-                .where(eq("key", key));
-
-        ResultSet results = getMappingManager().getSession().execute(statement);
-        // use auto mapper of datastax
-        Result<TestEntity> result = mapper.map(results);
-
-        resultList.addAll(result.all());
-
-        return resultList;
-    }
-    */
 }

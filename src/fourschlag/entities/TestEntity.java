@@ -1,4 +1,4 @@
-package entities;
+package fourschlag.entities;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;

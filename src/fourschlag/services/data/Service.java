@@ -1,4 +1,4 @@
-package fourschlag.services;
+package fourschlag.services.data;
 
 import com.datastax.driver.core.Session;
 import fourschlag.services.db.CassandraConnection;
