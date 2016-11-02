@@ -55,4 +55,26 @@ public class TestEntityService extends Service {
 
         return resultList;
     }
+
+    public boolean insertEntity(String key, String name, int age) {
+        try {
+            if (accessor.getById(key) != null) {
+                accessor.update(key, name, age);
+            } else {
+                accessor.insert(key, name, age);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteEntity(String key) {
+        try {
+            accessor.delete(key);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }
