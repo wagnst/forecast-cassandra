@@ -54,7 +54,7 @@ public class TestEntityWS {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteById(@PathParam("testEntityId") String id) {
         if (testEntityService.deleteEntity(id)) {
-            return Response.status(Response.Status.ACCEPTED).build();
+            return Response.status(Response.Status.OK).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -65,7 +65,7 @@ public class TestEntityWS {
     @Path("/add")
     public Response create(@FormParam("key") String key, @FormParam("name") String name, @FormParam("age") int age) {
         if (testEntityService.insertEntity(key, name, age)) {
-            return Response.status(Response.Status.ACCEPTED).build();
+            return Response.status(Response.Status.OK).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
