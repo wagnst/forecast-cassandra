@@ -4,8 +4,6 @@ import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.ActualSalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
-import jnr.ffi.annotations.Out;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +59,6 @@ public class ActualSalesService extends Service {
         data.setM12(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
 
         //+89 to jump to the next year
-
         period += 89;
         System.out.println(period);
         data.setM13(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
