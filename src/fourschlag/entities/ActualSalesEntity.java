@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Table(keyspace = "original_version", name = "actual_sales")
 public class ActualSalesEntity {
-    //Attribute
+
     @PartitionKey
     private UUID uuid;
     private double sales_volumes;
@@ -47,8 +47,6 @@ public class ActualSalesEntity {
         this.userid = userid;
         this.entry_ts = entry_ts;
     }
-
-    //Getter
 
     public UUID getUuid() {
         return uuid;

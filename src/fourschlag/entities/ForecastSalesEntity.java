@@ -3,6 +3,7 @@ package fourschlag.entities;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.UUID;
 
 @Table(keyspace = "forecast1", name = "forecast_sales")
@@ -35,7 +36,10 @@ public class ForecastSalesEntity {
     private String userid;
     private String entry_ts;
 
-    public ForecastSalesEntity() {};
+    public ForecastSalesEntity() {
+    }
+
+    ;
 
     public ForecastSalesEntity(UUID uuid, double sales_volumes, double net_sales, double cm1, int topdown_adjust_sales_volumes, int topdown_adjust_net_sales, int topdown_adjust_cm1, String product_main_group, String region, String sales_type, String entry_type, int period, int period_year, int period_month, int plan_period, int plan_year, int plan_half_year, int plan_quarter, int plan_month, String currency, String status, String usercomment, String userid, String entry_ts) {
         this.uuid = uuid;

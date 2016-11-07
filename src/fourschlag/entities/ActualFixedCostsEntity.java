@@ -2,11 +2,10 @@ package fourschlag.entities;
 
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.UUID;
 
 public class ActualFixedCostsEntity {
-
 
     @PartitionKey
     private UUID uuid;
@@ -42,8 +41,8 @@ public class ActualFixedCostsEntity {
     private double other_op_cost_company;
     private double equity_income;
 
-
-    public ActualFixedCostsEntity() {};
+    public ActualFixedCostsEntity() {
+    }
 
     public ActualFixedCostsEntity(UUID uuid, double fix_pre_man_cost, double ship_cost, double sell_cost, double diff_act_pre_man_cost, double idle_equip_cost, double rd_cost, double admin_cost_bu, double admin_cost_od, double other_op_cost_bu, double other_op_cost_od, double spec_items, double provisions, double currency_gains, double val_adjust_inventories, double other_fix_cost, double depreciation, double cap_cost, String sbu, String region, String subregion, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts, double admin_cost_company, double other_op_cost_company, double equity_income) {
         this.uuid = uuid;
@@ -79,7 +78,6 @@ public class ActualFixedCostsEntity {
         this.other_op_cost_company = other_op_cost_company;
         this.equity_income = equity_income;
     }
-
 
     public UUID getUuid() {
         return uuid;

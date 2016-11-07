@@ -2,11 +2,10 @@ package fourschlag.entities;
 
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.UUID;
 
 public class ForecastFixedCostsEntity {
-
 
     @PartitionKey
     private UUID uuid;
@@ -48,7 +47,6 @@ public class ForecastFixedCostsEntity {
     private double admin_cost_company;
     private double other_op_cost_company;
     private double equity_income;
-
 
     public ForecastFixedCostsEntity() {};
 
@@ -93,7 +91,6 @@ public class ForecastFixedCostsEntity {
         this.other_op_cost_company = other_op_cost_company;
         this.equity_income = equity_income;
     }
-
 
     public UUID getUuid() {
         return uuid;

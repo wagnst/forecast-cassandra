@@ -10,9 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- * Created by thor on 07.11.2016.
- */
 @Path("/forecast")
 public class ForecastWS {
     private ActualSalesService actualSalesService = new ActualSalesService();
