@@ -4,12 +4,12 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
-@Table(keyspace = "", name = "actual_sales")
+@Table(keyspace = "forecast1", name = "actual_sales")
 public class ActualSalesEntity {
     //Attribute
     @PartitionKey
     private UUID uuid;
-    private double sales_volume;
+    private double sales_volumes;
     private double net_sales;
     private double cm1;
     private String product_main_group;
@@ -26,9 +26,11 @@ public class ActualSalesEntity {
     private String userid;
     private String entry_ts;
 
-    public ActualSalesEntity(UUID uuid, double sales_volume, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
+    public ActualSalesEntity() {}
+
+    public ActualSalesEntity(UUID uuid, double sales_volumes, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
         this.uuid = uuid;
-        this.sales_volume = sales_volume;
+        this.sales_volumes = sales_volumes;
         this.net_sales = net_sales;
         this.cm1 = cm1;
         this.product_main_group = product_main_group;
@@ -52,8 +54,8 @@ public class ActualSalesEntity {
         return uuid;
     }
 
-    public double getSales_volume() {
-        return sales_volume;
+    public double getSales_volumes() {
+        return sales_volumes;
     }
 
     public double getNet_sales() {

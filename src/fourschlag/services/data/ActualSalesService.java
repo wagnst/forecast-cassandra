@@ -20,12 +20,12 @@ public class ActualSalesService extends Service {
         accessor = manager.createAccessor(ActualSalesAccessor.class);
     }
 
-    public List<ActualSalesEntity> getSomething() {
-        List<ActualSalesEntity> resultList = new ArrayList<>();
+    public List<String> getSomething() {
+        List<String> resultList = new ArrayList<>();
         Result<ActualSalesEntity> queryResult = accessor.getSomething();
 
         for (ActualSalesEntity e : queryResult) {
-            resultList.add(e);
+            resultList.add(e.getSbu());
         }
 
         return resultList;
