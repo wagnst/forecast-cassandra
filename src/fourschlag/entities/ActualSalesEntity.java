@@ -5,7 +5,7 @@ import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
 @Table(keyspace = "", name = "actual_sales")
-public class ActualSales {
+public class ActualSalesEntity {
     //Attribute
     @PartitionKey
     private UUID uuid;
@@ -26,7 +26,7 @@ public class ActualSales {
     private String userid;
     private String entry_ts;
 
-    public ActualSales(UUID uuid, double sales_volume, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
+    public ActualSalesEntity(UUID uuid, double sales_volume, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
         this.uuid = uuid;
         this.sales_volume = sales_volume;
         this.net_sales = net_sales;
