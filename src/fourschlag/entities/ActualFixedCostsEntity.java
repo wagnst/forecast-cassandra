@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class ActualFixedCostsEntity {
 
-    //Attribute
+
     @PartitionKey
     private UUID uuid;
     private double fix_pre_man_cost;
