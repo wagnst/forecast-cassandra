@@ -4,7 +4,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
-@Table(keyspace = "forecast1", name = "actual_sales")
+@Table(keyspace = "original_version", name = "actual_sales")
 public class ActualSalesEntity {
     //Attribute
     @PartitionKey
