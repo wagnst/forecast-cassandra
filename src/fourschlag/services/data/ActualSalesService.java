@@ -3,9 +3,7 @@ package fourschlag.services.data;
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.ActualSalesEntity;
-import fourschlag.entities.TestEntity;
-import fourschlag.entities.accessors.ForecastAccessor;
-import fourschlag.entities.accessors.TestEntityAccessor;
+import fourschlag.entities.accessors.ActualSalesAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +11,13 @@ import java.util.List;
 /**
  * Created by thor on 07.11.2016.
  */
-public class ForecastService extends Service {
-    private ForecastAccessor accessor;
+public class ActualSalesService extends Service {
+    private ActualSalesAccessor accessor;
 
-    public ForecastService() {
+    public ActualSalesService() {
         super("141.19.145.142", "forecast1");
         MappingManager manager = new MappingManager(this.getSession());
-        accessor = manager.createAccessor(ForecastAccessor.class);
+        accessor = manager.createAccessor(ActualSalesAccessor.class);
     }
 
     public List<ActualSalesEntity> getSomething() {

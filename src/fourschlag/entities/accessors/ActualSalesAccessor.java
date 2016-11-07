@@ -7,7 +7,7 @@ import fourschlag.entities.ActualSalesEntity;
 /**
  * Created by thor on 07.11.2016.
  */
-public interface ForecastAccessor {
+public interface ActualSalesAccessor {
     //Test-Query
     @Query("SELECT sales_volume, net_sales, period FROM actual_sales WHERE product_main_group = 'Oettinger Schwarzbier';")
     Result<ActualSalesEntity> getSomething();
