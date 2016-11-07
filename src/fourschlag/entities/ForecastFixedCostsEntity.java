@@ -2,9 +2,11 @@ package fourschlag.entities;
 
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
 
+@Table(keyspace = "original_version", name = "forecast_fixed_costs")
 public class ForecastFixedCostsEntity {
 
     @PartitionKey

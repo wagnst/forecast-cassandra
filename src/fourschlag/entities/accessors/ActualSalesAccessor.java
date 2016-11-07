@@ -17,4 +17,7 @@ public interface ActualSalesAccessor {
 
     @Query("SELECT sales_volumes, sbu, sales_type FROM actual_sales WHERE product_main_group = :product_main_group AND period = :period AND region = :region AND sales_type = '3rd_party' AND data_source = 'BW B' ALLOW FILTERING;")
     ActualSalesEntity getSalesVolumes(@Param("product_main_group") String product_main_group, @Param("period") int period, @Param("region") String region);
+
+    @Query("SELECT sales_volumes, sbu, sales_type FROM actual_sales WHERE product_main_group = :product_main_group AND period = :period AND region = :region AND sales_type = :sales_type AND data_source = 'BW B' ALLOW FILTERING;")
+    ActualSalesEntity getSalesKPIs(@Param("product_main_group") String product_main_group, @Param("period") int period, @Param("region") String region, @Param("sales_type") String sales_type);
 }

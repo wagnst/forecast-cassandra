@@ -6,8 +6,7 @@ import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
 
-@Table(keyspace = "forecast1", name = "forecast_sales")
-
+@Table(keyspace = "original_version", name = "forecast_sales")
 public class ForecastSalesEntity {
 
     @PartitionKey
