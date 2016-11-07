@@ -5,12 +5,9 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
-/**
- * Created by David Lupa on 07.11.2016.
- */
 public class ForecastFixedCostsEntity {
 
-    //Attribute
+
     @PartitionKey
     private UUID uuid;
     private double fix_pre_man_cost;
@@ -97,7 +94,6 @@ public class ForecastFixedCostsEntity {
         this.equity_income = equity_income;
     }
 
-    //Getter
 
     public UUID getUuid() {
         return uuid;

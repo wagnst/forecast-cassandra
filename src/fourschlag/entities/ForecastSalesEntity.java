@@ -6,12 +6,9 @@ import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
 @Table(keyspace = "forecast1", name = "forecast_sales")
-/**
- * Created by David Lupa on 07.11.2016.
- */
+
 public class ForecastSalesEntity {
 
-    //Attribute
     @PartitionKey
     private UUID uuid;
     private double sales_volumes;
@@ -66,8 +63,6 @@ public class ForecastSalesEntity {
         this.userid = userid;
         this.entry_ts = entry_ts;
     }
-
-    //Getter
 
 
     public UUID getUuid() {
