@@ -27,4 +27,11 @@ public class ForecastWS {
     public Response getKPIs(@PathParam("product_main_group") String product_main_group, @PathParam("period") int period) {
         return Response.ok(actualSalesService.getKPIs(product_main_group, period), Params.MEDIATYPE).build();
     }
+
+    @GET
+    @Path("/sales_volumes/{product_main_group}/{period}/{region}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSalesVolumes(@PathParam("product_main_group") String product_main_group, @PathParam("period") int period, @PathParam("region") String region) {
+        return Response.ok(actualSalesService.getSalesVolumes(product_main_group, period, region), Params.MEDIATYPE).build();
+    }
 }
