@@ -29,9 +29,9 @@ public class ForecastWS {
     }
 
     @GET
-    @Path("/sales_volumes/{product_main_group}/{period}/{region}")
+    @Path("/sales_volumes/{product_main_group}/{year}/{region}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSalesVolumes(@PathParam("product_main_group") String product_main_group, @PathParam("period") int period, @PathParam("region") String region) {
-        return Response.ok(actualSalesService.getSalesVolumes(product_main_group, period, region), Params.MEDIATYPE).build();
+    public Response getSalesVolumes(@PathParam("product_main_group") String product_main_group, @PathParam("year") int year, @PathParam("region") String region) {
+        return Response.ok(actualSalesService.getSalesVolumes(product_main_group, year, region), Params.MEDIATYPE).build();
     }
 }

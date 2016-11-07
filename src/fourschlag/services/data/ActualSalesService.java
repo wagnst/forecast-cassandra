@@ -38,14 +38,15 @@ public class ActualSalesService extends Service {
     }
 
     //Test Method
-    public List<OutputDataType> getSalesVolumes(String product_main_group, int period, String region) {
+    public List<OutputDataType> getSalesVolumes(String product_main_group, int year, String region) {
         List<OutputDataType> resultList = new ArrayList<>();
         OutputDataType data = new OutputDataType(KPIs.SALES_VOLUME);
+
+        int period = year * 100 + 1;
 
         ActualSalesEntity queryResult = accessor.getSalesVolumes(product_main_group, period++, region);
         data.setProductMainAndSBU(queryResult.getSbu(), product_main_group);
         data.setRegion(region);
-        data.setSales_type(queryResult.getSales_type());
 
         data.setM01(queryResult.getSales_volumes());
         data.setM03(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
@@ -60,13 +61,15 @@ public class ActualSalesService extends Service {
         data.setM12(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
 
         //+89 to jump to the next year
+
         period += 89;
+        System.out.println(period);
         data.setM13(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
         data.setM14(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
         data.setM15(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
         data.setM16(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
         data.setM17(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
-        data.setM18(accessor.getSalesVolumes(product_main_group, period, region).getSales_volumes());
+        data.setM18(accessor.getSalesVolumes(product_main_group, period++, region).getSales_volumes());
 
         resultList.add(data);
         return resultList;
