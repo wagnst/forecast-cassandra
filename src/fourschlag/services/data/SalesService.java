@@ -9,8 +9,6 @@ import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 
-import javax.ejb.Local;
-import java.time.*;
 import java.util.*;
 
 public class SalesService extends Service {
