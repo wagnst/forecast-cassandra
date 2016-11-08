@@ -1,7 +1,10 @@
 package fourschlag.services.db;
 
 public enum ClusterEndpoints {
-    MASTER("141.19.145.142");
+    NODE1("141.19.145.142"),
+    NODE2("141.19.145.134"),
+    NODE3("141.19.145.144"),
+    NODE4("141.19.145.132");
 
     private final String address;
 
