@@ -15,8 +15,8 @@ public class Period {
 
     public Period(int period) {
         this.period = period;
-        this.year = period/100;
-        this.month = period - this.year*100;
+        this.year = period / 100;
+        this.month = period - this.year * 100;
     }
 
     public Period increment() {
@@ -31,8 +31,8 @@ public class Period {
         return this;
     }
 
-    public int getFirstPeriodOfYear() {
-        return year * 100 + 1;
+    public Period getFirstPeriodOfYear() {
+        return new Period(year * 100 + 1);
     }
 
     public int getYear() {

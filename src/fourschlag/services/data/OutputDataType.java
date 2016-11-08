@@ -29,7 +29,7 @@ public class OutputDataType {
     private String region;
     private String subregion;
     private String sbu;
-    private String entry_type;
+    private EntryType entry_type;
     private String product_main_group;
     private String sales_type;
     private String currency;
@@ -43,7 +43,7 @@ public class OutputDataType {
     }
 
     public OutputDataType(KPIs kpi, String sbu, String product_main_group, String region, String subregion,
-                          String sales_type, LinkedList<Double> months) {
+                          String sales_type, EntryType entry_type, LinkedList<Double> months) {
         this.kpi = kpi.getFullName();
         this.order_number = kpi.getOrderNumber();
         this.fc_type = kpi.getFc_type();
@@ -52,6 +52,7 @@ public class OutputDataType {
         this.region = region;
         this.subregion = subregion;
         this.sales_type = sales_type;
+        this.entry_type = entry_type;
         this.setMonths(months);
     }
 
@@ -193,7 +194,7 @@ public class OutputDataType {
         return sbu;
     }
 
-    public String getEntry_type() {
+    public EntryType getEntryType() {
         return entry_type;
     }
 
@@ -313,7 +314,7 @@ public class OutputDataType {
         this.subregion = region;
     }
 
-    public void setEntryType(String entryType) {
+    public void setEntryType(EntryType entryType) {
         this.entry_type = entryType;
     }
 
