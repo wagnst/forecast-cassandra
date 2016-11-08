@@ -9,8 +9,6 @@ import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 
-import javax.ejb.Local;
-import java.time.*;
 import java.util.*;
 
 public class SalesService extends Service {
@@ -28,11 +26,9 @@ public class SalesService extends Service {
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs(int year, int intPeriod, String currency) {
+    public List<OutputDataType> getSalesKPIs(int year, int period, String currency) {
         //TODO currency, data_source
         List<OutputDataType> resultList = new ArrayList<>();
-
-        Period period = new Period(intPeriod);
 
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
         Result<RegionEntity> subregions = regionAccessor.getSubregions();
@@ -56,10 +52,10 @@ public class SalesService extends Service {
     }
 
     private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu,
-                                                                 Period parameterPeriod, String region, String sales_type) {
+                                                                 int intPeriod, String region, String sales_type) {
         List<OutputDataType> resultList = new ArrayList<>();
 
-        Period period = parameterPeriod;
+        Period period = new Period(intPeriod);
 
         //Get KPIs for first month
         System.out.println(product_main_group + " " + period + " " + region + " " + sales_type);
