@@ -12,9 +12,6 @@ import fourschlag.entities.RegionEntity;
  */
 @Accessor
 public interface RegionAccessor {
-    @Query("SELECT subregions FROM regions;")
+    @Query("SELECT subregion, region FROM regions;")
     Result<RegionEntity> getSubregions();
-
-    @Query("SELECT regions FROM regions DISTINCT;")
-    Result<RegionEntity> getRegions();
 }

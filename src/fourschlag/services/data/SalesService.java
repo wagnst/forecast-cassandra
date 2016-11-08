@@ -9,8 +9,7 @@ import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.Org_StructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SalesService extends Service {
     private ActualSalesAccessor actual_accessor;
@@ -23,17 +22,6 @@ public class SalesService extends Service {
         actual_accessor = manager.createAccessor(ActualSalesAccessor.class);
         org_structure_accessor = manager.createAccessor(Org_StructureAccessor.class);
         region_accessor = manager.createAccessor(RegionAccessor.class);
-    }
-
-    public List<String> getSomething() {
-        List<String> resultList = new ArrayList<>();
-        Result<ActualSalesEntity> queryResult = actual_accessor.getSomething();
-
-        for (ActualSalesEntity e : queryResult) {
-            resultList.add(e.getSbu());
-        }
-
-        return resultList;
     }
 
     public List<ActualSalesEntity> getKPIs(String product_main_group, int period) {
@@ -82,60 +70,65 @@ public class SalesService extends Service {
     }
 
 
-
     public List<OutputDataType> getSalesKPIs(int year, int period, String currency) {
+        //TODO currency, data_source
         List<OutputDataType> resultList = new ArrayList<>();
 
         Result<Org_StructureEntity> products = org_structure_accessor.getProducts();
         Result<RegionEntity> subregions = region_accessor.getSubregions();
-
-        for (Org_StructureEntity product: products) {
-            for (RegionEntity region: subregions) {
-                getSalesKPIsForProductAndRegion(product.getProduct_main_group(), year, region.getSubregion(), "3rd_party");
-                getSalesKPIsForProductAndRegion(product.getProduct_main_group(), year, region.getSubregion(), "transfer");
-            }
+        Set<String> regions = new HashSet<>();
+        for (RegionEntity region : subregions) {
+            regions.add(region.getRegion());
         }
 
+        for (Org_StructureEntity product : products) {
+            for (String region : regions) {
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), year, region, "3rd_party"));
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), year, region, "transfer"));
+            }
+        }
 
         return resultList;
     }
 
-    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, int year, String region, String data_source) {
+    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu, int year, String region, String sales_type) {
         List<OutputDataType> resultList = new ArrayList<>();
-
-        //Create Objects for each KPI
-        OutputDataType sales_volume = new OutputDataType(KPIs.SALES_VOLUME);
-        OutputDataType net_sales = new OutputDataType(KPIs.NET_SALES);
-        OutputDataType cm1 = new OutputDataType(KPIs.CM1);
 
         //Calculate first period of given year
         int period = year * 100 + 1;
 
         //Get KPIs for first month
-        ActualSalesEntity m01 = actual_accessor.getSalesKPIs(product_main_group, period++, region, data_source);
+        System.out.println(product_main_group + period + region + sales_type);
 
-        //Set all required attributes
-        sales_volume.setProductMainAndSBU(m01.getSbu(), product_main_group);
-        sales_volume.setRegion(region);
+        LinkedList<Double> salesVolumesMonths = new LinkedList<>();
+        LinkedList<Double> netSalesMonths = new LinkedList<>();
+        LinkedList<Double> cm1Months = new LinkedList<>();
 
-        net_sales.setProductMainAndSBU(m01.getSbu(), product_main_group);
-        net_sales.setRegion(region);
-
-        cm1.setProductMainAndSBU(m01.getSbu(), product_main_group);
-        cm1.setRegion(region);
-
+        ActualSalesEntity queryResult;
         //Set the KPIs for the first month
-        sales_volume.setM01(m01.getSales_volumes());
-        net_sales.setM01(m01.getNet_sales());
-        cm1.setM01(m01.getCm1());
+        for (int i = 0; i < 18; i++) {
+            queryResult = actual_accessor.getSalesKPIs(product_main_group, period++, region, sales_type);
+            if (queryResult != null) {
+                salesVolumesMonths.add(queryResult.getSales_volumes());
+                netSalesMonths.add(queryResult.getNet_sales());
+                cm1Months.add(queryResult.getCm1());
+            } else {
+                salesVolumesMonths.add(new Double(0));
+                netSalesMonths.add(new Double(0));
+                cm1Months.add(new Double(0));
+            }
+        }
 
-        //Do that for 18 month in total
-        ActualSalesEntity m02 = actual_accessor.getSalesKPIs(product_main_group, period++, region, data_source);
-        sales_volume.setM02(m02.getSales_volumes());
-        net_sales.setM02(m02.getNet_sales());
-        cm1.setM02(m02.getCm1());
+        //Create Objects for each KPI
+        OutputDataType salesVolume = new OutputDataType(KPIs.SALES_VOLUME, sbu, product_main_group, region, sales_type,
+                salesVolumesMonths);
+        OutputDataType net_sales = new OutputDataType(KPIs.NET_SALES, sbu, product_main_group, region, sales_type,
+                netSalesMonths);
+        OutputDataType cm1 = new OutputDataType(KPIs.CM1, sbu, product_main_group, region, sales_type, cm1Months);
 
-        //to be continued
+        resultList.add(salesVolume);
+        resultList.add(net_sales);
+        resultList.add(cm1);
 
         return resultList;
     }

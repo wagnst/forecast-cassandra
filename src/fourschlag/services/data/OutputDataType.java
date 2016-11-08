@@ -1,5 +1,11 @@
 package fourschlag.services.data;
 
+import com.sun.jmx.remote.internal.ArrayQueue;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Datentyp, der zum JSON Schema von SP passt
  */
@@ -41,6 +47,35 @@ public class OutputDataType {
         this.kpi = kpi.getFullName();
         this.order_number = kpi.getOrderNumber();
         this.fc_type = kpi.getFc_type();
+    }
+
+    public OutputDataType(KPIs kpi, String sbu, String product_main_group, String region, String sales_type,
+                          LinkedList<Double> months) {
+        this.kpi = kpi.getFullName();
+        this.order_number = kpi.getOrderNumber();
+        this.fc_type = kpi.getFc_type();
+        this.sbu = sbu;
+        this.product_main_group = product_main_group;
+        this.region = region;
+        this.sales_type = sales_type;
+        this.m01 = months.poll();
+        this.m02 = months.poll();
+        this.m03 = months.poll();
+        this.m04 = months.poll();
+        this.m05 = months.poll();
+        this.m06 = months.poll();
+        this.m07 = months.poll();
+        this.m08 = months.poll();
+        this.m09 = months.poll();
+        this.m10 = months.poll();
+        this.m11 = months.poll();
+        this.m12 = months.poll();
+        this.m13 = months.poll();
+        this.m14 = months.poll();
+        this.m15 = months.poll();
+        this.m16 = months.poll();
+        this.m17 = months.poll();
+        this.m18 = months.poll();
     }
 
     public OutputDataType validate() {

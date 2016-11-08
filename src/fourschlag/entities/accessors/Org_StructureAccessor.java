@@ -10,6 +10,6 @@ import fourschlag.entities.Org_StructureEntity;
  */
 @Accessor
 public interface Org_StructureAccessor {
-    @Query("SELECT product_main_group FROM org_structure;")
+    @Query("SELECT product_main_group, sbu FROM org_structure;")
     Result<Org_StructureEntity> getProducts();
 }

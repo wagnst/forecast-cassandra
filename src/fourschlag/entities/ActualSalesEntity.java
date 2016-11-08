@@ -7,6 +7,7 @@ import java.util.UUID;
 @Table(keyspace = "original_version", name = "actual_sales")
 public class ActualSalesEntity {
 
+    //TODO: Unterstriche entfernen (mit Annotationen mappen)
     @PartitionKey
     private UUID uuid;
     private double sales_volumes;
