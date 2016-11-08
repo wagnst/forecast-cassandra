@@ -57,12 +57,12 @@ public class SalesService extends Service {
 
         Period period = new Period(intPeriod);
 
-        //Get KPIs for first month
         System.out.println(product_main_group + " " + period + " " + region + " " + sales_type);
 
         LinkedList<Double> salesVolumesMonths = new LinkedList<>();
         LinkedList<Double> netSalesMonths = new LinkedList<>();
         LinkedList<Double> cm1Months = new LinkedList<>();
+
         ActualSalesEntity queryResult;
 
         //Set the KPIs for 18 months

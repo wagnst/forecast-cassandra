@@ -2,17 +2,15 @@ package fourschlag.entities;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import java.util.UUID;
 
 @Table(keyspace = "original_version", name = "actual_sales")
 public class ActualSalesEntity {
 
     //TODO: Unterstriche entfernen (mit Annotationen mappen)
-    @PartitionKey
-    private UUID uuid;
     private double sales_volumes;
     private double net_sales;
     private double cm1;
+    @PartitionKey
     private String product_main_group;
     private String region;
     private String sbu;
@@ -29,8 +27,7 @@ public class ActualSalesEntity {
 
     public ActualSalesEntity() {}
 
-    public ActualSalesEntity(UUID uuid, double sales_volumes, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
-        this.uuid = uuid;
+    public ActualSalesEntity(double sales_volumes, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
         this.sales_volumes = sales_volumes;
         this.net_sales = net_sales;
         this.cm1 = cm1;
@@ -47,10 +44,6 @@ public class ActualSalesEntity {
         this.currency = currency;
         this.userid = userid;
         this.entry_ts = entry_ts;
-    }
-
-    public UUID getUuid() {
-        return uuid;
     }
 
     public double getSales_volumes() {
