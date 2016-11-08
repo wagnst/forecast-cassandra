@@ -1,29 +1,33 @@
 package fourschlag.entities;
 
+import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-/**
- * Created by Henrik on 07.11.2016.
- */
-
-@Table(keyspace = "original_version", name = "org_structure")
+@Table(name = "org_structure")
 public class OrgStructureEntity {
+
     @PartitionKey
-    private String product_main_group;
+    @Column(name = "product_main_group")
+    private String productMainGroup;
+
+    @Column(name = "sbu")
     private String sbu;
+
+    @Column(name = "bu")
     private String bu;
 
-    public OrgStructureEntity(){}
+    public OrgStructureEntity() {
+    }
 
-    public OrgStructureEntity(String product_main_group, String sbu, String bu) {
-        this.product_main_group = product_main_group;
+    public OrgStructureEntity(String productMainGroup, String sbu, String bu) {
+        this.productMainGroup = productMainGroup;
         this.sbu = sbu;
         this.bu = bu;
     }
 
-    public String getProduct_main_group() {
-        return product_main_group;
+    public String getProductMainGroup() {
+        return productMainGroup;
     }
 
     public String getSbu() {

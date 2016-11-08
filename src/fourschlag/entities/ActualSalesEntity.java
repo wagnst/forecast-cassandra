@@ -1,39 +1,54 @@
 package fourschlag.entities;
 
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-@Table(keyspace = "original_version", name = "actual_sales")
+import java.util.UUID;
+
+@Table(name = "actual_sales")
 public class ActualSalesEntity extends SalesEntity {
 
-    //TODO: Unterstriche entfernen (mit Annotationen mappen)
+    @PartitionKey(4)
+    @Column(name = "data_source")
+    private String dataSource;
+
+    @Column(name = "sbu")
     private String sbu;
-    private int period_half_year;
-    private int period_quarter;
-    private String data_source;
 
-    public ActualSalesEntity() {}
+    @Column(name = "period_half_year")
+    private int periodHalfYear;
 
-    public ActualSalesEntity(double sales_volumes, double net_sales, double cm1, String product_main_group, String region, String sbu, String sales_type, String data_source, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts) {
-        super(sales_volumes, net_sales, cm1, product_main_group, region, sales_type, period, period_year, period_month, currency, userid, entry_ts);
-        this.data_source = data_source;
-        this.sbu = sbu;
-        this.period_half_year = period_half_year;
-        this.period_quarter = period_quarter;
+    @Column(name = "period_quarter")
+    private int periodQuarter;
+
+
+    public ActualSalesEntity() {
     }
 
-    public String getData_source() {
-        return data_source;
+    public ActualSalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1, String productMainGroup, String region, String sbu, String salesType, String dataSource, int period, int periodYear, int periodHalfYear, int periodQuarter, int periodMonth, String currency, String userId, String entryTs) {
+        super(uuid, salesVolumes, netSales, cm1, productMainGroup, region, salesType,
+                period, periodYear, periodMonth, currency, userId, entryTs);
+        this.sbu = sbu;
+        this.dataSource = dataSource;
+        this.periodHalfYear = periodHalfYear;
+        this.periodQuarter = periodQuarter;
+    }
+
+    public String getDataSource() {
+        return dataSource;
     }
 
     public String getSbu() {
         return sbu;
     }
 
-    public int getPeriod_half_year() {
-        return period_half_year;
+    public int getPeriodHalfYear() {
+        return periodHalfYear;
     }
 
-    public int getPeriod_quarter() {
-        return period_quarter;
+    public int getPeriodQuarter() {
+        return periodQuarter;
     }
+
 }

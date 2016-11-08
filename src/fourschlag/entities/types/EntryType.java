@@ -1,4 +1,4 @@
-package fourschlag.services.data;
+package fourschlag.entities.types;
 
 public enum EntryType {
     ACTUAL("actual"),
@@ -7,11 +7,16 @@ public enum EntryType {
 
     private final String type;
 
-    private EntryType(String type) {
+    EntryType(String type) {
         this.type = type;
     }
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return getType();
     }
 }

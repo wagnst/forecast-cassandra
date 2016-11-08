@@ -8,13 +8,13 @@ public class CassandraConnection {
     private Cluster cluster;
     private Session session;
 
-    public CassandraConnection(String ipAddress, String keyspace) {
+    public CassandraConnection() {
         cluster = Cluster
                 .builder()
-                .addContactPoint(ipAddress)
+                .addContactPoint(ClusterEndpoints.MASTER.getAdress())
                 .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
                 .build();
-        session = cluster.connect(keyspace);
+        session = cluster.connect(KeyspaceNames.ORIGINAL_VERSION.getKeyspace());
     }
 
     public Session getSession() {

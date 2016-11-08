@@ -1,9 +1,6 @@
-package fourschlag.services.data;
+package fourschlag.entities.types;
 
-/**
- * Created by Henrik on 07.11.2016.
- */
-public enum KPIs {
+public enum KeyPerformanceIndicators {
     SALES_VOLUME(1, "sales", "Sales Volumes"),
     NET_SALES(2, "sales", "Net Sales"),
     CM1(3, "sales", "CM1"),
@@ -40,7 +37,7 @@ public enum KPIs {
     private final String fc_type;
     private final String fullName;
 
-    private KPIs(int orderNumber, String fc_type, String fullName) {
+    private KeyPerformanceIndicators(int orderNumber, String fc_type, String fullName) {
         this.orderNumber = orderNumber;
         this.fc_type = fc_type;
         this.fullName = fullName;

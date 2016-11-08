@@ -19,7 +19,6 @@ public class TestEntity {
         this.age = age;
     }
 
-
     public String getName() {
         return this.name;
     }

@@ -1,5 +1,4 @@
-package fourschlag.services.data;
-
+package fourschlag.entities.types;
 
 public class Period {
 

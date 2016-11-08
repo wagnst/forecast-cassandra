@@ -1,155 +1,219 @@
 package fourschlag.entities;
 
-
+import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
-@Table(keyspace = "original_version", name = "actual_fixed_costs")
+
+@Table(name = "actual_fixed_costs")
 public class ActualFixedCostsEntity {
 
     @PartitionKey
+    @Column(name = "uuid")
     private UUID uuid;
-    private double fix_pre_man_cost;
-    private double ship_cost;
-    private double sell_cost;
-    private double diff_act_pre_man_cost;
-    private double idle_equip_cost;
-    private double rd_cost;
-    private double admin_cost_bu;
-    private double admin_cost_od;
-    private double other_op_cost_bu;
-    private double other_op_cost_od;
-    private double spec_items;
+
+    @Column(name = "fix_pre_man_cost")
+    private double fixPreManCost;
+
+    @Column(name = "ship_cost")
+    private double shipCost;
+
+    @Column(name = "sell_cost")
+    private double sellCost;
+
+    @Column(name = "diff_act_pre_man_cost")
+    private double diffActPreManCost;
+
+    @Column(name = "idle_equip_cost")
+    private double idleEquipCost;
+
+    @Column(name = "rd_cost")
+    private double rdCost;
+
+    @Column(name = "admin_cost_bu")
+    private double adminCostBu;
+
+    @Column(name = "admin_cost_od")
+    private double adminCostOd;
+
+    @Column(name = "other_op_cost_bu")
+    private double otherOpCostBu;
+
+    @Column(name = "other_op_cost_od")
+    private double otherOpCostOd;
+
+    @Column(name = "spec_items")
+    private double specItems;
+
+    @Column(name = "provisions")
     private double provisions;
-    private double currency_gains;
-    private double val_adjust_inventories;
-    private double other_fix_cost;
+
+    @Column(name = "currency_gains")
+    private double currencyGains;
+
+    @Column(name = "val_adjust_inventories")
+    private double valAdjustInventories;
+
+    @Column(name = "other_fix_cost")
+    private double otherFixCost;
+
+    @Column(name = "depcrecation")
     private double depreciation;
-    private double cap_cost;
+
+    @Column(name = "cap_cost")
+    private double capCost;
+
+    @Column(name = "sbu")
     private String sbu;
+
+    @Column(name = "region")
     private String region;
+
+    @Column(name = "subregion")
     private String subregion;
+
+    @Column(name = "period")
     private int period;
-    private int period_year;
-    private int period_half_year;
-    private int period_quarter;
-    private int period_month;
+
+    @Column(name = "period_year")
+    private int periodYear;
+
+    @Column(name = "period_half_year")
+    private int periodHalfYear;
+
+    @Column(name = "period_quarter")
+    private int periodQuarter;
+
+    @Column(name = "period_month")
+    private int periodMonth;
+
+    @Column(name = "currency")
     private String currency;
-    private String userid;
-    private String entry_ts;
-    private double admin_cost_company;
-    private double other_op_cost_company;
-    private double equity_income;
+
+    @Column(name = "userid")
+    private String userId;
+
+    @Column(name = "entry_ts")
+    private String entryTs;
+
+    @Column(name = "admin_cost_company")
+    private double adminCostCompany;
+
+    @Column(name = "other_op_cost_company")
+    private double otherOpCostCompany;
+
+    @Column(name = "equity_income")
+    private double equityIncome;
 
     public ActualFixedCostsEntity() {
     }
 
-    public ActualFixedCostsEntity(UUID uuid, double fix_pre_man_cost, double ship_cost, double sell_cost, double diff_act_pre_man_cost, double idle_equip_cost, double rd_cost, double admin_cost_bu, double admin_cost_od, double other_op_cost_bu, double other_op_cost_od, double spec_items, double provisions, double currency_gains, double val_adjust_inventories, double other_fix_cost, double depreciation, double cap_cost, String sbu, String region, String subregion, int period, int period_year, int period_half_year, int period_quarter, int period_month, String currency, String userid, String entry_ts, double admin_cost_company, double other_op_cost_company, double equity_income) {
+    public ActualFixedCostsEntity(UUID uuid, double fix_pre_man_cost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double admin_cost_od, double other_op_cost_bu, double otherOpCostOd, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, String sbu, String region, String subregion, int period, int periodYear, int periodHalfYear, int periodQuarter, int periodMonth, String currency, String userId, String entryTs, double adminCostCompany, double otherOpCostCompany, double equityIncome) {
         this.uuid = uuid;
-        this.fix_pre_man_cost = fix_pre_man_cost;
-        this.ship_cost = ship_cost;
-        this.sell_cost = sell_cost;
-        this.diff_act_pre_man_cost = diff_act_pre_man_cost;
-        this.idle_equip_cost = idle_equip_cost;
-        this.rd_cost = rd_cost;
-        this.admin_cost_bu = admin_cost_bu;
-        this.admin_cost_od = admin_cost_od;
-        this.other_op_cost_bu = other_op_cost_bu;
-        this.other_op_cost_od = other_op_cost_od;
-        this.spec_items = spec_items;
+        this.fixPreManCost = fix_pre_man_cost;
+        this.shipCost = shipCost;
+        this.sellCost = sellCost;
+        this.diffActPreManCost = diffActPreManCost;
+        this.idleEquipCost = idleEquipCost;
+        this.rdCost = rdCost;
+        this.adminCostBu = adminCostBu;
+        this.adminCostOd = admin_cost_od;
+        this.otherOpCostBu = other_op_cost_bu;
+        this.otherOpCostOd = otherOpCostOd;
+        this.specItems = specItems;
         this.provisions = provisions;
-        this.currency_gains = currency_gains;
-        this.val_adjust_inventories = val_adjust_inventories;
-        this.other_fix_cost = other_fix_cost;
+        this.currencyGains = currencyGains;
+        this.valAdjustInventories = valAdjustInventories;
+        this.otherFixCost = otherFixCost;
         this.depreciation = depreciation;
-        this.cap_cost = cap_cost;
+        this.capCost = capCost;
         this.sbu = sbu;
         this.region = region;
         this.subregion = subregion;
         this.period = period;
-        this.period_year = period_year;
-        this.period_half_year = period_half_year;
-        this.period_quarter = period_quarter;
-        this.period_month = period_month;
+        this.periodYear = periodYear;
+        this.periodHalfYear = periodHalfYear;
+        this.periodQuarter = periodQuarter;
+        this.periodMonth = periodMonth;
         this.currency = currency;
-        this.userid = userid;
-        this.entry_ts = entry_ts;
-        this.admin_cost_company = admin_cost_company;
-        this.other_op_cost_company = other_op_cost_company;
-        this.equity_income = equity_income;
+        this.userId = userId;
+        this.entryTs = entryTs;
+        this.adminCostCompany = adminCostCompany;
+        this.otherOpCostCompany = otherOpCostCompany;
+        this.equityIncome = equityIncome;
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public double getFix_pre_man_cost() {
-        return fix_pre_man_cost;
+    public double getFixPreManCost() {
+        return fixPreManCost;
     }
 
-    public double getShip_cost() {
-        return ship_cost;
+    public double getShipCost() {
+        return shipCost;
     }
 
-    public double getSell_cost() {
-        return sell_cost;
+    public double getSellCost() {
+        return sellCost;
     }
 
-    public double getDiff_act_pre_man_cost() {
-        return diff_act_pre_man_cost;
+    public double getDiffActPreManCost() {
+        return diffActPreManCost;
     }
 
-    public double getIdle_equip_cost() {
-        return idle_equip_cost;
+    public double getIdleEquipCost() {
+        return idleEquipCost;
     }
 
-    public double getRd_cost() {
-        return rd_cost;
+    public double getRdCost() {
+        return rdCost;
     }
 
-    public double getAdmin_cost_bu() {
-        return admin_cost_bu;
+    public double getAdminCostBu() {
+        return adminCostBu;
     }
 
-    public double getAdmin_cost_od() {
-        return admin_cost_od;
+    public double getAdminCostOd() {
+        return adminCostOd;
     }
 
-    public double getOther_op_cost_bu() {
-        return other_op_cost_bu;
+    public double getOtherOpCostBu() {
+        return otherOpCostBu;
     }
 
-    public double getOther_op_cost_od() {
-        return other_op_cost_od;
+    public double getOtherOpCostOd() {
+        return otherOpCostOd;
     }
 
-    public double getSpec_items() {
-        return spec_items;
+    public double getSpecItems() {
+        return specItems;
     }
 
     public double getProvisions() {
         return provisions;
     }
 
-    public double getCurrency_gains() {
-        return currency_gains;
+    public double getCurrencyGains() {
+        return currencyGains;
     }
 
-    public double getVal_adjust_inventories() {
-        return val_adjust_inventories;
+    public double getValAdjustInventories() {
+        return valAdjustInventories;
     }
 
-    public double getOther_fix_cost() {
-        return other_fix_cost;
+    public double getOtherFixCost() {
+        return otherFixCost;
     }
 
     public double getDepreciation() {
         return depreciation;
     }
 
-    public double getCap_cost() {
-        return cap_cost;
+    public double getCapCost() {
+        return capCost;
     }
 
     public String getSbu() {
@@ -168,43 +232,44 @@ public class ActualFixedCostsEntity {
         return period;
     }
 
-    public int getPeriod_year() {
-        return period_year;
+    public int getPeriodYear() {
+        return periodYear;
     }
 
-    public int getPeriod_half_year() {
-        return period_half_year;
+    public int getPeriodHalfYear() {
+        return periodHalfYear;
     }
 
-    public int getPeriod_quarter() {
-        return period_quarter;
+    public int getPeriodQuarter() {
+        return periodQuarter;
     }
 
-    public int getPeriod_month() {
-        return period_month;
+    public int getPeriodMonth() {
+        return periodMonth;
     }
 
     public String getCurrency() {
         return currency;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getEntry_ts() {
-        return entry_ts;
+    public String getEntryTs() {
+        return entryTs;
     }
 
-    public double getAdmin_cost_company() {
-        return admin_cost_company;
+    public double getAdminCostCompany() {
+        return adminCostCompany;
     }
 
-    public double getOther_op_cost_company() {
-        return other_op_cost_company;
+    public double getOtherOpCostCompany() {
+        return otherOpCostCompany;
     }
 
-    public double getEquity_income() {
-        return equity_income;
+    public double getEquityIncome() {
+        return equityIncome;
     }
 }
+

@@ -9,6 +9,7 @@ import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
+import fourschlag.entities.types.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,7 +23,7 @@ public class SalesService extends Service {
     private static final int MONTHS_AMOUNT = 18;
 
     public SalesService() {
-        super("141.19.145.142", "original_version");
+        super();
         MappingManager manager = new MappingManager(this.getSession());
         actualAccessor = manager.createAccessor(ActualSalesAccessor.class);
         forecastAccessor = manager.createAccessor(ForecastSalesAccessor.class);
@@ -38,28 +39,29 @@ public class SalesService extends Service {
 
         Period requestedPeriod = new Period(period);
 
-        //Regions abfragen, Duplikate filtern
+        /* query regions, filter duplicates */
         Set<String> regions = new HashSet<>();
         for (RegionEntity region : subregions) {
             regions.add(region.getRegion());
         }
 
+        /* fill result list and calculate KPI's */
         for (OrgStructureEntity product : products) {
             for (String region : regions) {
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
-                        , requestedPeriod, region, "3rd_party"));
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
-                        , requestedPeriod, region, "transfer"));
+                /* use sales_types from enum, instead of mapped ones */
+                for (SalesType salesType : SalesType.values())
+                    resultList.addAll(getSalesKPIsForProductAndRegion(
+                            product.getProductMainGroup(), product.getSbu(), requestedPeriod, region, salesType
+                    ));
             }
         }
 
         return resultList;
     }
 
-    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu,
-                                                                 Period period, String region, String sales_type) {
-
-        // TODO: Es fehlen noch: Price, var_costs, cm1_specific, cm1_percent --> Berechnen sich aus den anderen KPIs
+    private List<OutputDataType> getSalesKPIsForProductAndRegion(String productMainGroup, String sbu,
+                                                                 Period period, String region, SalesType salesType) {
+        // TODO: Es fehlen noch: Price, var_costs, cm1_specific, cm1_percent --> Berechnen sich aus den anderen KeyPerformanceIndicators
         // TODO: Währungsumrechnung
 
         List<OutputDataType> resultList = new ArrayList<>();
@@ -68,7 +70,7 @@ public class SalesService extends Service {
         LocalDateTime now = LocalDateTime.now();
         Period currentPeriod = new Period(now.getYear(), now.getMonth().getValue());
 
-        System.out.println(product_main_group + " " + requestedPeriod + " " + region + " " + sales_type);
+        //System.out.println(productMainGroup + " " + requestedPeriod + " " + region + " " + salesType);
 
         LinkedList<Double> salesVolumesMonths = new LinkedList<>();
         LinkedList<Double> netSalesMonths = new LinkedList<>();
@@ -78,7 +80,6 @@ public class SalesService extends Service {
         boolean actualFlag = false;
         boolean forecastFlag = false;
 
-        //Set the KPIs for 18 months
         for (int i = 0; i < MONTHS_AMOUNT; i++) {
             /* Compare requested period with current period
                If requested period in history (requested: 201610, current: 201611) use actual data.
@@ -86,27 +87,28 @@ public class SalesService extends Service {
              */
             if (requestedPeriod.getPeriod() < currentPeriod.getPeriod()) {
                 actualFlag = true;
-                queryResult = actualAccessor.getSalesKPIs(product_main_group, requestedPeriod.getPeriod(), region,
-                                                            sales_type, "BW B");
+                queryResult = actualAccessor.getSalesKPIs(productMainGroup, requestedPeriod.getPeriod(), region,
+                        salesType.getType(), "BW B");
                 if (queryResult == null) {
-                    queryResult = actualAccessor.getSalesKPIs(product_main_group, requestedPeriod.getPeriod(), region,
-                                                                sales_type, "BW A");
+                    queryResult = actualAccessor.getSalesKPIs(productMainGroup, requestedPeriod.getPeriod(), region,
+                            salesType.getType(), "BW A");
                 }
             } else {
                 forecastFlag = true;
-                queryResult = forecastAccessor.getSalesKPI(product_main_group, requestedPeriod.getPeriod(), region, sales_type);
+                queryResult = forecastAccessor.getSalesKPI(productMainGroup, requestedPeriod.getPeriod(), region, salesType.toString());
             }
 
-            //Check if queryResult has data
+            /* Check if queryResult has data */
             if (queryResult == null) {
                 salesVolumesMonths.add(new Double(0));
                 netSalesMonths.add(new Double(0));
                 cm1Months.add(new Double(0));
             } else {
-                salesVolumesMonths.add(queryResult.getSales_volumes());
-                netSalesMonths.add(queryResult.getNet_sales());
+                salesVolumesMonths.add(queryResult.getSalesVolumes());
+                netSalesMonths.add(queryResult.getNetSales());
                 cm1Months.add(queryResult.getCm1());
             }
+
             requestedPeriod.increment();
         }
 
@@ -120,14 +122,13 @@ public class SalesService extends Service {
             entryType = EntryType.ACTUAL;
         }
 
-
-        //Create Objects for each KPI
-        OutputDataType salesVolume = new OutputDataType(KPIs.SALES_VOLUME, sbu, product_main_group, region, region,
-                sales_type, entryType, salesVolumesMonths);
-        OutputDataType netSales = new OutputDataType(KPIs.NET_SALES, sbu, product_main_group, region, region,
-                sales_type, entryType,  netSalesMonths);
-        OutputDataType cm1 = new OutputDataType(KPIs.CM1, sbu, product_main_group, region, region, sales_type,
-                entryType, cm1Months);
+        /* Create Objects for each KPI */
+        OutputDataType salesVolume = new OutputDataType(KeyPerformanceIndicators.SALES_VOLUME, sbu, productMainGroup, region, region,
+                salesType.toString(), entryType.toString(), salesVolumesMonths);
+        OutputDataType netSales = new OutputDataType(KeyPerformanceIndicators.NET_SALES, sbu, productMainGroup, region, region,
+                salesType.toString(), entryType.toString(), netSalesMonths);
+        OutputDataType cm1 = new OutputDataType(KeyPerformanceIndicators.CM1, sbu, productMainGroup, region, region, salesType.toString(),
+                entryType.toString(), cm1Months);
 
         resultList.add(salesVolume);
         resultList.add(netSales);
@@ -136,4 +137,3 @@ public class SalesService extends Service {
         return resultList;
     }
 }
-

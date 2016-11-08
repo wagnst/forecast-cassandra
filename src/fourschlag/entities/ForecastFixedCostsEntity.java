@@ -6,9 +6,10 @@ import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
 
-@Table(keyspace = "original_version", name = "forecast_fixed_costs")
+@Table(name = "forecast_fixed_costs")
 public class ForecastFixedCostsEntity {
 
+    //TODO: add Column annotation and rename variables
     @PartitionKey
     private UUID uuid;
     private double fix_pre_man_cost;

@@ -1,9 +1,9 @@
-package fourschlag.services.data;
+package fourschlag.entities.types;
 
 import java.util.LinkedList;
 
 public class OutputDataType {
-    private int order_number;
+    private int orderNumber;
     private String kpi;
     private double m01;
     private double m02;
@@ -29,30 +29,30 @@ public class OutputDataType {
     private String region;
     private String subregion;
     private String sbu;
-    private EntryType entry_type;
-    private String product_main_group;
-    private String sales_type;
+    private String entryType;
+    private String productMainGroup;
+    private String salesType;
     private String currency;
     private String unit;
-    private String fc_type;
+    private String fcType;
 
-    public OutputDataType(KPIs kpi) {
+    public OutputDataType(KeyPerformanceIndicators kpi) {
         this.kpi = kpi.getFullName();
-        this.order_number = kpi.getOrderNumber();
-        this.fc_type = kpi.getFc_type();
+        this.orderNumber = kpi.getOrderNumber();
+        this.fcType = kpi.getFc_type();
     }
 
-    public OutputDataType(KPIs kpi, String sbu, String product_main_group, String region, String subregion,
-                          String sales_type, EntryType entry_type, LinkedList<Double> months) {
+    public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region, String subregion,
+                          String salesType, String entryType, LinkedList<Double> months) {
         this.kpi = kpi.getFullName();
-        this.order_number = kpi.getOrderNumber();
-        this.fc_type = kpi.getFc_type();
+        this.orderNumber = kpi.getOrderNumber();
+        this.fcType = kpi.getFc_type();
         this.sbu = sbu;
-        this.product_main_group = product_main_group;
+        this.productMainGroup = productMainGroup;
         this.region = region;
         this.subregion = subregion;
-        this.sales_type = sales_type;
-        this.entry_type = entry_type;
+        this.salesType = salesType;
+        this.entryType = entryType;
         this.setMonths(months);
     }
 
@@ -80,7 +80,7 @@ public class OutputDataType {
     public OutputDataType validate() {
         boolean isValid = false;
 
-        //check if all attributes are set and valid
+        /* check if all attributes are set and valid */
         if (isValid) {
             return this;
         } else {
@@ -88,10 +88,8 @@ public class OutputDataType {
         }
     }
 
-    //Getter
-
-    public int getOrder_number() {
-        return order_number;
+    public int getOrderNumber() {
+        return orderNumber;
     }
 
     public String getKpi() {
@@ -194,16 +192,16 @@ public class OutputDataType {
         return sbu;
     }
 
-    public EntryType getEntryType() {
-        return entry_type;
+    public String getEntryType() {
+        return entryType;
     }
 
-    public String getProduct_main_group() {
-        return product_main_group;
+    public String getProductMainGroup() {
+        return productMainGroup;
     }
 
-    public String getSales_type() {
-        return sales_type;
+    public String getSalesType() {
+        return salesType;
     }
 
     public String getCurrency() {
@@ -214,11 +212,9 @@ public class OutputDataType {
         return unit;
     }
 
-    public String getFc_type() {
-        return fc_type;
+    public String getFcType() {
+        return fcType;
     }
-
-    //Setter
 
     public void setM01(double m01) {
         this.m01 = m01;
@@ -314,31 +310,69 @@ public class OutputDataType {
         this.subregion = region;
     }
 
-    public void setEntryType(EntryType entryType) {
-        this.entry_type = entryType;
+    public void setEntryType(String entryType) {
+        this.entryType = entryType;
     }
 
     //Setter for Product Main Group and SBU if Product Main Group is existent
     public void setProductMainAndSBU(String sbu, String product_main_group) {
         this.sbu = sbu;
-        this.product_main_group = product_main_group;
+        this.productMainGroup = product_main_group;
     }
 
     //Setter for Product Main Group and SBU if Product Main Group is NOT existent
     public void setProductMainAndSBU(String sbu) {
         this.sbu = sbu;
-        this.product_main_group = sbu;
+        this.productMainGroup = sbu;
     }
 
     public void setCurrency(String currency) {
         this.currency = currency;
     }
 
-    public void setSales_type(String sales_type) {
-        this.sales_type = sales_type;
+    public void setSalesType(String salesType) {
+        this.salesType = salesType;
     }
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    @Override
+    public String toString() {
+        return "OutputDataType{" +
+                "orderNumber=" + orderNumber +
+                ", kpi='" + kpi + '\'' +
+                ", m01=" + m01 +
+                ", m02=" + m02 +
+                ", m03=" + m03 +
+                ", m04=" + m04 +
+                ", m05=" + m05 +
+                ", m06=" + m06 +
+                ", m07=" + m07 +
+                ", m08=" + m08 +
+                ", m09=" + m09 +
+                ", m10=" + m10 +
+                ", m11=" + m11 +
+                ", m12=" + m12 +
+                ", m13=" + m13 +
+                ", m14=" + m14 +
+                ", m15=" + m15 +
+                ", m16=" + m16 +
+                ", m17=" + m17 +
+                ", m18=" + m18 +
+                ", bj2=" + bj2 +
+                ", bj3=" + bj3 +
+                ", bj4=" + bj4 +
+                ", region='" + region + '\'' +
+                ", subregion='" + subregion + '\'' +
+                ", sbu='" + sbu + '\'' +
+                ", entryType=" + entryType +
+                ", productMainGroup='" + productMainGroup + '\'' +
+                ", salesType=" + salesType +
+                ", currency='" + currency + '\'' +
+                ", unit='" + unit + '\'' +
+                ", fcType='" + fcType + '\'' +
+                '}';
     }
 }

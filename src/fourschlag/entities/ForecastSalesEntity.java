@@ -1,69 +1,100 @@
 package fourschlag.entities;
 
 
+import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
 
-@Table(keyspace = "original_version", name = "forecast_sales")
-public class ForecastSalesEntity extends SalesEntity{
+import java.util.UUID;
 
-    private int topdown_adjust_sales_volumes;
-    private int topdown_adjust_net_sales;
-    private int topdown_adjust_cm1;
-    private int plan_period;
-    private int plan_year;
-    private int plan_half_year;
-    private int plan_quarter;
-    private int plan_month;
+@Table(name = "forecast_sales")
+public class ForecastSalesEntity extends SalesEntity {
+
+    @Column(name = "topdown_adjust_sales_volumes")
+    private int topdownAdjustSalesVolumes;
+
+    @Column(name = "topdown_adjust_net_sales")
+    private int topdownAdjustNetSales;
+
+    @Column(name = "topdown_adjust_cm1")
+    private int topdownAdjustCm1;
+
+    @Column(name = "plan_period")
+    private int planPeriod;
+
+    @Column(name = "plan_year")
+    private int planYear;
+
+    @Column(name = "plan_half_year")
+    private int planHalfYear;
+
+    @Column(name = "plan_quarter")
+    private int planQuarter;
+
+    @Column(name = "plan_month")
+    private int planMonth;
+
+    @Column(name = "entry_type")
+    private String entryType;
+
+    @Column(name = "status")
     private String status;
+
+    @Column(name = "usercomment")
     private String usercomment;
 
     public ForecastSalesEntity() {
     }
 
-    public ForecastSalesEntity(double sales_volumes, double net_sales, double cm1, int topdown_adjust_sales_volumes, int topdown_adjust_net_sales, int topdown_adjust_cm1, String product_main_group, String region, String sales_type, String entry_type, int period, int period_year, int period_month, int plan_period, int plan_year, int plan_half_year, int plan_quarter, int plan_month, String currency, String status, String usercomment, String userid, String entry_ts) {
-        super(sales_volumes, net_sales, cm1, product_main_group, region, sales_type, period, period_year, period_month, currency, userid, entry_ts);
-        this.topdown_adjust_sales_volumes = topdown_adjust_sales_volumes;
-        this.topdown_adjust_net_sales = topdown_adjust_net_sales;
-        this.topdown_adjust_cm1 = topdown_adjust_cm1;
-        this.plan_period = plan_period;
-        this.plan_year = plan_year;
-        this.plan_half_year = plan_half_year;
-        this.plan_quarter = plan_quarter;
-        this.plan_month = plan_month;
+    public ForecastSalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1, int topdownAdjustSalesVolumes, int topdownAdjustNetSales, int topdownAdjustCm1, String productMainGroup, String region, String salesType, String entryType, int period, int periodYear, int periodMonth, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String currency, String status, String usercomment, String userId, String entryTs) {
+        super(uuid, salesVolumes, netSales, cm1, productMainGroup, region, salesType,
+                period, periodYear, periodMonth, currency, userId, entryTs);
+        this.topdownAdjustSalesVolumes = topdownAdjustSalesVolumes;
+        this.topdownAdjustNetSales = topdownAdjustNetSales;
+        this.topdownAdjustCm1 = topdownAdjustCm1;
+        this.planPeriod = planPeriod;
+        this.planYear = planYear;
+        this.planHalfYear = planHalfYear;
+        this.planQuarter = planQuarter;
+        this.planMonth = planMonth;
         this.status = status;
         this.usercomment = usercomment;
+        this.entryType = entryType;
     }
 
-    public int getTopdown_adjust_sales_volumes() {
-        return topdown_adjust_sales_volumes;
+    public int getTopdownAdjustSalesVolumes() {
+        return topdownAdjustSalesVolumes;
     }
 
-    public int getTopdown_adjust_net_sales() {
-        return topdown_adjust_net_sales;
+    public int getTopdownAdjustNetSales() {
+        return topdownAdjustNetSales;
     }
 
-    public int getTopdown_adjust_cm1() {
-        return topdown_adjust_cm1;
+    public int getTopdownAdjustCm1() {
+        return topdownAdjustCm1;
     }
 
-    public int getPlan_period() {
-        return plan_period;
+    public int getPlanPeriod() {
+        return planPeriod;
     }
 
-    public int getPlan_year() {
-        return plan_year;
+    public int getPlanYear() {
+        return planYear;
     }
 
-    public int getPlan_half_year() {
-        return plan_half_year;
+    public int getPlanHalfYear() {
+        return planHalfYear;
     }
 
-    public int getPlan_quarter() {
-        return plan_quarter;
+    public int getPlanQuarter() {
+        return planQuarter;
     }
 
-    public int getPlan_month() {
-        return plan_month;
+    public int getPlanMonth() {
+        return planMonth;
+    }
+
+    public String getEntryType() {
+        return entryType;
     }
 
     public String getStatus() {
@@ -73,4 +104,5 @@ public class ForecastSalesEntity extends SalesEntity{
     public String getUsercomment() {
         return usercomment;
     }
+
 }

@@ -3,16 +3,15 @@ package fourschlag.entities;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-/**
- * Created by Henrik on 07.11.2016.
- */
-@Table(keyspace = "original_version", name = "regions")
+@Table(name = "regions")
 public class RegionEntity {
+
     @PartitionKey
     private String subregion;
     private String region;
 
-    public RegionEntity(){}
+    public RegionEntity() {
+    }
 
     public RegionEntity(String subregion, String region) {
         this.subregion = subregion;

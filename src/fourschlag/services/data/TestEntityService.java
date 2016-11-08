@@ -13,7 +13,7 @@ public class TestEntityService extends Service {
     private TestEntityAccessor accessor;
 
     public TestEntityService() {
-        super("141.19.145.142", "keyspace2");
+        super();
         MappingManager manager = new MappingManager(this.getSession());
         accessor = manager.createAccessor(TestEntityAccessor.class);
     }
