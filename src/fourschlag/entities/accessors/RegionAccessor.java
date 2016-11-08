@@ -3,7 +3,6 @@ package fourschlag.entities.accessors;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-import fourschlag.entities.Org_StructureEntity;
 import fourschlag.entities.RegionEntity;
 
 

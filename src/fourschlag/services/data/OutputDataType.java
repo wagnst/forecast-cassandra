@@ -1,14 +1,7 @@
 package fourschlag.services.data;
 
-import com.sun.jmx.remote.internal.ArrayQueue;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
-/**
- * Datentyp, der zum JSON Schema von SP passt
- */
 public class OutputDataType {
     private int order_number;
     private String kpi;
@@ -49,15 +42,20 @@ public class OutputDataType {
         this.fc_type = kpi.getFc_type();
     }
 
-    public OutputDataType(KPIs kpi, String sbu, String product_main_group, String region, String sales_type,
-                          LinkedList<Double> months) {
+    public OutputDataType(KPIs kpi, String sbu, String product_main_group, String region, String subregion,
+                          String sales_type, LinkedList<Double> months) {
         this.kpi = kpi.getFullName();
         this.order_number = kpi.getOrderNumber();
         this.fc_type = kpi.getFc_type();
         this.sbu = sbu;
         this.product_main_group = product_main_group;
         this.region = region;
+        this.subregion = subregion;
         this.sales_type = sales_type;
+        this.setMonths(months);
+    }
+
+    private void setMonths(LinkedList<Double> months) {
         this.m01 = months.poll();
         this.m02 = months.poll();
         this.m03 = months.poll();
@@ -82,8 +80,7 @@ public class OutputDataType {
         boolean isValid = false;
 
         //check if all attributes are set and valid
-
-        if(isValid) {
+        if (isValid) {
             return this;
         } else {
             return null;
@@ -316,8 +313,8 @@ public class OutputDataType {
         this.subregion = region;
     }
 
-    public void setEntry_type(String entry_type) {
-        this.entry_type = entry_type;
+    public void setEntryType(String entryType) {
+        this.entry_type = entryType;
     }
 
     //Setter for Product Main Group and SBU if Product Main Group is existent

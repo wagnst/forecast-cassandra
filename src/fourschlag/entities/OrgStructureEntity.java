@@ -8,15 +8,15 @@ import com.datastax.driver.mapping.annotations.Table;
  */
 
 @Table(keyspace = "original_version", name = "org_structure")
-public class Org_StructureEntity {
+public class OrgStructureEntity {
     @PartitionKey
     private String product_main_group;
     private String sbu;
     private String bu;
 
-    public Org_StructureEntity(){}
+    public OrgStructureEntity(){}
 
-    public Org_StructureEntity(String product_main_group, String sbu, String bu) {
+    public OrgStructureEntity(String product_main_group, String sbu, String bu) {
         this.product_main_group = product_main_group;
         this.sbu = sbu;
         this.bu = bu;

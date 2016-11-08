@@ -15,20 +15,6 @@ public class ForecastWS {
     private SalesService salesService = new SalesService();
 
     @GET
-    @Path("/kpi/{product_main_group}/{period}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getKPIs(@PathParam("product_main_group") String product_main_group, @PathParam("period") int period) {
-        return Response.ok(salesService.getKPIs(product_main_group, period), Params.MEDIATYPE).build();
-    }
-
-    @GET
-    @Path("/sales_volumes/{product_main_group}/{year}/{region}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSalesVolumes(@PathParam("product_main_group") String product_main_group, @PathParam("year") int year, @PathParam("region") String region) {
-        return Response.ok(salesService.getSalesVolumes(product_main_group, year, region), Params.MEDIATYPE).build();
-    }
-
-    @GET
     @Path("/sales/{year}/{period}/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSalesKPIs(@PathParam("year") int year, @PathParam("period") int period, @PathParam("currency") String currency) {
