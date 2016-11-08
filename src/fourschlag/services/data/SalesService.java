@@ -28,11 +28,11 @@ public class SalesService extends Service {
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs(int year, int parameterPeriod, String currency) {
+    public List<OutputDataType> getSalesKPIs(int year, int intPeriod, String currency) {
         //TODO currency, data_source
         List<OutputDataType> resultList = new ArrayList<>();
 
-        Period period = new Period(parameterPeriod);
+        Period period = new Period(intPeriod);
 
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
         Result<RegionEntity> subregions = regionAccessor.getSubregions();
@@ -45,18 +45,21 @@ public class SalesService extends Service {
 
         for (OrgStructureEntity product : products) {
             for (String region : regions) {
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), period, region, "3rd_party"));
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), period, region, "transfer"));
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
+                                    , period, region, "3rd_party"));
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
+                                    , period, region, "transfer"));
             }
         }
 
         return resultList;
     }
 
-    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu, Period period, String region, String sales_type) {
+    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu,
+                                                                 Period parameterPeriod, String region, String sales_type) {
         List<OutputDataType> resultList = new ArrayList<>();
 
-        //Calculate first period of given year
+        Period period = parameterPeriod;
 
         //Get KPIs for first month
         System.out.println(product_main_group + " " + period + " " + region + " " + sales_type);
