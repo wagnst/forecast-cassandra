@@ -10,7 +10,7 @@ import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 
 import javax.ejb.Local;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.*;
 
 public class SalesService extends Service {
@@ -28,12 +28,16 @@ public class SalesService extends Service {
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs(int year, int period, String currency) {
+    public List<OutputDataType> getSalesKPIs(int year, int parameterPeriod, String currency) {
         //TODO currency, data_source
         List<OutputDataType> resultList = new ArrayList<>();
 
+        Period period = new Period(parameterPeriod);
+
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
         Result<RegionEntity> subregions = regionAccessor.getSubregions();
+
+        //Regions abfragen, Duplikate filtern
         Set<String> regions = new HashSet<>();
         for (RegionEntity region : subregions) {
             regions.add(region.getRegion());
@@ -41,19 +45,18 @@ public class SalesService extends Service {
 
         for (OrgStructureEntity product : products) {
             for (String region : regions) {
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), year, region, "3rd_party"));
-                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), year, region, "transfer"));
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), period, region, "3rd_party"));
+                resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu(), period, region, "transfer"));
             }
         }
 
         return resultList;
     }
 
-    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu, int year, String region, String sales_type) {
+    private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu, Period period, String region, String sales_type) {
         List<OutputDataType> resultList = new ArrayList<>();
 
         //Calculate first period of given year
-        int period = year * 100 + 1;
 
         //Get KPIs for first month
         System.out.println(product_main_group + " " + period + " " + region + " " + sales_type);
@@ -62,12 +65,10 @@ public class SalesService extends Service {
         LinkedList<Double> netSalesMonths = new LinkedList<>();
         LinkedList<Double> cm1Months = new LinkedList<>();
         ActualSalesEntity queryResult;
-        LocalDateTime now = LocalDateTime.now();
 
         //Set the KPIs for 18 months
         for (int i = 0; i < MONTHS_AMOUNT; i++) {
-            if ()
-            queryResult = actualAccessor.getSalesKPIs(product_main_group, period++, region, sales_type);
+            queryResult = actualAccessor.getSalesKPIs(product_main_group, period.getPeriod(), region, sales_type);
             if (queryResult != null) {
                 salesVolumesMonths.add(queryResult.getSales_volumes());
                 netSalesMonths.add(queryResult.getNet_sales());
@@ -77,6 +78,8 @@ public class SalesService extends Service {
                 netSalesMonths.add(new Double(0));
                 cm1Months.add(new Double(0));
             }
+
+            period.increment();
         }
 
         //Create Objects for each KPI
