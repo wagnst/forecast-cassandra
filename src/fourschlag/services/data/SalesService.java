@@ -2,9 +2,9 @@ package fourschlag.services.data;
 
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.ActualSalesEntity;
 import fourschlag.entities.OrgStructureEntity;
 import fourschlag.entities.RegionEntity;
+import fourschlag.entities.SalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
@@ -74,7 +74,7 @@ public class SalesService extends Service {
         LinkedList<Double> netSalesMonths = new LinkedList<>();
         LinkedList<Double> cm1Months = new LinkedList<>();
 
-        ActualSalesEntity queryResult;
+        SalesEntity queryResult;
         boolean actualFlag = false;
         boolean forecastFlag = false;
 
