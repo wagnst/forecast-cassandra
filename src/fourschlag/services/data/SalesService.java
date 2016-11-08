@@ -27,7 +27,6 @@ public class SalesService extends Service {
     }
 
     public List<OutputDataType> getSalesKPIs(int year, int period, String currency) {
-        //TODO currency, data_source
         List<OutputDataType> resultList = new ArrayList<>();
 
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
@@ -42,9 +41,9 @@ public class SalesService extends Service {
         for (OrgStructureEntity product : products) {
             for (String region : regions) {
                 resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
-                                    , period, region, "3rd_party"));
+                        , period, region, "3rd_party"));
                 resultList.addAll(getSalesKPIsForProductAndRegion(product.getProduct_main_group(), product.getSbu()
-                                    , period, region, "transfer"));
+                        , period, region, "transfer"));
             }
         }
 
@@ -53,6 +52,10 @@ public class SalesService extends Service {
 
     private List<OutputDataType> getSalesKPIsForProductAndRegion(String product_main_group, String sbu,
                                                                  int intPeriod, String region, String sales_type) {
+
+        // TODO: Es fehlen noch: Price, var_costs, cm1_specific, cm1_percent --> Berechnen sich aus den anderen KPIs
+        // TODO: Währungsumrechnung
+
         List<OutputDataType> resultList = new ArrayList<>();
 
         Period period = new Period(intPeriod);
@@ -67,15 +70,23 @@ public class SalesService extends Service {
 
         //Set the KPIs for 18 months
         for (int i = 0; i < MONTHS_AMOUNT; i++) {
-            queryResult = actualAccessor.getSalesKPIs(product_main_group, period.getPeriod(), region, sales_type);
-            if (queryResult != null) {
+
+            queryResult = actualAccessor.getSalesKPIs(product_main_group, period.getPeriod(), region, sales_type, "BW B");
+            if (queryResult == null) {
+                queryResult = actualAccessor.getSalesKPIs(product_main_group, period.getPeriod(), region, sales_type, "BW A");
+                if (queryResult == null) {
+                    salesVolumesMonths.add(new Double(0));
+                    netSalesMonths.add(new Double(0));
+                    cm1Months.add(new Double(0));
+                } else {
+                    salesVolumesMonths.add(queryResult.getSales_volumes());
+                    netSalesMonths.add(queryResult.getNet_sales());
+                    cm1Months.add(queryResult.getCm1());
+                }
+            } else {
                 salesVolumesMonths.add(queryResult.getSales_volumes());
                 netSalesMonths.add(queryResult.getNet_sales());
                 cm1Months.add(queryResult.getCm1());
-            } else {
-                salesVolumesMonths.add(new Double(0));
-                netSalesMonths.add(new Double(0));
-                cm1Months.add(new Double(0));
             }
 
             period.increment();
