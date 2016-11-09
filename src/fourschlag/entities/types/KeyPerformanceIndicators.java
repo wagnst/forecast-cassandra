@@ -20,7 +20,7 @@ public enum KeyPerformanceIndicators {
     ADMIN_COST_COMPANY(10, "fixed costs", "Administration Cost Company"),
     OTHER_OP_COST_BU(11, "fixed costs", "Other Operating Cost BU"),
     OTHER_OP_COST_OD(12, "fixed costs", "Other Operating Cost OD"),
-    OTHER_OP_COST_COMPANY(13, "fixed costs", "Other Operating Cost Comapny"),
+    OTHER_OP_COST_COMPANY(13, "fixed costs", "Other Operating Cost Company"),
     SPEC_ITEMS(14, "fixed costs", "Special Items"),
     PROVISIONS(15, "fixed costs", "Provisions"),
     CURRENCY_GAINS(16, "fixed costs", "Currency Gains"),
