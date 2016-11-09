@@ -34,12 +34,12 @@ public enum KeyPerformanceIndicators {
     CAP_COST(24, "fixed costs", "Cost of Capital");
 
     private final int orderNumber;
-    private final String fc_type;
+    private final String fcType;
     private final String fullName;
 
-    private KeyPerformanceIndicators(int orderNumber, String fc_type, String fullName) {
+    KeyPerformanceIndicators(int orderNumber, String fcType, String fullName) {
         this.orderNumber = orderNumber;
-        this.fc_type = fc_type;
+        this.fcType = fcType;
         this.fullName = fullName;
     }
 
@@ -47,8 +47,8 @@ public enum KeyPerformanceIndicators {
         return orderNumber;
     }
 
-    public String getFc_type() {
-        return fc_type;
+    public String getFcType() {
+        return fcType;
     }
 
     public String getFullName() {
