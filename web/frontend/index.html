@@ -14,8 +14,8 @@
     <script src="js/jquery.jqGrid.min.js" type="text/javascript"></script>
     <script src="js/i18n/grid.locale-en.js" type="text/javascript"></script>
     <script>
-        $(function() {
-            $.fn.runGrid = function ( year, period, currency) {
+        $(function () {
+            $.fn.runGrid = function (year, period, currency) {
                 $("#resultList").jqGrid({
                     url: 'http://141.19.145.133:8080/fourschlag/api/forecast/sales/' + year + '/' + period + '/' + currency,
                     datatype: "json",
@@ -42,7 +42,7 @@
                         name: 'm02',
                         index: 'm02',
                         width: 40,
-                        align: "right",
+                        align: "right"
                     }, {
                         name: 'm03',
                         index: 'm03',
@@ -192,64 +192,8 @@
                     sortorder: "desc",
                     viewrecords: true,
                     multiselect: false,
-                    subGrid: false,
                     caption: "FourSchlag Sales KPIs",
                     height: '1000',
-                    subGridRowExpanded: function (subgrid_id, row_id) {
-                        var subgrid_table_id, pager_id;
-                        subgrid_table_id = subgrid_id + "_t";
-                        pager_id = "p_" + subgrid_table_id;
-                        $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>");
-                        $("#" + subgrid_table_id).jqGrid({
-                            // hier müsste man quasi mit + rowId anfragen, um genau von der speziellen row den wert zu bekommen zb url: "xx" + row_id
-                            // url: "http://141.19.145.133:8080/fourschlag/api/forecast/sales/2013/201301/eur" + row_id,
-                            url: "subgrid.php?q=2&id=" + row_id,
-                            datatype: "json",
-                            colNames: ['No', 'Item', 'Qty', 'Unit', 'Line Total'],
-                            colModel: [{
-                                name: "num",
-                                index: "num",
-                                width: 80,
-                                key: true
-                            }, {
-                                name: "item",
-                                index: "item",
-                                width: 130
-                            }, {
-                                name: "qty",
-                                index: "qty",
-                                width: 70,
-                                align: "right"
-                            }, {
-                                name: "unit",
-                                index: "unit",
-                                width: 70,
-                                align: "right"
-                            }, {
-                                name: "total",
-                                index: "total",
-                                width: 70,
-                                align: "right",
-                                sortable: false
-                            }],
-                            rowNum: 20,
-                            pager: pager_id,
-                            sortname: 'num',
-                            sortorder: "asc",
-                            height: '100%'
-                        });
-                        $("#" + subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {
-                            edit: false,
-                            add: false,
-                            del: false
-                        })
-                    },
-                    subGridRowColapsed: function (subgrid_id, row_id) {
-                        // this function is called before removing the data
-                        //var subgrid_table_id;
-                        //subgrid_table_id = subgrid_id+"_t";
-                        //jQuery("#"+subgrid_table_id).remove();
-                    }
                 });
                 $("#resultList").jqGrid('navGrid', '#resultPager', {
                     edit: false,
@@ -263,7 +207,7 @@
                 // to stop the form from submitting
                 e.preventDefault();
                 var data = $("#inputForm :input").serializeArray();
-                console.log("querying for year=" + data[0].value + ", period=" + data[1].value + ", currency=" +data[2].value);
+                console.log("querying for year=" + data[0].value + ", period=" + data[1].value + ", currency=" + data[2].value);
                 $.fn.runGrid(data[0].value, data[1].value, data[2].value);
                 console.log("query done");
             });
@@ -286,7 +230,7 @@
     <input type="text" name="currency" value="eur">
     <input type="submit" value="Submit">
 </form>
-<p>Webservice Schema: <strong>/sales/{year}/{period}/{currency}</strong></p>
+<p>Called Webservice Schema: <strong>/sales/{year}/{period}/{currency}</strong></p>
 <table id="resultList"></table>
 <div id="resultPager"></div>
 </body>
