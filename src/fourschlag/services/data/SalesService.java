@@ -31,7 +31,7 @@ public class SalesService extends Service {
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs(int year, int period, String currency) {
+    public List<OutputDataType> getSalesKPIs(int planYear, int period, String currency) {
         List<OutputDataType> resultList = new ArrayList<>();
 
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
@@ -51,7 +51,7 @@ public class SalesService extends Service {
                 /* use sales_types from enum, instead of mapped ones */
                 for (SalesType salesType : SalesType.values())
                     resultList.addAll(getSalesKPIsForProductAndRegion(
-                            product.getProductMainGroup(), product.getSbu(), requestedPeriod, region, salesType
+                            product.getProductMainGroup(), product.getSbu(), planYear, requestedPeriod, region, salesType
                     ));
             }
         }
@@ -59,7 +59,7 @@ public class SalesService extends Service {
         return resultList;
     }
 
-    private List<OutputDataType> getSalesKPIsForProductAndRegion(String productMainGroup, String sbu,
+    private List<OutputDataType> getSalesKPIsForProductAndRegion(String productMainGroup, String sbu, int planYear,
                                                                  Period period, String region, SalesType salesType) {
         // TODO: Es fehlen noch: Price, var_costs, cm1_specific, cm1_percent --> Berechnen sich aus den anderen KeyPerformanceIndicators
         // TODO: Währungsumrechnung
@@ -95,7 +95,9 @@ public class SalesService extends Service {
                 }
             } else {
                 forecastFlag = true;
-                queryResult = forecastAccessor.getSalesKPI(productMainGroup, requestedPeriod.getPeriod(), region, salesType.toString());
+                //TODO: Add case for entry_type = budget (--> kpi description in GDrive)
+                queryResult = forecastAccessor.getSalesKPI(productMainGroup, requestedPeriod.getPeriod(), planYear,
+                                                            region, salesType.toString(), "forecast");
             }
 
             /* Check if queryResult has data */

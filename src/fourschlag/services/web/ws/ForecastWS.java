@@ -15,12 +15,12 @@ public class ForecastWS {
     private SalesService salesService = new SalesService();
 
     @GET
-    @Path("/sales/{year}/{period}/{currency}")
+    @Path("/sales/{planYear}/{period}/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSalesKPIs(
-            @PathParam("year") int year,
+            @PathParam("planYear") int planYear,
             @PathParam("period") int period,
             @PathParam("currency") String currency) {
-        return Response.ok(salesService.getSalesKPIs(year, period, currency), Params.MEDIATYPE).build();
+        return Response.ok(salesService.getSalesKPIs(planYear, period, currency), Params.MEDIATYPE).build();
     }
 }
