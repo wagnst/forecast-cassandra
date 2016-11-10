@@ -172,10 +172,9 @@
                     add: false,
                     del: false
                 });
-                $("#resultList").parents('div.ui-jqgrid-bdiv').css("min-height","100px");
+                $("#resultList").parents('div.ui-jqgrid-bdiv').css("min-height", "100px");
                 //trigger for refresh
                 $("#resultList").jqGrid().setGridParam({url: endpointScheme + endpointUrl + endpointPath + year + '/' + period + '/' + currency}).trigger("reloadGrid")
-                //$("#resultList").trigger("reloadGrid", {fromServer: true});
             }
 
             // listener on submit input form
@@ -185,7 +184,7 @@
                 var data = $("#inputForm :input").serializeArray();
                 var kpiType = $('#kpiType').find(":selected").text();
                 console.log("querying for kpiType=" + kpiType + ", year=" + data[0].value + ", period=" + data[1].value + ", currency=" + data[2].value);
-                //$("#resultList").jqGrid("clearGridData");
+                $("#resultList").jqGrid("clearGridData");
                 $.fn.runGrid(kpiType, data[0].value, data[1].value, data[2].value);
                 console.log("query done");
             });
@@ -195,71 +194,78 @@
 
 <body>
 
-<div class="jumbotron">
-    <form id="inputForm" class="form-horizontal" role="form">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-12 col-md-2">
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label"
-                               for="kpiType">Area</label>
-                        <div class="col-lg-8">
-                            <select class="form-control" id="kpiType">
-                                <option>sales</option>
-                            </select>
-                        </div>
-                    </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">FourSchlag JS Sample Frontend</div>
+    <div class="panel-body">
+        <div class="jumbotron">
+            <form id="inputForm" class="form-horizontal" role="form">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="kpiType">Area</label>
+                                <div class="col-lg-8">
+                                    <select class="form-control" id="kpiType">
+                                        <option>sales</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-12 col-md-2">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="year">Year</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="year"
+                                           value="2013">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="period">Period</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="period"
+                                           value="201301">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="currency">Currency</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="currency"
+                                           value="eur">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-1">
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label"
+                                       for=""></label>
+                                <div class="col-lg-2">
+                                    <button type="submit"
+                                            class="btn btn-default"><img
+                                            width="120px"
+                                            height="120px"
+                                            src="img/fourschlag-logo.png"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-xs-12 col-md-2">
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label"
-                               for="year">Year</label>
-                        <div class="col-lg-8">
-                            <input type="text" class="form-control" name="year"
-                                   value="2013">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label"
-                               for="period">Period</label>
-                        <div class="col-lg-8">
-                            <input type="text" class="form-control"
-                                   name="period"
-                                   value="201301">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-lg-3 control-label"
-                               for="currency">Currency</label>
-                        <div class="col-lg-8">
-                            <input type="text" class="form-control"
-                                   name="currency"
-                                   value="eur">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-1">
-                    <div class="form-group">
-                        <label class="col-lg-2 control-label"
-                               for=""></label>
-                        <div class="col-lg-2">
-                            <button type="submit" class="btn btn-default"><img
-                                    width="120px"
-                                    height="120px"
-                                    src="img/fourschlag-logo.png"/>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
-    </form>
+        <table id="resultList"></table>
+        <div id="resultPager"></div>
+    </div>
 </div>
 
-
-<table id="resultList"></table>
-<div id="resultPager"></div>
 </body>
 
 </html>
