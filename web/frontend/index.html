@@ -16,11 +16,11 @@
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
     <script>
         $(function () {
-            $.fn.runGrid = function (year, period, currency) {
+            $.fn.runGrid = function (kpiType, year, period, currency) {
                 //set the http endpoint url
                 var endpointScheme = 'http://'
                 var endpointUrl = '141.19.145.133:8080'
-                var endpointPath = '/fourschlag/api/forecast/sales/'
+                var endpointPath = '/fourschlag/api/forecast/' + kpiType + '/'
                 $("#resultList").jqGrid({
                     url: endpointScheme + endpointUrl + endpointPath + year + '/' + period + '/' + currency,
                     datatype: "json",
@@ -165,14 +165,14 @@
                     sortorder: "desc",
                     viewrecords: true,
                     multiselect: false,
-                    caption: "FourSchlag Sales KPIs",
-                    height: '650',
+                    height: '100%',
                 });
                 $("#resultList").jqGrid('navGrid', '#resultPager', {
                     edit: false,
                     add: false,
                     del: false
                 });
+                $("#resultList").parents('div.ui-jqgrid-bdiv').css("min-height","100px");
                 //trigger for refresh
                 $("#resultList").jqGrid().setGridParam({url: endpointScheme + endpointUrl + endpointPath + year + '/' + period + '/' + currency}).trigger("reloadGrid")
                 //$("#resultList").trigger("reloadGrid", {fromServer: true});
@@ -183,9 +183,10 @@
                 // to stop the form from submitting
                 e.preventDefault();
                 var data = $("#inputForm :input").serializeArray();
-                console.log("querying for year=" + data[0].value + ", period=" + data[1].value + ", currency=" + data[2].value);
+                var kpiType = $('#kpiType').find(":selected").text();
+                console.log("querying for kpiType=" + kpiType + ", year=" + data[0].value + ", period=" + data[1].value + ", currency=" + data[2].value);
                 //$("#resultList").jqGrid("clearGridData");
-                $.fn.runGrid(data[0].value, data[1].value, data[2].value);
+                $.fn.runGrid(kpiType, data[0].value, data[1].value, data[2].value);
                 console.log("query done");
             });
         });
@@ -200,11 +201,11 @@
             <div class="row">
                 <div class="col-xs-12 col-md-2">
                     <div class="form-group">
-                        <label class="col-lg-2 control-label"
-                               for="type">KPI</label>
-                        <div class="col-lg-10">
-                            <select class="form-control" id="type">
-                                <option>Sales</option>
+                        <label class="col-lg-3 control-label"
+                               for="kpiType">Area</label>
+                        <div class="col-lg-8">
+                            <select class="form-control" id="kpiType">
+                                <option>sales</option>
                             </select>
                         </div>
                     </div>
@@ -212,26 +213,26 @@
                 </div>
                 <div class="col-xs-12 col-md-2">
                     <div class="form-group">
-                        <label class="col-lg-2 control-label"
+                        <label class="col-lg-3 control-label"
                                for="year">Year</label>
-                        <div class="col-lg-10">
+                        <div class="col-lg-8">
                             <input type="text" class="form-control" name="year"
                                    value="2013">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-2 control-label"
+                        <label class="col-lg-3 control-label"
                                for="period">Period</label>
-                        <div class="col-lg-10">
+                        <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    name="period"
                                    value="201301">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-2 control-label"
+                        <label class="col-lg-3 control-label"
                                for="currency">Currency</label>
-                        <div class="col-lg-10">
+                        <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    name="currency"
                                    value="eur">
