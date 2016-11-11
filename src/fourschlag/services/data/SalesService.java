@@ -31,13 +31,13 @@ public class SalesService extends Service {
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs(int planYear, int period, String currency) {
+    public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String currency) {
         List<OutputDataType> resultList = new ArrayList<>();
 
         Result<OrgStructureEntity> products = orgStructureAccessor.getProducts();
         Result<RegionEntity> subregions = regionAccessor.getSubregions();
 
-        Period requestedPeriod = new Period(period);
+        Period currentPeriod = new Period(currentPeriodInt);
 
         /* query regions, filter duplicates */
         Set<String> regions = new HashSet<>();
@@ -51,7 +51,7 @@ public class SalesService extends Service {
                 /* use sales_types from enum, instead of mapped ones */
                 for (SalesType salesType : SalesType.values())
                     resultList.addAll(getSalesKPIsForProductAndRegion(
-                            product.getProductMainGroup(), product.getSbu(), planYear, requestedPeriod, region, salesType
+                            product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType
                     ));
             }
         }
@@ -60,15 +60,16 @@ public class SalesService extends Service {
     }
 
     private List<OutputDataType> getSalesKPIsForProductAndRegion(String productMainGroup, String sbu, int planYear,
-                                                                 Period period, String region, SalesType salesType) {
+                                                                 Period currentPeriod, String region, SalesType salesType) {
         // TODO: Es fehlen noch: Price, var_costs, cm1_specific, cm1_percent --> Berechnen sich aus den anderen KeyPerformanceIndicators
         // TODO: Währungsumrechnung
 
         List<OutputDataType> resultList = new ArrayList<>();
 
-        Period requestedPeriod = period.getFirstPeriodOfYear();
-        LocalDateTime now = LocalDateTime.now();
-        Period currentPeriod = new Period(now.getYear(), now.getMonth().getValue());
+        /* Get the Plan Period by taking the given plan year and jump to its first month. The Plan Period will be
+         * incremented, while the current Period stays the same, because it represents the point of view/time from which
+          * we are accessing the data */
+        Period planPeriod = Period.getPeriodByYear(planYear);
 
         //System.out.println(productMainGroup + " " + requestedPeriod + " " + region + " " + salesType);
 
@@ -81,23 +82,24 @@ public class SalesService extends Service {
         boolean forecastFlag = false;
 
         for (int i = 0; i < MONTHS_AMOUNT; i++) {
-            /* Compare requested period with current period
-               If requested period in history (requested: 201610, current: 201611) use actual data.
+            /* Compare plan period with current period
+               If plan period in history (plan: 201610, current: 201611) use actual data.
                Else forecast data
              */
-            if (requestedPeriod.getPeriod() < currentPeriod.getPeriod()) {
+            /* TODO: IF planPeriod is currentPeriod - 1, THEN try to get actual data. IF actual data is not available, THEN use forecast data */
+
+            if (planPeriod.getPeriod() < currentPeriod.getPeriod()) {
                 actualFlag = true;
-                queryResult = actualAccessor.getSalesKPIs(productMainGroup, requestedPeriod.getPeriod(), region,
+                queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
                         salesType.getType(), "BW B");
                 if (queryResult == null) {
-                    queryResult = actualAccessor.getSalesKPIs(productMainGroup, requestedPeriod.getPeriod(), region,
+                    queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
                             salesType.getType(), "BW A");
                 }
             } else {
                 forecastFlag = true;
-                //TODO: Add case for entry_type = budget (--> kpi description in GDrive)
-                queryResult = forecastAccessor.getSalesKPI(productMainGroup, requestedPeriod.getPeriod(), planYear,
-                                                            region, salesType.toString(), "forecast");
+                queryResult = forecastAccessor.getSalesKPI(productMainGroup, currentPeriod.getPeriod(),
+                        planPeriod.getPeriod(), region, salesType.toString());
             }
 
             /* Check if queryResult has data */
@@ -111,7 +113,8 @@ public class SalesService extends Service {
                 cm1Months.add(queryResult.getCm1());
             }
 
-            requestedPeriod.increment();
+            /* Increment the planPeriod to jump to the next month */
+            planPeriod.increment();
         }
 
         /* Check flags to decide what entry type was used */

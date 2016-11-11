@@ -21,6 +21,7 @@ public class ForecastWS {
             @PathParam("planyear") int planYear,
             @PathParam("period") int period,
             @PathParam("currency") String currency) {
+        //TODO: period must be the present or the past, but must not be the future!
         return Response.ok(salesService.getSalesKPIs(planYear, period, currency), Params.MEDIATYPE).build();
     }
 }

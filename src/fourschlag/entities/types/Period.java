@@ -34,6 +34,10 @@ public class Period {
         return new Period(year * 100 + 1);
     }
 
+    public static Period getPeriodByYear(int year) {
+        return new Period(year, 1);
+    }
+
     public int getYear() {
         return year;
     }
