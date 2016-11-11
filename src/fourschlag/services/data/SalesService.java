@@ -10,9 +10,7 @@ import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 import fourschlag.entities.types.*;
-import jnr.ffi.annotations.Out;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class SalesService extends Service {
