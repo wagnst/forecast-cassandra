@@ -14,4 +14,12 @@ public interface ForecastSalesAccessor {
             @Param("plan_period") int planPeriod,
             @Param("region") String region,
             @Param("sales_type") String salesType);
+
+    @Query("SELECT cm1 FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type ALLOW FILTERING;")
+    ActualSalesEntity getCm1(
+            @Param("product_main_group") String productMainGroup,
+            @Param("period") int period,
+            @Param("plan_period") int planPeriod,
+            @Param("region") String region,
+            @Param("sales_type") String salesType);
 }

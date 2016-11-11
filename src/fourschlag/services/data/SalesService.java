@@ -85,6 +85,8 @@ public class SalesService extends Service {
         boolean actualFlag = false;
         boolean forecastFlag = false;
 
+        boolean bwAFlag;
+
         double currentSalesVolume;
         double currentNetSales;
         double currentCm1;
@@ -95,6 +97,7 @@ public class SalesService extends Service {
                Else forecast data
              */
             /* TODO: IF planPeriod is currentPeriod - 1, THEN try to get actual data. IF actual data is not available, THEN use forecast data */
+            bwAFlag = false;
 
             if (planPeriod.getPeriod() < currentPeriod.getPeriod()) {
                 actualFlag = true;
@@ -103,6 +106,10 @@ public class SalesService extends Service {
                 if (queryResult == null) {
                     queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
                             salesType.getType(), "BW A");
+                    /* IF data source BW A was used THEN set flag to true */
+                    if (queryResult != null) {
+                        bwAFlag = true;
+                    }
                 }
             } else {
                 forecastFlag = true;
@@ -118,7 +125,14 @@ public class SalesService extends Service {
             } else {
                 currentSalesVolume = queryResult.getSalesVolumes();
                 currentNetSales = queryResult.getNetSales();
-                currentCm1 = queryResult.getCm1();
+
+                /* IF flag is set to true THEN use forecast data. ELSE use actual data */
+                if (bwAFlag) {
+                    currentCm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+                            planPeriod.getPeriod(), region, salesType.toString()).getCm1();
+                } else {
+                    currentCm1 = queryResult.getCm1();
+                }
             }
 
             /* IF sales volume is 0 THEN set these KPIs also to 0. ELSE calculate the other KPIs*/
@@ -126,11 +140,17 @@ public class SalesService extends Service {
                 priceMonths.add(new Double(0));
                 varCostMonths.add(new Double(0));
                 cm1SpecificMonths.add(new Double(0));
-                cm1PercentMonths.add(new Double(0));
             } else {
                 priceMonths.add(currentNetSales/currentSalesVolume*1000);
                 varCostMonths.add((currentNetSales-currentCm1)*1000/currentSalesVolume);
                 cm1SpecificMonths.add(currentCm1/currentSalesVolume*1000);
+
+            }
+
+            /* IF net sales is 0 THEN set cm1 percent to 0. ELSE calculate cm1 percent. */
+            if(currentNetSales == 0) {
+                cm1PercentMonths.add(new Double(0));
+            } else {
                 cm1PercentMonths.add(currentCm1/currentNetSales*100);
             }
 
@@ -141,7 +161,7 @@ public class SalesService extends Service {
 
             /* Increment the planPeriod to jump to the next month */
             planPeriod.increment();
-        }
+        } /* end of monthly for-loop */
 
         /* Check flags to set what entry type was used */
         EntryType entryType;
