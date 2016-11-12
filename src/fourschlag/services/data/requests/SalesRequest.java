@@ -18,6 +18,9 @@ public class SalesRequest extends KpiRequest {
     private Period currentPeriod;
     private String region;
     private SalesType salesType;
+    private EntryType entryType;
+    private static boolean actualFlag = false;
+    private static boolean forecastFlag = false;
 
     private ActualSalesAccessor actualAccessor;
     private ForecastSalesAccessor forecastAccessor;
@@ -62,19 +65,20 @@ public class SalesRequest extends KpiRequest {
             cm1PercentMonths.add(kpisForOneMonth.poll());
         }
 
-        //TODO: Set EntryType correctly
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.SALES_VOLUME, EntryType.ACTUAL, salesVolumesMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.NET_SALES, EntryType.ACTUAL, netSalesMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1, EntryType.ACTUAL, cm1Months));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.PRICE, EntryType.ACTUAL, priceMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.VAR_COSTS, EntryType.ACTUAL, varCostMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_SPECIFIC, EntryType.ACTUAL, cm1SpecificMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_PERCENT, EntryType.ACTUAL, cm1PercentMonths));
+        setEntryType();
+
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.SALES_VOLUME, entryType, salesVolumesMonths));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.NET_SALES, entryType, netSalesMonths));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1, entryType, cm1Months));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.PRICE, entryType, priceMonths));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.VAR_COSTS, entryType, varCostMonths));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_SPECIFIC, entryType, cm1SpecificMonths));
+        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_PERCENT, entryType, cm1PercentMonths));
 
         return resultList;
     }
 
-    /* TODO: Return data type maybe as HashMap? */
+    /* TODO: Return data type maybe as HashMap? Could be bad for performance */
     private LinkedList<Double> getSalesKPIsForSpecificMonth() {
         double salesVolume;
         double netSales;
@@ -123,13 +127,14 @@ public class SalesRequest extends KpiRequest {
     }
 
     private SalesEntity getActualData() {
-        SalesEntity queryResult;
-        queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
+        actualFlag = true;
+        SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
                 salesType.getType(), "BW B");
         if (queryResult == null) {
             queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
                     salesType.getType(), "BW A");
             if (queryResult != null) {
+                //TODO: Cover case in entryType, when all the KPIs are actual data except CM1
                 queryResult.setCm1(getForecastCm1());
             }
         }
@@ -139,11 +144,13 @@ public class SalesRequest extends KpiRequest {
     }
 
     private SalesEntity getForecastData() {
+        forecastFlag = true;
         return forecastAccessor.getSalesKPI(productMainGroup, currentPeriod.getPeriod(),
                 planPeriod.getPeriod(), region, salesType.toString());
     }
 
     private double getForecastCm1() {
+        forecastFlag = true;
         SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 planPeriod.getPeriod(), region, salesType.toString());
         if (cm1 == null) {
@@ -155,6 +162,16 @@ public class SalesRequest extends KpiRequest {
     private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType, LinkedList<Double> monthlyValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), monthlyValues);
+    }
+
+    private void setEntryType() {
+        if (actualFlag && forecastFlag) {
+            entryType = EntryType.ACTUAL_FORECAST;
+        } else if (forecastFlag) {
+            entryType = EntryType.FORECAST;
+        } else {
+            entryType = EntryType.ACTUAL;
+        }
     }
 
 }
