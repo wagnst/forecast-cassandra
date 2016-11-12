@@ -128,6 +128,7 @@ public class SalesService extends Service {
 
                 /* IF flag is set to true THEN use forecast data. ELSE use actual data */
                 if (bwAFlag) {
+                    /* TODO: Null abfangen, Entry-Type für CM1 anpassen */
                     currentCm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                             planPeriod.getPeriod(), region, salesType.toString()).getCm1();
                 } else {
