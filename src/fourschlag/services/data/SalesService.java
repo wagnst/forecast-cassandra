@@ -23,11 +23,11 @@ public class SalesService extends Service {
         Period currentPeriod = new Period(currentPeriodInt);
 
         /* fill result list and calculate KPI's */
-        for (OrgStructureEntity product : OrgStructureRequest.getProductMainGroups()) {
-            for (String region : RegionRequest.getRegions()) {
+        for (OrgStructureEntity product : new OrgStructureRequest(getConnection()).getProductMainGroups()) {
+            for (String region : new RegionRequest(getConnection()).getRegions()) {
                 /* use sales_types from enum, instead of mapped ones */
                 for (SalesType salesType : SalesType.values())
-                    resultList.addAll(new SalesRequest(
+                    resultList.addAll(new SalesRequest(getConnection(),
                             product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType
                     ).getSalesKPIs());
             }

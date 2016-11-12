@@ -4,33 +4,26 @@ import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.RegionEntity;
 import fourschlag.entities.accessors.RegionAccessor;
+import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegionRequest extends Request{
+public class RegionRequest extends Request {
 
     private RegionAccessor regionAccessor;
-    private static RegionRequest instance = null;
 
-    private RegionRequest() {
-        super();
+    public RegionRequest(CassandraConnection connection) {
+        super(connection);
         MappingManager manager = new MappingManager(getSession());
         regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
-    private static RegionRequest getInstance() {
-        if (instance == null) {
-            instance = new RegionRequest();
-        }
-        return instance;
+    public Result<RegionEntity> getSubregions() {
+        return regionAccessor.getSubregions();
     }
 
-    public static Result<RegionEntity> getSubregions() {
-        return getInstance().regionAccessor.getSubregions();
-    }
-
-    public static Set<String> getRegions() {
+    public Set<String> getRegions() {
         /* query regions, filter duplicates */
         Set<String> regions = new HashSet<>();
         for (RegionEntity region : getSubregions()) {

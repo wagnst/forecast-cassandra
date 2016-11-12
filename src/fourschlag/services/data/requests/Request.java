@@ -5,22 +5,16 @@ import com.datastax.driver.mapping.MappingManager;
 import fourschlag.services.db.CassandraConnection;
 
 public class Request {
-    private CassandraConnection connection;
     private Session session;
     private MappingManager manager;
 
-    public Request() {
-        connection = CassandraConnection.getInstance();
-        session = connection.getSession();
-        MappingManager manager = new MappingManager(this.getSession());
+    public Request(CassandraConnection connection) {
+        this.session = connection.getSession();
+        this.manager = connection.getManager();
     }
 
     public Session getSession() {
         return this.session;
-    }
-
-    public void closeConnection() {
-        this.connection.closeConnection();
     }
 
     public MappingManager getManager() {
