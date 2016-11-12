@@ -1,5 +1,6 @@
 package fourschlag.services.data.requests;
 
+import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.RegionEntity;
 import fourschlag.entities.accessors.RegionAccessor;
@@ -14,7 +15,8 @@ public class RegionRequest extends Request{
 
     private RegionRequest() {
         super();
-        regionAccessor = getManager().createAccessor(RegionAccessor.class);
+        MappingManager manager = new MappingManager(getSession());
+        regionAccessor = manager.createAccessor(RegionAccessor.class);
     }
 
     private static RegionRequest getInstance() {

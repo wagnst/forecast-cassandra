@@ -1,5 +1,6 @@
 package fourschlag.services.data.requests;
 
+import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.OrgStructureEntity;
 import fourschlag.entities.accessors.OrgStructureAccessor;
@@ -11,7 +12,8 @@ public class OrgStructureRequest extends Request {
 
     private OrgStructureRequest() {
         super();
-        orgStructureAccessor = getManager().createAccessor(OrgStructureAccessor.class);
+        MappingManager manager = new MappingManager(getSession());
+        orgStructureAccessor = manager.createAccessor(OrgStructureAccessor.class);
     }
 
     private static OrgStructureRequest getInstance() {

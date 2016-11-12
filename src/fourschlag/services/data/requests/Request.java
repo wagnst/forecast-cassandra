@@ -10,7 +10,7 @@ public class Request {
     private MappingManager manager;
 
     public Request() {
-        connection = new CassandraConnection();
+        connection = CassandraConnection.getInstance();
         session = connection.getSession();
         MappingManager manager = new MappingManager(this.getSession());
     }

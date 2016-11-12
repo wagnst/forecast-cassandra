@@ -1,5 +1,6 @@
 package fourschlag.services.data.requests;
 
+import com.datastax.driver.mapping.MappingManager;
 import fourschlag.entities.SalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
@@ -29,8 +30,9 @@ public class SalesRequest extends KpiRequest {
         this.currentPeriod = currentPeriod;
         this.region = region;
         this.salesType = salesType;
-        actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
-        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+        MappingManager manager = new MappingManager(getSession());
+        actualAccessor = manager.createAccessor(ActualSalesAccessor.class);
+        forecastAccessor = manager.createAccessor(ForecastSalesAccessor.class);
     }
 
     public List<OutputDataType> getSalesKPIs() {
