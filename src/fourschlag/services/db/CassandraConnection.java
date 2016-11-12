@@ -28,5 +28,7 @@ public class CassandraConnection {
         cluster.close();
     }
 
-    public MappingManager getManager() { return manager; }
+    public MappingManager getManager() {
+        return manager;
+    }
 }

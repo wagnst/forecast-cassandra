@@ -37,7 +37,7 @@ public class SalesRequest extends KpiRequest {
     }
 
     public List<OutputDataType> getSalesKPIs() {
-        System.out.println(productMainGroup + " " + region + " " + salesType);
+        //System.out.println(productMainGroup + " " + region + " " + salesType);
         List<OutputDataType> resultList = new ArrayList<>();
 
         /* Create Lists for each KPI to store the values of the 18 months */
@@ -52,7 +52,7 @@ public class SalesRequest extends KpiRequest {
         LinkedList<Double> kpisForOneMonth;
 
         for (int i = 0; i < getNumberOfMonths(); i++) {
-            kpisForOneMonth =  getSalesKPIsForSpecificMonth();
+            kpisForOneMonth = getSalesKPIsForSpecificMonth();
             salesVolumesMonths.add(kpisForOneMonth.poll());
             netSalesMonths.add(kpisForOneMonth.poll());
             cm1Months.add(kpisForOneMonth.poll());
@@ -107,15 +107,15 @@ public class SalesRequest extends KpiRequest {
             varCost = 0;
             cm1Specific = 0;
         } else {
-            price = netSales/salesVolume*1000;
-            varCost = (netSales - cm1)*1000/salesVolume;
-            cm1Specific = cm1/salesVolume*1000;
+            price = netSales / salesVolume * 1000;
+            varCost = (netSales - cm1) * 1000 / salesVolume;
+            cm1Specific = cm1 / salesVolume * 1000;
         }
 
         if (netSales == 0) {
             cm1Percent = 0;
         } else {
-            cm1Percent = cm1/netSales;
+            cm1Percent = cm1 / netSales;
         }
 
         LinkedList<Double> resultList = new LinkedList<>(Arrays.asList(salesVolume, netSales, cm1, price, varCost, cm1Specific, cm1Percent));
@@ -144,8 +144,8 @@ public class SalesRequest extends KpiRequest {
     }
 
     private double getForecastCm1() {
-        SalesEntity cm1 =  forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
-                        planPeriod.getPeriod(), region, salesType.toString());
+        SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+                planPeriod.getPeriod(), region, salesType.toString());
         if (cm1 == null) {
             return 0;
         }
