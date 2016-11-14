@@ -4,8 +4,10 @@ import com.datastax.driver.core.Session;
 import fourschlag.services.db.CassandraConnection;
 
 public class Service {
-    CassandraConnection connection;
-    Session session;
+    private CassandraConnection connection;
+    private Session session;
+
+    private static int NUMBER_OF_MONTHS = 18;
 
     public Service() {
         connection = new CassandraConnection();
@@ -22,5 +24,9 @@ public class Service {
 
     public CassandraConnection getConnection() {
         return connection;
+    }
+
+    public static int getNumberOfMonths() {
+        return NUMBER_OF_MONTHS;
     }
 }

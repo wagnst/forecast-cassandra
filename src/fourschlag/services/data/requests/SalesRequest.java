@@ -4,6 +4,7 @@ import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.types.*;
+import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.ArrayList;
@@ -21,13 +22,15 @@ public class SalesRequest extends KpiRequest {
     private Period currentPeriod;
     private String region;
     private SalesType salesType;
+    private ExchangeRateRequest exchangeRates;
+
     private EntryType entryType;
     private ActualSalesAccessor actualAccessor;
     private ForecastSalesAccessor forecastAccessor;
 
 
     public SalesRequest(CassandraConnection connection, String productMainGroup, String sbu, int planYear,
-                        Period currentPeriod, String region, SalesType salesType) {
+                        Period currentPeriod, String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
         super(connection);
         this.productMainGroup = productMainGroup;
         this.sbu = sbu;
@@ -35,6 +38,7 @@ public class SalesRequest extends KpiRequest {
         this.currentPeriod = currentPeriod;
         this.region = region;
         this.salesType = salesType;
+        this.exchangeRates = exchangeRates;
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
@@ -44,7 +48,7 @@ public class SalesRequest extends KpiRequest {
         List<OutputDataType> resultList = new ArrayList<>();
 
         /* TODO: Prepare Map with months to iterate over and fill with values */
-        for (int i = 0; i < getNumberOfMonths(); i++) {
+        for (int i = 0; i < Service.getNumberOfMonths(); i++) {
             getSalesKpisForSpecificMonth();
             planPeriod.increment();
         }

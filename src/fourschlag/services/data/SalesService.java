@@ -4,6 +4,7 @@ import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
+import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureRequest;
 import fourschlag.services.data.requests.RegionRequest;
 import fourschlag.services.data.requests.SalesRequest;
@@ -20,6 +21,8 @@ public class SalesService extends Service {
     public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String currency) {
         List<OutputDataType> resultList = new ArrayList<>();
 
+        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), currency, planYear);
+
         Period currentPeriod = new Period(currentPeriodInt);
 
         /* fill result list and calculate KPI's */
@@ -31,8 +34,8 @@ public class SalesService extends Service {
                 for (SalesType salesType : SalesType.values())
                     /* TODO: Set instead of List? --> Performance? */
                     resultList.addAll(new SalesRequest(getConnection(),
-                            product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType
-                    ).getSalesKpis());
+                            product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType,
+                            exchangeRates).getSalesKpis());
             }
         }
 

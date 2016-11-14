@@ -19,13 +19,8 @@ public class KpiRequest extends Request {
         put(CM1_SPECIFIC, new LinkedList<>());
         put(CM1_PERCENT, new LinkedList<>());
     }};
-    private static int NUMBER_OF_MONTHS = 18;
 
     public KpiRequest(CassandraConnection connection) {
         super(connection);
-    }
-
-    public static int getNumberOfMonths() {
-        return NUMBER_OF_MONTHS;
     }
 }

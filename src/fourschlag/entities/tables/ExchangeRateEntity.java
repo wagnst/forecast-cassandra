@@ -5,6 +5,7 @@ import com.datastax.driver.mapping.annotations.Table;
 
 @Table(name = "exchange_rate")
 public class ExchangeRateEntity {
+    @Column(name = "period")
     private int period;
     @Column(name = "period_year")
     private int periodYear;
@@ -14,7 +15,9 @@ public class ExchangeRateEntity {
     private String fromCurrency;
     @Column(name = "to_currency")
     private String toCurrency;
+    @Column(name = "rate")
     private double rate;
+    @Column(name = "userid")
     private String userid;
     @Column(name = "entry_ts")
     private String entryTS;
