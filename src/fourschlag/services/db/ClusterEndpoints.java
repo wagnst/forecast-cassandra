@@ -12,12 +12,12 @@ public enum ClusterEndpoints {
         this.address = address;
     }
 
-    public String getAdress() {
+    public String getAddress() {
         return address;
     }
 
     @Override
     public String toString() {
-        return getAdress();
+        return getAddress();
     }
 }

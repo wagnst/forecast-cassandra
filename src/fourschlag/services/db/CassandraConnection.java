@@ -13,7 +13,7 @@ public class CassandraConnection {
     public CassandraConnection() {
         cluster = Cluster
                 .builder()
-                .addContactPoint(ClusterEndpoints.NODE1.getAdress())
+                .addContactPoint(ClusterEndpoints.NODE1.getAddress())
                 .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
                 .build();
         session = cluster.connect(KeyspaceNames.ORIGINAL_VERSION.getKeyspace());
