@@ -49,7 +49,16 @@ public class ExchangeRateRequest extends Request {
     }
 
     public double getExchangeRate(Period period, String fromCurrency) {
-        return exchangeRates.get(period.getPeriod()).get(fromCurrency);
+        Double exchangeRate = exchangeRates.get(period.getPeriod()).get(fromCurrency);
+        if (exchangeRate == null) {
+            ExchangeRateEntity queryResult = accessor.getSpecificExchangeRate(period.getPeriod(), fromCurrency, toCurrency);
+            if (queryResult == null) {
+                /* TODO: Throw Exception maybe to let calling method know there is no rate */
+                exchangeRate = new Double(1);
+            }
+        }
+
+        return exchangeRate;
     }
 
     public Map<Integer, Map<String, Double>> getExchangeRates() {
