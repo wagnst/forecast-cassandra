@@ -3,7 +3,7 @@ package fourschlag.entities.accessors;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-import fourschlag.entities.RegionEntity;
+import fourschlag.entities.tables.RegionEntity;
 
 @Accessor
 public interface RegionAccessor {

@@ -18,6 +18,10 @@ public class Period {
         this.month = period - this.year * 100;
     }
 
+    public static Period getPeriodByYear(int year) {
+        return new Period(year, 1);
+    }
+
     public Period increment() {
         if (this.month < 12) {
             this.month++;
@@ -32,10 +36,6 @@ public class Period {
 
     public Period getFirstPeriodOfYear() {
         return new Period(year * 100 + 1);
-    }
-
-    public static Period getPeriodByYear(int year) {
-        return new Period(year, 1);
     }
 
     public int getYear() {

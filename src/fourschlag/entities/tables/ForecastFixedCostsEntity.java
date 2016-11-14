@@ -1,4 +1,4 @@
-package fourschlag.entities;
+package fourschlag.entities.tables;
 
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -51,7 +51,10 @@ public class ForecastFixedCostsEntity {
     private double other_op_cost_company;
     private double equity_income;
 
-    public ForecastFixedCostsEntity() {};
+    public ForecastFixedCostsEntity() {
+    }
+
+    ;
 
     public ForecastFixedCostsEntity(UUID uuid, double fix_pre_man_cost, double ship_cost, double sell_cost, double diff_act_pre_man_cost, double idle_equip_cost, double rd_cost, double admin_cost_bu, double admin_cost_od, double other_op_cost_bu, double other_op_cost_od, double spec_items, double provisions, double currency_gains, double val_adjust_inventories, double other_fix_cost, double topdown_adjust_fix_costs, double depreciation, double cap_cost, String sbu, String region, String subregion, String entry_type, int period, int period_year, int period_month, int plan_period, int plan_year, int plan_half_year, int plan_quarter, int plan_month, String currency, String status, String usercomment, String userid, String entry_ts, double admin_cost_company, double other_op_cost_company, double equity_income) {
         this.uuid = uuid;

@@ -1,4 +1,4 @@
-package fourschlag.entities;
+package fourschlag.entities.tables;
 
 
 import com.datastax.driver.mapping.annotations.Column;
@@ -108,6 +108,10 @@ public class SalesEntity {
 
     public double getCm1() {
         return cm1;
+    }
+
+    public void setCm1(double cm1) {
+        this.cm1 = cm1;
     }
 
     public int getPeriodYear() {
