@@ -110,6 +110,10 @@ public class SalesEntity {
         return cm1;
     }
 
+    public void setCm1(double cm1) {
+        this.cm1 = cm1;
+    }
+
     public int getPeriodYear() {
         return periodYear;
     }
@@ -128,9 +132,5 @@ public class SalesEntity {
 
     public String getEntryTs() {
         return entryTs;
-    }
-
-    public void setCm1(double cm1) {
-        this.cm1 = cm1;
     }
 }

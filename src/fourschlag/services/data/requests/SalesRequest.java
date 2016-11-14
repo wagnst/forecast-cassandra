@@ -7,11 +7,14 @@ import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fourschlag.entities.types.KeyPerformanceIndicators.*;
+
 public class SalesRequest extends KpiRequest {
+    private static boolean actualFlag = false;
+    private static boolean forecastFlag = false;
     private String productMainGroup;
     private String sbu;
     private Period planPeriod;
@@ -19,9 +22,6 @@ public class SalesRequest extends KpiRequest {
     private String region;
     private SalesType salesType;
     private EntryType entryType;
-    private static boolean actualFlag = false;
-    private static boolean forecastFlag = false;
-
     private ActualSalesAccessor actualAccessor;
     private ForecastSalesAccessor forecastAccessor;
 
@@ -39,47 +39,30 @@ public class SalesRequest extends KpiRequest {
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
 
-    public List<OutputDataType> getSalesKPIs() {
+    public List<OutputDataType> getSalesKpis() {
         //System.out.println(productMainGroup + " " + region + " " + salesType);
         List<OutputDataType> resultList = new ArrayList<>();
 
-        /* Create Lists for each KPI to store the values of the 18 months */
-        LinkedList<Double> salesVolumesMonths = new LinkedList<>();
-        LinkedList<Double> netSalesMonths = new LinkedList<>();
-        LinkedList<Double> cm1Months = new LinkedList<>();
-        LinkedList<Double> priceMonths = new LinkedList<>();
-        LinkedList<Double> varCostMonths = new LinkedList<>();
-        LinkedList<Double> cm1SpecificMonths = new LinkedList<>();
-        LinkedList<Double> cm1PercentMonths = new LinkedList<>();
-
-        LinkedList<Double> kpisForOneMonth;
-
+        /* TODO: Prepare Map with months to iterate over and fill with values */
         for (int i = 0; i < getNumberOfMonths(); i++) {
-            kpisForOneMonth = getSalesKPIsForSpecificMonth();
-            salesVolumesMonths.add(kpisForOneMonth.poll());
-            netSalesMonths.add(kpisForOneMonth.poll());
-            cm1Months.add(kpisForOneMonth.poll());
-            priceMonths.add(kpisForOneMonth.poll());
-            varCostMonths.add(kpisForOneMonth.poll());
-            cm1SpecificMonths.add(kpisForOneMonth.poll());
-            cm1PercentMonths.add(kpisForOneMonth.poll());
+            getSalesKpisForSpecificMonth();
         }
 
         setEntryType();
 
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.SALES_VOLUME, entryType, salesVolumesMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.NET_SALES, entryType, netSalesMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1, entryType, cm1Months));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.PRICE, entryType, priceMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.VAR_COSTS, entryType, varCostMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_SPECIFIC, entryType, cm1SpecificMonths));
-        resultList.add(createOutputDataType(KeyPerformanceIndicators.CM1_PERCENT, entryType, cm1PercentMonths));
+        resultList.add(createOutputDataType(SALES_VOLUME, entryType, monthlyKpiValues.get(SALES_VOLUME)));
+        resultList.add(createOutputDataType(NET_SALES, entryType, monthlyKpiValues.get(NET_SALES)));
+        resultList.add(createOutputDataType(CM1, entryType, monthlyKpiValues.get(CM1)));
+        resultList.add(createOutputDataType(PRICE, entryType, monthlyKpiValues.get(PRICE)));
+        resultList.add(createOutputDataType(VAR_COSTS, entryType, monthlyKpiValues.get(VAR_COSTS)));
+        resultList.add(createOutputDataType(CM1_SPECIFIC, entryType, monthlyKpiValues.get(CM1_SPECIFIC)));
+        resultList.add(createOutputDataType(CM1_PERCENT, entryType, monthlyKpiValues.get(CM1_PERCENT)));
 
         return resultList;
     }
 
     /* TODO: Return data type maybe as HashMap? Could be bad for performance */
-    private LinkedList<Double> getSalesKPIsForSpecificMonth() {
+    private void getSalesKpisForSpecificMonth() {
         double salesVolume;
         double netSales;
         double cm1;
@@ -122,23 +105,27 @@ public class SalesRequest extends KpiRequest {
             cm1Percent = cm1 / netSales;
         }
 
-        LinkedList<Double> resultList = new LinkedList<>(Arrays.asList(salesVolume, netSales, cm1, price, varCost, cm1Specific, cm1Percent));
-        return resultList;
+        monthlyKpiValues.get(SALES_VOLUME).add(salesVolume);
+        monthlyKpiValues.get(NET_SALES).add(netSales);
+        monthlyKpiValues.get(CM1).add(cm1);
+        monthlyKpiValues.get(PRICE).add(price);
+        monthlyKpiValues.get(VAR_COSTS).add(varCost);
+        monthlyKpiValues.get(CM1_SPECIFIC).add(cm1Specific);
+        monthlyKpiValues.get(CM1_PERCENT).add(cm1Percent);
     }
 
     private SalesEntity getActualData() {
         actualFlag = true;
         SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
-                salesType.getType(), "BW B");
+                salesType.getType(), DataSource.BW_B.toString());
         if (queryResult == null) {
             queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
-                    salesType.getType(), "BW A");
+                    salesType.getType(), DataSource.BW_A.toString());
             if (queryResult != null) {
                 //TODO: Cover case in entryType, when all the KPIs are actual data except CM1
                 queryResult.setCm1(getForecastCm1());
             }
         }
-
 
         return queryResult;
     }
