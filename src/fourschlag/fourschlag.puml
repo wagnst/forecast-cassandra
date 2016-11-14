@@ -84,7 +84,7 @@ package "fourschlag" {
         ' create usages from Accessors to different Entities
         ActualSalesAccessor *-- ActualSalesEntity : use
         ExchangeRateAccessor *-- ExchangeRateEntity : use
-        ForecastSalesAccessor *-- ActualSalesEntity : use
+        ForecastSalesAccessor *-- ForecastSalesEntity : use
         OrgStructureAccessor *-- OrgStructureEntity : use
         RegionAccessor *-- RegionEntity : use
     }

@@ -3,7 +3,7 @@ package fourschlag.entities.accessors;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
-import fourschlag.entities.ForecastSalesEntity;
+import fourschlag.entities.tables.ForecastSalesEntity;
 
 @Accessor
 public interface ForecastSalesAccessor {
