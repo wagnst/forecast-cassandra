@@ -13,7 +13,7 @@ import java.util.Map;
 public class ExchangeRateRequest extends Request {
     private String toCurrency;
     private Period planPeriod;
-    private Map<Period, Map<String, Double>> exchangeRates;
+    private Map<Integer, Map<String, Double>> exchangeRates;
 
     private ExchangeRateAccessor accessor;
 
@@ -31,10 +31,12 @@ public class ExchangeRateRequest extends Request {
 
         for (int i = 0; i < Service.getNumberOfMonths(); i++) {
             exchangeRateResult = accessor.getExchangeRate(planPeriod.getPeriod(), toCurrency);
-            exchangeRates.put(planPeriod, new HashMap<>());
+
+            /* TODO: Catch null, if no exchange rate is available */
+            exchangeRates.put(planPeriod.getPeriod(), new HashMap<>());
 
             for (ExchangeRateEntity entity : exchangeRateResult) {
-                exchangeRates.get(planPeriod).put(entity.getFromCurrency(), entity.getRate());
+                exchangeRates.get(planPeriod.getPeriod()).put(entity.getFromCurrency(), entity.getRate());
             }
 
             planPeriod.increment();
@@ -47,10 +49,10 @@ public class ExchangeRateRequest extends Request {
     }
 
     public double getExchangeRate(Period period, String fromCurrency) {
-        return exchangeRates.get(period).get(fromCurrency);
+        return exchangeRates.get(period.getPeriod()).get(fromCurrency);
     }
 
-    public Map<Period, Map<String, Double>> getExchangeRates() {
+    public Map<Integer, Map<String, Double>> getExchangeRates() {
         return exchangeRates;
     }
 }

@@ -92,6 +92,13 @@ public class SalesRequest extends KpiRequest {
             salesVolume = queryResult.getSalesVolumes();
             netSales = queryResult.getNetSales();
             cm1 = queryResult.getCm1();
+
+            if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
+                double exchangeRate = exchangeRates.getExchangeRate(planPeriod, queryResult.getCurrency());
+                salesVolume *= exchangeRate;
+                netSales *= exchangeRate;
+                cm1 *= exchangeRate;
+            }
         }
 
         if (salesVolume == 0) {
@@ -153,7 +160,7 @@ public class SalesRequest extends KpiRequest {
 
     private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType, LinkedList<Double> monthlyValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
-                region, region, salesType.toString(), entryType.toString(), monthlyValues);
+                region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues);
     }
 
     private void setEntryType() {

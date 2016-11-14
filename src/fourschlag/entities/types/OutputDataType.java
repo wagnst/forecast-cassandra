@@ -43,7 +43,7 @@ public class OutputDataType {
     }
 
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region, String subregion,
-                          String salesType, String entryType, LinkedList<Double> months) {
+                          String salesType, String entryType, String currency, LinkedList<Double> months) {
         this.kpi = kpi.getFullName();
         this.orderNumber = kpi.getOrderNumber();
         this.fcType = kpi.getFcType();
@@ -53,6 +53,7 @@ public class OutputDataType {
         this.subregion = subregion;
         this.salesType = salesType;
         this.entryType = entryType;
+        this.currency = currency;
         this.setMonths(months);
     }
 
