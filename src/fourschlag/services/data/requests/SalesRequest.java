@@ -1,6 +1,6 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.SalesEntity;
+import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.types.*;

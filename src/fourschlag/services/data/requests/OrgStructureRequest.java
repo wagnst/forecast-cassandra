@@ -1,7 +1,7 @@
 package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.OrgStructureEntity;
+import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.services.db.CassandraConnection;
 

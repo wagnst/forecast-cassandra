@@ -2,7 +2,7 @@ package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.RegionEntity;
+import fourschlag.entities.tables.RegionEntity;
 import fourschlag.entities.accessors.RegionAccessor;
 import fourschlag.services.db.CassandraConnection;
 

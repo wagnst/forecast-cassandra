@@ -1,6 +1,6 @@
 package fourschlag.services.data;
 
-import fourschlag.entities.OrgStructureEntity;
+import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
