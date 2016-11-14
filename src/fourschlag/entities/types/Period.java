@@ -38,6 +38,10 @@ public class Period {
         return new Period(year * 100 + 1);
     }
 
+    public int getZeroMonthPeriod() {
+        return year*100;
+    }
+
     public int getYear() {
         return year;
     }
