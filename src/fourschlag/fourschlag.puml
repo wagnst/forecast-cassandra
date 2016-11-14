@@ -3,8 +3,15 @@
 http://plantuml.com/component-diagram
 http://plantuml.com/class-diagram '/
 
-' top to bottom direction
+title
+ <b>Class diagram of <u>FourSchlag</u> project</b>
+ <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
+ <i>Version:</i> <b>DRAFT</b>, 14th Nov 2016
+ <i>Author:</i> Steffen Wagner
+end title
+
 left to right direction
+
 package "fourschlag" {
     package "entities" {
         package "accessors" {
@@ -57,6 +64,9 @@ package "fourschlag" {
             Class "ForecastFixedCostsEntity" {
             }
 
+            Class "ForecastSalesEntity" {
+            }
+
             Class "OrgStructureEntity" {
             }
 
@@ -67,6 +77,11 @@ package "fourschlag" {
             }
         }
 
+        ' inheritances from SalesEntity
+        SalesEntity <|-- ForecastSalesEntity
+        SalesEntity <|-- ActualSalesEntity
+
+        ' create usages from Accessors to different Entities
         ActualSalesAccessor *-- ActualSalesEntity : use
         ExchangeRateAccessor *-- ExchangeRateEntity : use
         ForecastSalesAccessor *-- ActualSalesEntity : use
@@ -75,8 +90,15 @@ package "fourschlag" {
     }
 
     package "services" {
+
         package "data" {
+
             package "requests" {
+                Class "ExchangeRateRequest" {
+                    +double : getExchangeRate()
+                    +String : getToCurrency()
+                }
+
                 Class "KpiRequests" {
                     +{static}int : getNumberOfMonths()
                 }
@@ -99,14 +121,24 @@ package "fourschlag" {
                     +List<OutputDataType>: getSalesKpis()
                 }
 
+                ' inheritance of Request <-- KpiRequest <-- SalesRequest
                 Request <|-- KpiRequests
                 KpiRequests <|-- SalesRequest
 
+                ' inherits for Request
                 Request <|-- OrgStructureRequest
                 Request <|-- RegionRequest
 
+                ' ExchangeRateRequest gets data from ExchangeRateAccessor
+                ExchangeRateRequest *-- ExchangeRateAccessor : use
+
+                ' KpiRequests uses KPI class
                 KpiRequests *-- KeyPerformanceIndicators : use
 
+                ' usages from SalesRequest
+                SalesRequest *-- ActualSalesAccessor : use
+                SalesRequest *-- ForecastSalesAccessor : use
+                SalesRequest *-- ExchangeRateRequest : use
             }
 
             Class "Service" {
@@ -121,8 +153,11 @@ package "fourschlag" {
 
             ' internal uses of SalesService
             SalesService *-- SalesRequest : use
+            SalesService *-- ExchangeRateRequest : use
+            SalesService *-- OrgStructureRequest : use
+            SalesService *-- RegionRequest : use
+            SalesService *-- Period : use
             SalesService *-- OutputDataType : use
-
         }
 
         package "db" {
