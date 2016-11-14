@@ -4,20 +4,23 @@ import com.datastax.driver.core.Session;
 import fourschlag.services.db.CassandraConnection;
 
 public class Service {
-
-    private CassandraConnection connection;
-    private Session session;
+    CassandraConnection connection;
+    Session session;
 
     public Service() {
         connection = new CassandraConnection();
         session = connection.getSession();
     }
 
-    public Session getSession() {
-        return this.session;
-    }
-
     public void closeConnection() {
         this.connection.closeConnection();
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public CassandraConnection getConnection() {
+        return connection;
     }
 }

@@ -110,6 +110,10 @@ public class SalesEntity {
         return cm1;
     }
 
+    public void setCm1(double cm1) {
+        this.cm1 = cm1;
+    }
+
     public int getPeriodYear() {
         return periodYear;
     }
