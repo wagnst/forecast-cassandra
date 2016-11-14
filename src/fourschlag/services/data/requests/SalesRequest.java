@@ -46,6 +46,7 @@ public class SalesRequest extends KpiRequest {
         /* TODO: Prepare Map with months to iterate over and fill with values */
         for (int i = 0; i < getNumberOfMonths(); i++) {
             getSalesKpisForSpecificMonth();
+            planPeriod.increment();
         }
 
         setEntryType();
