@@ -195,7 +195,7 @@ package "fourschlag" {
 
             ApplicationService -- ForecastWS
 
-            ' call sales to KPIs
+            ' WS uses SalesService to get the KPI data
             ForecastWS *-- SalesService : use
 
         }
