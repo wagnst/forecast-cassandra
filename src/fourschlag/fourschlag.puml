@@ -1,0 +1,170 @@
+@startuml
+/' For available options see
+http://plantuml.com/component-diagram
+http://plantuml.com/class-diagram '/
+
+' top to bottom direction
+left to right direction
+package "fourschlag" {
+    package "entities" {
+        package "accessors" {
+            Interface "ActualSalesAccessor"{
+            }
+
+            Interface "ExchangeRateAccessor" {
+            }
+
+            Interface "ForecastSalesAccessor" {
+            }
+
+            Interface "OrgStructureAccessor" {
+            }
+
+            Interface "RegionAccessor" {
+            }
+        }
+
+        package "types" {
+            Enum "DataSource" {
+            }
+
+            Enum "EntryType" {
+            }
+
+            Enum "KeyPerformanceIndicators" {
+            }
+
+            Class "OutputDataType" {
+            }
+
+            Class "Period" {
+            }
+
+            Enum "SalesType" {
+            }
+        }
+
+        package "tables" {
+            Class "ActualFixedCostsEntity" {
+            }
+
+            Class "ActualSalesEntity" {
+            }
+
+            Class "ExchangeRateEntity" {
+            }
+
+            Class "ForecastFixedCostsEntity" {
+            }
+
+            Class "OrgStructureEntity" {
+            }
+
+            Class "RegionEntity" {
+            }
+
+            Class "SalesEntity" {
+            }
+        }
+
+        ActualSalesAccessor *-- ActualSalesEntity : use
+        ExchangeRateAccessor *-- ExchangeRateEntity : use
+        ForecastSalesAccessor *-- ActualSalesEntity : use
+        OrgStructureAccessor *-- OrgStructureEntity : use
+        RegionAccessor *-- RegionEntity : use
+    }
+
+    package "services" {
+        package "data" {
+            package "requests" {
+                Class "KpiRequests" {
+                    +{static}int : getNumberOfMonths()
+                }
+
+                Class "OrgStructureRequest" {
+                    +Result<OrgStructureEntity> : getProductMainGroups()
+                }
+
+                Class "RegionRequest" {
+                     +Result<RegionEntity> : getSubregions()
+                     +Set<String> : getRegions()
+                }
+
+                Class "Request" {
+                    +Session : getSession()
+                    +MappingManager : getManager()
+                }
+
+                Class "SalesRequest" {
+                    +List<OutputDataType>: getSalesKpis()
+                }
+
+                Request <|-- KpiRequests
+                KpiRequests <|-- SalesRequest
+
+                Request <|-- OrgStructureRequest
+                Request <|-- RegionRequest
+
+                KpiRequests *-- KeyPerformanceIndicators : use
+
+            }
+
+            Class "Service" {
+                +CassandraConnection : getConnection()
+            }
+
+            Class "SalesService" {
+                +List<OutputDataType> : getSalesKPIs()
+            }
+
+            Service <|-- SalesService
+
+            ' internal uses of SalesService
+            SalesService *-- SalesRequest : use
+            SalesService *-- OutputDataType : use
+
+        }
+
+        package "db" {
+            Enum "KeyspaceNames" {
+                +String : getKeyspace()
+            }
+
+            Enum "ClusterEndpoints" {
+                +String : getAddress()
+            }
+
+            Class "CassandraConnection" {
+                +Session : getSession()
+                +MappingManager : getManager()
+                +void : closeConnection()
+            }
+
+            ' internal uses of CassandaConnection
+            CassandraConnection *-- KeyspaceNames : use
+            CassandraConnection *-- ClusterEndpoints : use
+
+            ' open database connection
+            Service *-- CassandraConnection : use
+        }
+
+        package "web" {
+            package "ws" {
+                Class ForecastWS {
+                    +Response : getSalesKPIs
+                }
+            }
+
+            Class ApplicationService<? extends Application>  {
+            }
+
+            ApplicationService -- ForecastWS
+
+            ' call sales to KPIs
+            ForecastWS *-- SalesService : use
+
+        }
+    }
+}
+
+@enduml
