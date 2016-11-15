@@ -10,10 +10,10 @@ public class CassandraConnection {
     private Session session;
     private MappingManager manager;
 
-    public CassandraConnection() {
+    public CassandraConnection(ClusterEndpoints endpoint) {
         cluster = Cluster
                 .builder()
-                .addContactPoint(ClusterEndpoints.NODE1.getAddress())
+                .addContactPoint(endpoint.getAddress())
                 .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
                 .build();
         session = cluster.connect(KeyspaceNames.ORIGINAL_VERSION.getKeyspace());

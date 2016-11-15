@@ -9,6 +9,7 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureRequest;
 import fourschlag.services.data.requests.RegionRequest;
 import fourschlag.services.data.requests.SalesRequest;
+import fourschlag.services.db.CassandraConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,8 @@ import java.util.Set;
 
 public class SalesService extends Service {
 
-    public SalesService() {
-        super();
+    public SalesService(CassandraConnection connection) {
+        super(connection);
     }
 
     public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {

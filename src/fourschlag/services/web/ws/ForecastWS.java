@@ -1,6 +1,8 @@
 package fourschlag.services.web.ws;
 
 import fourschlag.services.data.SalesService;
+import fourschlag.services.db.CassandraConnection;
+import fourschlag.services.db.ClusterEndpoints;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -12,7 +14,8 @@ import javax.ws.rs.core.Response;
 
 @Path("/forecast")
 public class ForecastWS {
-    private SalesService salesService = new SalesService();
+    private CassandraConnection connection = new CassandraConnection(ClusterEndpoints.NODE1);
+    private SalesService salesService = new SalesService(connection);
 
     @GET
     @Path("/sales/{planyear}/{period}/{currency}")

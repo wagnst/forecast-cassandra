@@ -9,9 +9,9 @@ public class Service {
 
     private static int NUMBER_OF_MONTHS = 18;
 
-    public Service() {
-        connection = new CassandraConnection();
-        session = connection.getSession();
+    public Service(CassandraConnection connection) {
+        this.connection = connection;
+        this.session = connection.getSession();
     }
 
     public void closeConnection() {
