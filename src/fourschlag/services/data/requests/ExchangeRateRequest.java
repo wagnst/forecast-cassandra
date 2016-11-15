@@ -8,12 +8,20 @@ import fourschlag.services.db.CassandraConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Extends Request. Offers functionality to request exchange rates.
+ */
 public class ExchangeRateRequest extends Request {
     private String toCurrency;
     private Map<Integer, Map<String, Double>> exchangeRates;
 
     private ExchangeRateAccessor accessor;
 
+    /**
+     * Constructor for ExchangeRateRequest
+     * @param connection Cassandra connection that is supposed to be used
+     * @param toCurrency the desired currency
+     */
     public ExchangeRateRequest(CassandraConnection connection, String toCurrency) {
         super(connection);
         this.toCurrency = toCurrency;

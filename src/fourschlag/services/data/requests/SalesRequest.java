@@ -13,6 +13,9 @@ import java.util.List;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
+/**
+ * Extends Request. Offers Functionality to request Sales KPIs for a specific region, period and product main group
+ */
 public class SalesRequest extends KpiRequest {
     private static boolean actualFlag = false;
     private static boolean forecastFlag = false;
@@ -28,7 +31,17 @@ public class SalesRequest extends KpiRequest {
     private ActualSalesAccessor actualAccessor;
     private ForecastSalesAccessor forecastAccessor;
 
-
+    /**
+     * Constructor for SalesRequest
+     * @param connection Cassandra connection that is supposed to be used
+     * @param productMainGroup Product Main Group to filter for
+     * @param sbu SBU of that Product Main Group
+     * @param planYear Indicates the time span for which the KPIs are supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is supposed to be looked at
+     * @param region Region to filter for
+     * @param salesType Sales Type to filter for
+     * @param exchangeRates Desired output currency
+     */
     public SalesRequest(CassandraConnection connection, String productMainGroup, String sbu, int planYear,
                         Period currentPeriod, String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
         super(connection);
@@ -43,6 +56,10 @@ public class SalesRequest extends KpiRequest {
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
 
+    /**
+     * Calculates sales KPIs for the attributes saved in this request
+     * @return List of OutputDataTypes that contain all KPIs for given parameters
+     */
     public List<OutputDataType> getSalesKpis() {
         //System.out.println(productMainGroup + " " + region + " " + salesType);
         List<OutputDataType> resultList = new ArrayList<>();
@@ -67,6 +84,10 @@ public class SalesRequest extends KpiRequest {
     }
 
     /* TODO: Return data type maybe as HashMap? Could be bad for performance */
+
+    /**
+     * Private method to get KPIs for exactly one period (current value of planPeriod)
+     */
     private void getSalesKpisForSpecificMonth() {
         double salesVolume;
         double netSales;
@@ -126,6 +147,10 @@ public class SalesRequest extends KpiRequest {
         monthlyKpiValues.get(CM1_PERCENT).add(cm1Percent);
     }
 
+    /**
+     * Queries KPIs from the actual sales table
+     * @return SalesEntity Object with query result
+     */
     private SalesEntity getActualData() {
         actualFlag = true;
         SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
@@ -142,12 +167,20 @@ public class SalesRequest extends KpiRequest {
         return queryResult;
     }
 
+    /**
+     * Queries KPIs from the forecast sales table
+     * @return SalesEntity Object with query result
+     */
     private SalesEntity getForecastData() {
         forecastFlag = true;
         return forecastAccessor.getSalesKPI(productMainGroup, currentPeriod.getPeriod(),
                 planPeriod.getPeriod(), region, salesType.toString());
     }
 
+    /**
+     * Gets the cm1 value from the forecast sales table
+     * @return double value of cm1
+     */
     private double getForecastCm1() {
         forecastFlag = true;
         SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
@@ -158,11 +191,21 @@ public class SalesRequest extends KpiRequest {
         return cm1.getCm1();
     }
 
+    /**
+     * Creates a OutputDataType Object with all given attributes
+     * @param kpi KPI that is supposed to be set in the OutputDataType
+     * @param entryType Entry type that is supposed to be set in the OutputDataType
+     * @param monthlyValues The monthly values for the KPI
+     * @return OutputDataType object
+     */
     private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType, LinkedList<Double> monthlyValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues);
     }
 
+    /**
+     * Sets the entry type of this request
+     */
     private void setEntryType() {
         if (actualFlag && forecastFlag) {
             entryType = EntryType.ACTUAL_FORECAST;

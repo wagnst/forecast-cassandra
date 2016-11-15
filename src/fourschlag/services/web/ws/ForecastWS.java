@@ -3,6 +3,7 @@ package fourschlag.services.web.ws;
 import fourschlag.services.data.SalesService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.db.ClusterEndpoints;
+import fourschlag.services.db.KeyspaceNames;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -12,11 +13,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ *  ForecastWS offers web services to get KPIs from a database
+ */
 @Path("/forecast")
 public class ForecastWS {
-    private CassandraConnection connection = new CassandraConnection(ClusterEndpoints.NODE1);
+    private CassandraConnection connection = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
     private SalesService salesService = new SalesService(connection);
 
+    /* TODO: Maybe close session each time, but not connection */
+
+    /* No JavaDoc yet, because this method is subject to change */
     @GET
     @Path("/sales/{planyear}/{period}/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
