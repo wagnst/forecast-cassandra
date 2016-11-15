@@ -23,7 +23,7 @@ public class SalesService extends Service {
     public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
         List<OutputDataType> resultList = new ArrayList<>();
 
-        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency, planYear);
+        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
         Set<String> regions = new RegionRequest(getConnection()).getRegions();
         Result<OrgStructureEntity> products = new OrgStructureRequest(getConnection()).getProductMainGroups();
 
