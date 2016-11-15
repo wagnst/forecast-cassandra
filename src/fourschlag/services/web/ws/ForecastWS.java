@@ -22,6 +22,7 @@ public class ForecastWS {
     private SalesService salesService = new SalesService(connection);
 
     /* TODO: Maybe close session each time, but not connection */
+    /* TODO: Create Connection pool and remove the connection from this WS */
 
     /* No JavaDoc yet, because this method is subject to change */
     @GET
