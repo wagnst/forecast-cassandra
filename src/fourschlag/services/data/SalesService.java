@@ -50,6 +50,7 @@ public class SalesService extends Service {
         Period currentPeriod = new Period(currentPeriodInt);
 
         /* TODO: Threading can be implemented here */
+        /* TODO: Stream (parallel stream) instead of for each loop */
         /* Now we loop over all products, regions and finally sales types */
         for (OrgStructureEntity product : products) {
             for (String region : regions) {
@@ -58,11 +59,11 @@ public class SalesService extends Service {
                 for (SalesType salesType : SalesType.values())
                     /* TODO: Set instead of List for result list? --> Performance? */
                     /* A new SalesRequest is created each time with all current parameters.
-                     * Then the method getSalesKpis is called and we add the List that is returned to our result list
+                     * Then the method calculateSalesKpis is called and we add the List that is returned to our result list
                      */
                     resultList.addAll(new SalesRequest(getConnection(),
                             product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType,
-                            exchangeRates).getSalesKpis());
+                            exchangeRates).calculateSalesKpis());
             }
         }
         /* Finally the result list will be returned */

@@ -12,6 +12,12 @@ public class Period {
         this.period = year * 100 + month;
     }
 
+    public Period(Period p){
+        this.year = p.year;
+        this.month = p.month;
+        this.period = p.period;
+    }
+
     public Period(int period) {
         this.period = period;
         this.year = period / 100;

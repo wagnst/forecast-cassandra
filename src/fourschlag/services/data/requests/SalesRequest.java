@@ -1,15 +1,16 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
+import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
@@ -17,19 +18,19 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  * Extends Request. Offers Functionality to request Sales KPIs for a specific region, period and product main group
  */
 public class SalesRequest extends KpiRequest {
-    private static boolean actualFlag = false;
-    private static boolean forecastFlag = false;
-    private String productMainGroup;
-    private String sbu;
-    private Period planPeriod;
-    private Period currentPeriod;
-    private String region;
-    private SalesType salesType;
-    private ExchangeRateRequest exchangeRates;
+    private boolean actualFlag = false;
+    private boolean forecastFlag = false;
+    private final String productMainGroup;
+    private final String sbu;
+    private final Period planPeriod;
+    private final Period currentPeriod;
+    private final String region;
+    private final SalesType salesType;
+    private final ExchangeRateRequest exchangeRates;
 
     private EntryType entryType;
-    private ActualSalesAccessor actualAccessor;
-    private ForecastSalesAccessor forecastAccessor;
+    private final ActualSalesAccessor actualAccessor;
+    private final ForecastSalesAccessor forecastAccessor;
 
     /**
      * Constructor for SalesRequest
@@ -61,27 +62,36 @@ public class SalesRequest extends KpiRequest {
      * Calculates sales KPIs for the attributes saved in this request
      * @return List of OutputDataTypes that contain all KPIs for given parameters
      */
-    public List<OutputDataType> getSalesKpis() {
+    public List<OutputDataType> calculateSalesKpis() {
         /* Prepare result list that will be returned later */
-        List<OutputDataType> resultList = new ArrayList<>();
+        List<OutputDataType> resultList;
+        Period tempPlanPeriod = new Period(planPeriod);
 
         /* TODO: Prepare Map with months to iterate over and fill with values */
         /* getSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < Service.getNumberOfMonths(); i++) {
-            getSalesKpisForSpecificMonth();
-            planPeriod.increment();
+            getSalesKpisForSpecificMonth(tempPlanPeriod);
+            tempPlanPeriod.increment();
         }
 
         setEntryType();
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
-        resultList.add(createOutputDataType(SALES_VOLUME, entryType, monthlyKpiValues.get(SALES_VOLUME)));
-        resultList.add(createOutputDataType(NET_SALES, entryType, monthlyKpiValues.get(NET_SALES)));
-        resultList.add(createOutputDataType(CM1, entryType, monthlyKpiValues.get(CM1)));
-        resultList.add(createOutputDataType(PRICE, entryType, monthlyKpiValues.get(PRICE)));
-        resultList.add(createOutputDataType(VAR_COSTS, entryType, monthlyKpiValues.get(VAR_COSTS)));
-        resultList.add(createOutputDataType(CM1_SPECIFIC, entryType, monthlyKpiValues.get(CM1_SPECIFIC)));
-        resultList.add(createOutputDataType(CM1_PERCENT, entryType, monthlyKpiValues.get(CM1_PERCENT)));
+
+        resultList = Arrays.stream(KeyPerformanceIndicators.values())
+                .filter(kpi -> kpi.getFcType().equals("sales"))
+                .map(kpi -> createOutputDataType(kpi, monthlyKpiValues.get(kpi)))
+                .collect(Collectors.toList());
+
+        /*
+        resultList.add(createOutputDataType(SALES_VOLUME, monthlyKpiValues.get(SALES_VOLUME)));
+        resultList.add(createOutputDataType(NET_SALES, monthlyKpiValues.get(NET_SALES)));
+        resultList.add(createOutputDataType(CM1, monthlyKpiValues.get(CM1)));
+        resultList.add(createOutputDataType(PRICE, monthlyKpiValues.get(PRICE)));
+        resultList.add(createOutputDataType(VAR_COSTS, monthlyKpiValues.get(VAR_COSTS)));
+        resultList.add(createOutputDataType(CM1_SPECIFIC, monthlyKpiValues.get(CM1_SPECIFIC)));
+        resultList.add(createOutputDataType(CM1_PERCENT, monthlyKpiValues.get(CM1_PERCENT)));
+        */
 
         return resultList;
     }
@@ -91,7 +101,7 @@ public class SalesRequest extends KpiRequest {
     /**
      * Private method to get KPIs for exactly one period (current value of planPeriod)
      */
-    private void getSalesKpisForSpecificMonth() {
+    private void getSalesKpisForSpecificMonth(Period tempPlanPeriod) {
         /* Prepare the kpi variables */
         double salesVolume;
         double netSales;
@@ -106,10 +116,10 @@ public class SalesRequest extends KpiRequest {
         /* IF plan period is in the past compared to current period THEN get data from the actual sales table
          * ELSE get data from the forecast table
          */
-        if (planPeriod.getPeriod() < currentPeriod.getPeriod()) {
-            queryResult = getActualData();
+        if (tempPlanPeriod.getPeriod() < currentPeriod.getPeriod()) {
+            queryResult = getActualData(tempPlanPeriod);
         } else {
-            queryResult = getForecastData();
+            queryResult = getForecastData(tempPlanPeriod);
         }
 
         /* IF the result of the query is empty THEN set these KPIs to 0
@@ -126,7 +136,7 @@ public class SalesRequest extends KpiRequest {
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(planPeriod, queryResult.getCurrency());
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
                 salesVolume *= exchangeRate;
                 netSales *= exchangeRate;
                 cm1 *= exchangeRate;
@@ -165,21 +175,21 @@ public class SalesRequest extends KpiRequest {
      * Queries KPIs from the actual sales table
      * @return SalesEntity Object with query result
      */
-    private SalesEntity getActualData() {
+    private SalesEntity getActualData(Period tempPlanPeriod) {
         /* Set this flag to true, so the entry type can be set correctly later */
         actualFlag = true;
         /* Send query to the database with data source BW B */
-        SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
+        SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
                 salesType.getType(), DataSource.BW_B.toString());
 
         /* IF result is empty THEN query again with data source BW A */
         if (queryResult == null) {
-            queryResult = actualAccessor.getSalesKPIs(productMainGroup, planPeriod.getPeriod(), region,
+            queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
                     salesType.getType(), DataSource.BW_A.toString());
             /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result */
             if (queryResult != null) {
                 //TODO: Cover case in entryType, when all the KPIs are actual data except CM1
-                queryResult.setCm1(getForecastCm1());
+                queryResult.setCm1(getForecastCm1(tempPlanPeriod));
             }
         }
 
@@ -190,22 +200,22 @@ public class SalesRequest extends KpiRequest {
      * Queries KPIs from the forecast sales table
      * @return SalesEntity Object with query result
      */
-    private SalesEntity getForecastData() {
+    private SalesEntity getForecastData(Period tempPlanPeriod) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         return forecastAccessor.getSalesKPI(productMainGroup, currentPeriod.getPeriod(),
-                planPeriod.getPeriod(), region, salesType.toString());
+                tempPlanPeriod.getPeriod(), region, salesType.toString());
     }
 
     /**
      * Gets the cm1 value from the forecast sales table
      * @return double value of cm1
      */
-    private double getForecastCm1() {
+    private double getForecastCm1(Period tempPlanPeriod) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
-                planPeriod.getPeriod(), region, salesType.toString());
+                tempPlanPeriod.getPeriod(), region, salesType.toString());
         /* IF query result is empty THEN set cm1 to 0 */
         if (cm1 == null) {
             return 0;
@@ -216,11 +226,10 @@ public class SalesRequest extends KpiRequest {
     /**
      * Creates a OutputDataType Object with all given attributes
      * @param kpi KPI that is supposed to be set in the OutputDataType
-     * @param entryType Entry type that is supposed to be set in the OutputDataType
      * @param monthlyValues The monthly values for the KPI
      * @return OutputDataType object
      */
-    private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType, LinkedList<Double> monthlyValues) {
+    private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, LinkedList<Double> monthlyValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues);
     }
