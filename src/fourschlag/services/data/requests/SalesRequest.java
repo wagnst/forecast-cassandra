@@ -18,8 +18,6 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  * Extends Request. Offers Functionality to request Sales KPIs for a specific region, period and product main group
  */
 public class SalesRequest extends KpiRequest {
-    private boolean actualFlag = false;
-    private boolean forecastFlag = false;
     private final String productMainGroup;
     private final String sbu;
     private final Period planPeriod;
@@ -27,21 +25,23 @@ public class SalesRequest extends KpiRequest {
     private final String region;
     private final SalesType salesType;
     private final ExchangeRateRequest exchangeRates;
-
-    private EntryType entryType;
     private final ActualSalesAccessor actualAccessor;
     private final ForecastSalesAccessor forecastAccessor;
+    private boolean actualFlag = false;
+    private boolean forecastFlag = false;
+    private EntryType entryType;
 
     /**
      * Constructor for SalesRequest
-     * @param connection Cassandra connection that is supposed to be used
+     *
+     * @param connection       Cassandra connection that is supposed to be used
      * @param productMainGroup Product Main Group to filter for
-     * @param sbu SBU of that Product Main Group
-     * @param planYear Indicates the time span for which the KPIs are supposed to be queried
-     * @param currentPeriod The point of view in time from which the data is supposed to be looked at
-     * @param region Region to filter for
-     * @param salesType Sales Type to filter for
-     * @param exchangeRates Desired output currency
+     * @param sbu              SBU of that Product Main Group
+     * @param planYear         Indicates the time span for which the KPIs are supposed to be queried
+     * @param currentPeriod    The point of view in time from which the data is supposed to be looked at
+     * @param region           Region to filter for
+     * @param salesType        Sales Type to filter for
+     * @param exchangeRates    Desired output currency
      */
     public SalesRequest(CassandraConnection connection, String productMainGroup, String sbu, int planYear,
                         Period currentPeriod, String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
@@ -60,6 +60,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Calculates sales KPIs for the attributes saved in this request
+     *
      * @return List of OutputDataTypes that contain all KPIs for given parameters
      */
     public List<OutputDataType> calculateSalesKpis() {
@@ -166,6 +167,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Queries KPIs from the actual sales table
+     *
      * @return SalesEntity Object with query result
      */
     private SalesEntity getActualData(Period tempPlanPeriod) {
@@ -191,6 +193,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Queries KPIs from the forecast sales table
+     *
      * @return SalesEntity Object with query result
      */
     private SalesEntity getForecastData(Period tempPlanPeriod) {
@@ -202,6 +205,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Gets the cm1 value from the forecast sales table
+     *
      * @return double value of cm1
      */
     private double getForecastCm1(Period tempPlanPeriod) {
@@ -218,7 +222,8 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Creates a OutputDataType Object with all given attributes
-     * @param kpi KPI that is supposed to be set in the OutputDataType
+     *
+     * @param kpi           KPI that is supposed to be set in the OutputDataType
      * @param monthlyValues The monthly values for the KPI
      * @return OutputDataType object
      */

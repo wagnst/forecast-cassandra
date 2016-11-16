@@ -17,6 +17,7 @@ public enum ClusterEndpoints {
 
     /**
      * Getter for the ip address of the node
+     *
      * @return ip address of node
      */
     public String getAddress() {
@@ -25,6 +26,7 @@ public enum ClusterEndpoints {
 
     /**
      * Overriden toString method that returns the ip adress of the node
+     *
      * @return ip address of node
      */
     @Override

@@ -1,8 +1,8 @@
 package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.accessors.OrgStructureAccessor;
+import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.services.db.CassandraConnection;
 
 /**
@@ -13,6 +13,7 @@ public class OrgStructureRequest extends Request {
 
     /**
      * Constructor for OrgStructureRequest.
+     *
      * @param connection Cassandra connection that is supposed to be used
      */
     public OrgStructureRequest(CassandraConnection connection) {
@@ -22,6 +23,7 @@ public class OrgStructureRequest extends Request {
 
     /**
      * Queries the database for all Product Main Groups
+     *
      * @return Result Iterable with multiple OrgStructure entities
      */
     public Result<OrgStructureEntity> getProductMainGroups() {

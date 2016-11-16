@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *  ForecastWS offers web services to get KPIs from a database
+ * ForecastWS offers web services to get KPIs from a database
  */
 @Path("/forecast")
 public class ForecastWS {

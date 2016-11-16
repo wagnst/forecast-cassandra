@@ -12,7 +12,7 @@ public class Period {
         this.period = year * 100 + month;
     }
 
-    public Period(Period p){
+    public Period(Period p) {
         this.year = p.year;
         this.month = p.month;
         this.period = p.period;
@@ -45,7 +45,7 @@ public class Period {
     }
 
     public int getZeroMonthPeriod() {
-        return year*100;
+        return year * 100;
     }
 
     public int getYear() {

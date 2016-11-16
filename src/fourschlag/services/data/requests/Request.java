@@ -13,6 +13,7 @@ public class Request {
 
     /**
      * Constructor for Request.
+     *
      * @param connection Cassandra connection that is supposed to be used
      */
     public Request(CassandraConnection connection) {
@@ -22,6 +23,7 @@ public class Request {
 
     /**
      * Getter for the session
+     *
      * @return session that is currently used
      */
     public Session getSession() {
@@ -30,6 +32,7 @@ public class Request {
 
     /**
      * Getter for the MappingManager
+     *
      * @return MappingManager that is currently used
      */
     public MappingManager getManager() {

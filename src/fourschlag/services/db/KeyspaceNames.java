@@ -15,6 +15,7 @@ public enum KeyspaceNames {
 
     /**
      * Getter for the keyspace name
+     *
      * @return name of the keyspace
      */
     public String getKeyspace() {
@@ -23,6 +24,7 @@ public enum KeyspaceNames {
 
     /**
      * Overriden toString method
+     *
      * @return name of the keyspace
      */
     @Override

@@ -19,6 +19,7 @@ public class ExchangeRateRequest extends Request {
 
     /**
      * Constructor for ExchangeRateRequest
+     *
      * @param connection Cassandra connection that is supposed to be used
      * @param toCurrency the desired currency
      */

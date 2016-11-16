@@ -15,6 +15,7 @@ public class CassandraConnection {
 
     /**
      * Constructor for Cassandra Connection.
+     *
      * @param endpoint Endpoint of the database cluster to connect to
      * @param keyspace Keyspace in the database to connect to
      */
@@ -30,6 +31,7 @@ public class CassandraConnection {
 
     /**
      * Getter for the session
+     *
      * @return session for the current connection
      */
     public Session getSession() {
@@ -44,8 +46,10 @@ public class CassandraConnection {
     }
 
     /* TODO: Method to rebuild connection */
+
     /**
      * Getter for the MappingManager, that is needed to create Accessor objects
+     *
      * @return MappingManager for the current session
      */
     public MappingManager getManager() {

@@ -2,8 +2,8 @@ package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.MappingManager;
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.tables.RegionEntity;
 import fourschlag.entities.accessors.RegionAccessor;
+import fourschlag.entities.tables.RegionEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashSet;
@@ -18,6 +18,7 @@ public class RegionRequest extends Request {
 
     /**
      * Constructor for RegionRequest
+     *
      * @param connection Cassandra connection that is supposed to be used
      */
     public RegionRequest(CassandraConnection connection) {
@@ -28,6 +29,7 @@ public class RegionRequest extends Request {
 
     /**
      * Queries the database for all subregions.
+     *
      * @return Result Iterable with multiple Region entities
      */
     public Result<RegionEntity> getSubregions() {
@@ -36,6 +38,7 @@ public class RegionRequest extends Request {
 
     /**
      * Queries the database for all regions
+     *
      * @return Set with all regions as String
      */
     public Set<String> getRegions() {
