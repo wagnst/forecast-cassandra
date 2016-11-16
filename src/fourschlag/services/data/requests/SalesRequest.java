@@ -83,16 +83,9 @@ public class SalesRequest extends KpiRequest {
                 .map(kpi -> createOutputDataType(kpi, monthlyKpiValues.get(kpi)))
                 .collect(Collectors.toList());
 
-        /*
-        resultList.add(createOutputDataType(SALES_VOLUME, monthlyKpiValues.get(SALES_VOLUME)));
-        resultList.add(createOutputDataType(NET_SALES, monthlyKpiValues.get(NET_SALES)));
-        resultList.add(createOutputDataType(CM1, monthlyKpiValues.get(CM1)));
-        resultList.add(createOutputDataType(PRICE, monthlyKpiValues.get(PRICE)));
-        resultList.add(createOutputDataType(VAR_COSTS, monthlyKpiValues.get(VAR_COSTS)));
-        resultList.add(createOutputDataType(CM1_SPECIFIC, monthlyKpiValues.get(CM1_SPECIFIC)));
-        resultList.add(createOutputDataType(CM1_PERCENT, monthlyKpiValues.get(CM1_PERCENT)));
-        */
-
+        /* Reset the flags */
+        actualFlag = false;
+        forecastFlag = false;
         return resultList;
     }
 

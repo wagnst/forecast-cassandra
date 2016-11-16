@@ -78,17 +78,6 @@ public class OutputDataType {
         this.m18 = months.poll();
     }
 
-    public OutputDataType validate() {
-        boolean isValid = false;
-
-        /* check if all attributes are set and valid */
-        if (isValid) {
-            return this;
-        } else {
-            return null;
-        }
-    }
-
     public int getOrderNumber() {
         return orderNumber;
     }
