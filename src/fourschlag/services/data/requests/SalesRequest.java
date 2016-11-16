@@ -211,6 +211,7 @@ public class SalesRequest extends KpiRequest {
     private double getForecastCm1(Period tempPlanPeriod) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
+        /* TODO: Currency conversion */
         SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
         /* IF query result is empty THEN set cm1 to 0 */
