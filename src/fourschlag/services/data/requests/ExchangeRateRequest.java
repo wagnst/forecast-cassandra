@@ -12,6 +12,7 @@ import java.util.Map;
  * Extends Request. Offers functionality to request exchange rates.
  */
 public class ExchangeRateRequest extends Request {
+
     private String toCurrency;
     private Map<Integer, Map<String, Double>> exchangeRates;
 

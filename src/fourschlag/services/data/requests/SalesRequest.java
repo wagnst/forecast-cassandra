@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
 /**
- * Extends Request. Offers Functionality to request Sales KPIs for a specific region, period and product main group
+ * Extends Request. Offers Functionality to request Sales KPIs for a specific
+ * region, period and product main group
  */
 public class SalesRequest extends KpiRequest {
+
     private final String productMainGroup;
     private final String sbu;
     private final Period planPeriod;
@@ -37,8 +39,10 @@ public class SalesRequest extends KpiRequest {
      * @param connection       Cassandra connection that is supposed to be used
      * @param productMainGroup Product Main Group to filter for
      * @param sbu              SBU of that Product Main Group
-     * @param planYear         Indicates the time span for which the KPIs are supposed to be queried
-     * @param currentPeriod    The point of view in time from which the data is supposed to be looked at
+     * @param planYear         Indicates the time span for which the KPIs are
+     *                         supposed to be queried
+     * @param currentPeriod    The point of view in time from which the data is
+     *                         supposed to be looked at
      * @param region           Region to filter for
      * @param salesType        Sales Type to filter for
      * @param exchangeRates    Desired output currency
@@ -61,7 +65,8 @@ public class SalesRequest extends KpiRequest {
     /**
      * Calculates sales KPIs for the attributes saved in this request
      *
-     * @return List of OutputDataTypes that contain all KPIs for given parameters
+     * @return List of OutputDataTypes that contain all KPIs for given
+     * parameters
      */
     public List<OutputDataType> calculateSalesKpis() {
         /* Prepare result list that will be returned later */
@@ -93,7 +98,8 @@ public class SalesRequest extends KpiRequest {
     /* TODO: Return data type maybe as HashMap? Could be bad for performance */
 
     /**
-     * Private method to get KPIs for exactly one period (current value of planPeriod)
+     * Private method to get KPIs for exactly one period (current value of
+     * planPeriod)
      */
     private void getSalesKpisForSpecificMonth(Period tempPlanPeriod) {
         /* Prepare the kpi variables */
@@ -224,8 +230,10 @@ public class SalesRequest extends KpiRequest {
     /**
      * Creates a OutputDataType Object with all given attributes
      *
-     * @param kpi           KPI that is supposed to be set in the OutputDataType
+     * @param kpi           KPI that is supposed to be set in the
+     *                      OutputDataType
      * @param monthlyValues The monthly values for the KPI
+     *
      * @return OutputDataType object
      */
     private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, LinkedList<Double> monthlyValues) {

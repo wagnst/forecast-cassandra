@@ -9,9 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Extends Request. Offers functionality to request product main groups and sbus.
+ * Extends Request. Offers functionality to request product main groups and
+ * sbus.
  */
 public class OrgStructureRequest extends Request {
+
     private OrgStructureAccessor orgStructureAccessor;
 
     /**

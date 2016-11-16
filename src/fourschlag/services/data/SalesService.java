@@ -31,12 +31,17 @@ public class SalesService extends Service {
     }
 
     /**
-     * Calculates all Sales KPIs for a time span (planYear) and from certain point of view (currentPeriod).
+     * Calculates all Sales KPIs for a time span (planYear) and from certain
+     * point of view (currentPeriod).
      *
-     * @param planYear         Indicates the time span for which the KPIs are supposed to be queried
-     * @param currentPeriodInt The point of view in time from which the data is supposed to be looked at
+     * @param planYear         Indicates the time span for which the KPIs are
+     *                         supposed to be queried
+     * @param currentPeriodInt The point of view in time from which the data is
+     *                         supposed to be looked at
      * @param toCurrency       The desired output currency
-     * @return List of the OutputDataTypes that contain all KPIs for the given parameters
+     *
+     * @return List of the OutputDataTypes that contain all KPIs for the given
+     * parameters
      */
     public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
         /* Prepare result list that will be returned later */

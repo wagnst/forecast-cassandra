@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
  */
 @Path("/forecast")
 public class ForecastWS {
+
     private CassandraConnection connection = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
     private SalesService salesService = new SalesService(connection);
 
