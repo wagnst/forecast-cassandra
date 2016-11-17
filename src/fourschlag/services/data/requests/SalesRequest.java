@@ -189,11 +189,9 @@ public class SalesRequest extends KpiRequest {
                     salesType.getType(), DataSource.BW_A.toString());
             /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result */
             if (queryResult != null) {
-                //TODO: Cover case in entryType, when all the KPIs are actual data except CM1
                 queryResult.setCm1(getForecastCm1(tempPlanPeriod));
             }
         }
-
         return queryResult;
     }
 
@@ -218,10 +216,10 @@ public class SalesRequest extends KpiRequest {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         /* TODO: Currency conversion */
-        SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+        SalesEntity cm1 =  forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
-        /* IF query result is empty THEN set cm1 to 0 */
-        if (cm1 == null) {
+
+        if(cm1 == null) {
             return 0;
         }
         return cm1.getCm1();
