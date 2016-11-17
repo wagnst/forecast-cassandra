@@ -100,7 +100,7 @@ package "fourschlag" {
                 }
 
                 Class "KpiRequests" {
-                    +{static}int : getNumberOfMonths()
+
                 }
 
                 Class "OrgStructureRequest" {
@@ -139,10 +139,12 @@ package "fourschlag" {
                 SalesRequest *-- ActualSalesAccessor : use
                 SalesRequest *-- ForecastSalesAccessor : use
                 SalesRequest *-- ExchangeRateRequest : use
+                SalesRequest *-- KeyPerformanceIndicators : use
             }
 
             Class "Service" {
                 +CassandraConnection : getConnection()
+                +{static}int : getNumberOfMonths()
             }
 
             Class "SalesService" {
@@ -158,6 +160,7 @@ package "fourschlag" {
             SalesService *-- RegionRequest : use
             SalesService *-- Period : use
             SalesService *-- OutputDataType : use
+            SalesService *-- SalesType : use
         }
 
         package "db" {
@@ -197,7 +200,7 @@ package "fourschlag" {
 
             ' WS uses SalesService to get the KPI data
             ForecastWS *-- SalesService : use
-
+            ForecastWS *-- CassandraConnection : use
         }
     }
 }
