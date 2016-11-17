@@ -113,6 +113,7 @@ public class SalesRequest extends KpiRequest {
 
         SalesEntity queryResult;
 
+        /* TODO: IF planPeriod = currentPeriod -1 THEN try to get Actual Data ELSE get Forecast Data
         /* IF plan period is in the past compared to current period THEN get data from the actual sales table
          * ELSE get data from the forecast table
          */
