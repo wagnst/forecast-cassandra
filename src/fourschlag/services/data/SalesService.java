@@ -10,7 +10,6 @@ import fourschlag.services.data.requests.RegionRequest;
 import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +44,7 @@ public class SalesService extends Service {
      */
     public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
         /* Prepare result list that will be returned later */
-        List<OutputDataType> resultList = new ArrayList<>();
+        List<OutputDataType> resultList;
 
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
@@ -57,7 +56,7 @@ public class SalesService extends Service {
         /* Create instance of Period with the given int value */
         Period currentPeriod = new Period(currentPeriodInt);
 
-
+        /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
         resultList = products.stream().parallel()
                 .flatMap(product -> regions.stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
