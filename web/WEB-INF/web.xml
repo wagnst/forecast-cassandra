@@ -15,7 +15,7 @@
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>
-                fourschlag.services.web.ws.ForecastWS;com.fasterxml.jackson.jaxrs
+                fourschlag.services.web.ApplicationService;fourschlag.services.web.ws.ForecastWS;com.fasterxml.jackson.jaxrs
             </param-value>
         </init-param>
 
