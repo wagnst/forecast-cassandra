@@ -28,6 +28,7 @@ public class CassandraConnection {
                 .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
                 .build();
         session = cluster.connect(keyspace.getKeyspace());
+        manager = new MappingManager(session);
     }
 
     public static CassandraConnection getInstance() {
