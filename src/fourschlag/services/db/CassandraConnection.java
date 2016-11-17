@@ -9,6 +9,7 @@ import com.datastax.driver.mapping.MappingManager;
  * CassandraConnection
  */
 public class CassandraConnection {
+
     private Cluster cluster;
     private Session session;
     private MappingManager manager;

@@ -9,9 +9,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Extends Request. Contains HashMap that is used by all children of KpiRequest to store the KPIs.
+ * Extends Request. Contains HashMap that is used by all children of KpiRequest
+ * to store the KPIs.
  */
 public class KpiRequest extends Request {
+
     protected Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues;
 
     /**

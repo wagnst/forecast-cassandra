@@ -7,7 +7,7 @@ import fourschlag.entities.tables.ForecastSalesEntity;
 
 @Accessor
 public interface ForecastSalesAccessor {
-    @Query("SELECT sales_volumes, net_sales, cm1 FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type ALLOW FILTERING;")
+    @Query("SELECT sales_volumes, net_sales, cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type ALLOW FILTERING;")
     ForecastSalesEntity getSalesKPI(
             @Param("product_main_group") String productMainGroup,
             @Param("period") int period,

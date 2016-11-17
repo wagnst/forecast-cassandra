@@ -3,9 +3,11 @@ package fourschlag.services.data;
 import fourschlag.services.db.CassandraConnection;
 
 /**
- * Super class Service. Contains information about the connection to the database.
+ * Super class Service. Contains information about the connection to the
+ * database.
  */
 public class Service {
+
     private static int NUMBER_OF_MONTHS = 18;
     private CassandraConnection connection;
 
