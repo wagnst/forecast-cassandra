@@ -4,6 +4,7 @@ package fourschlag.services.db;
  * Enum that contains all endpoints of the cassandra cluster
  */
 public enum ClusterEndpoints {
+
     NODE1("141.19.145.142"),
     NODE2("141.19.145.134"),
     NODE3("141.19.145.144"),

@@ -5,10 +5,15 @@ import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Extends Request. Offers functionality to request product main groups and sbus.
+ * Extends Request. Offers functionality to request product main groups and
+ * sbus.
  */
 public class OrgStructureRequest extends Request {
+
     private OrgStructureAccessor orgStructureAccessor;
 
     /**
@@ -28,5 +33,13 @@ public class OrgStructureRequest extends Request {
      */
     public Result<OrgStructureEntity> getProductMainGroups() {
         return orgStructureAccessor.getProducts();
+    }
+
+    public Set<OrgStructureEntity> getProductMainGroupsAsSet() {
+        Result<OrgStructureEntity> products = getProductMainGroups();
+        Set<OrgStructureEntity> productSet = new HashSet<>();
+        products.forEach(product -> productSet.add(product));
+
+        return productSet;
     }
 }

@@ -2,8 +2,6 @@ package fourschlag.services.web.ws;
 
 import fourschlag.services.data.SalesService;
 import fourschlag.services.db.CassandraConnection;
-import fourschlag.services.db.ClusterEndpoints;
-import fourschlag.services.db.KeyspaceNames;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -18,7 +16,8 @@ import javax.ws.rs.core.Response;
  */
 @Path("/forecast")
 public class ForecastWS {
-    private CassandraConnection connection = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
+
+    private CassandraConnection connection = CassandraConnection.getInstance();
     private SalesService salesService = new SalesService(connection);
 
     /* TODO: Maybe close session each time, but not connection */

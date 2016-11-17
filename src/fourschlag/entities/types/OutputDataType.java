@@ -54,6 +54,7 @@ public class OutputDataType {
         this.salesType = salesType;
         this.entryType = entryType;
         this.currency = currency;
+        this.unit = convertUnitCurrency(kpi.getUnit(), currency);
         this.setMonths(months);
     }
 
@@ -76,6 +77,18 @@ public class OutputDataType {
         this.m16 = months.poll();
         this.m17 = months.poll();
         this.m18 = months.poll();
+    }
+
+    private String convertUnitCurrency(String unit, String currency) {
+        if (currency.equals("eur")) {
+            return unit;
+        } else if (unit.indexOf('€') == -1) {
+            return unit;
+        } else if (currency.equals("usd")) {
+            return unit.replace("€", "$");
+        } else {
+            return unit.replace("€", currency);
+        }
     }
 
     public int getOrderNumber() {

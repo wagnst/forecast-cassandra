@@ -9,9 +9,11 @@ import com.datastax.driver.mapping.MappingManager;
  * CassandraConnection
  */
 public class CassandraConnection {
+
     private Cluster cluster;
     private Session session;
     private MappingManager manager;
+    private static CassandraConnection instance = null;
 
     /**
      * Constructor for Cassandra Connection.
@@ -19,7 +21,7 @@ public class CassandraConnection {
      * @param endpoint Endpoint of the database cluster to connect to
      * @param keyspace Keyspace in the database to connect to
      */
-    public CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
+    private CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
         cluster = Cluster
                 .builder()
                 .addContactPoint(endpoint.getAddress())
@@ -27,6 +29,13 @@ public class CassandraConnection {
                 .build();
         session = cluster.connect(keyspace.getKeyspace());
         manager = new MappingManager(session);
+    }
+
+    public static CassandraConnection getInstance() {
+        if (instance == null) {
+            instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
+        }
+        return instance;
     }
 
     /**
@@ -43,6 +52,10 @@ public class CassandraConnection {
      */
     public void closeConnection() {
         cluster.close();
+    }
+
+    public void closeSession() {
+        session.close();
     }
 
     /* TODO: Method to rebuild connection */

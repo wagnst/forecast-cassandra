@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Extends Request. Offers functionality to request regions and subregions from the database.
+ * Extends Request. Offers functionality to request regions and subregions from
+ * the database.
  */
 public class RegionRequest extends Request {
 
