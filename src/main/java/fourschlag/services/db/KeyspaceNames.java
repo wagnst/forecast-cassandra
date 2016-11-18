@@ -5,7 +5,8 @@ package fourschlag.services.db;
  */
 public enum KeyspaceNames {
 
-    ORIGINAL_VERSION("original_version");
+    ORIGINAL_VERSION("original_version"),
+    DEMO("demo");
 
     private final String keyspace;
 

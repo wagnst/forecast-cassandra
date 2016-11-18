@@ -33,7 +33,7 @@ public class CassandraConnection {
 
     public static CassandraConnection getInstance() {
         if (instance == null) {
-            instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
+            instance = new CassandraConnection(ClusterEndpoints.DEMO, KeyspaceNames.DEMO);
         }
         return instance;
     }
