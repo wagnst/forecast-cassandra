@@ -9,7 +9,7 @@ public enum ClusterEndpoints {
     NODE2("141.19.145.134"),
     NODE3("141.19.145.144"),
     NODE4("141.19.145.132"),
-    DEMO("127.0.0.1");
+    DEV("127.0.0.1");
 
     private final String address;
 
