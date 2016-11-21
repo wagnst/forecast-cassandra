@@ -55,6 +55,8 @@ public class SalesRequest extends KpiRequest {
         this.region = region;
         this.salesType = salesType;
         this.exchangeRates = exchangeRates;
+
+        /* TODO: Avoid creating new OrgStructureRequest every time */
         this.sbu = new OrgStructureRequest(connection).getSbu(productMainGroup);
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
