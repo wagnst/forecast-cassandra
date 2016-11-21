@@ -5,6 +5,9 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.policies.DefaultRetryPolicy;
 import com.datastax.driver.mapping.MappingManager;
 
+import java.io.IOException;
+import java.net.InetAddress;
+
 /**
  * CassandraConnection
  */
@@ -31,9 +34,29 @@ public class CassandraConnection {
         manager = new MappingManager(session);
     }
 
+    /**
+     * Decide if we are in HS network or on localhost and return a connection
+     *
+     * @return Cassandra connection instance
+     */
     public static CassandraConnection getInstance() {
         if (instance == null) {
-            instance = new CassandraConnection(ClusterEndpoints.DEMO, KeyspaceNames.DEMO);
+            /* check if NODE cluster is available in current network, else fall back to localhost */
+            try {
+                InetAddress.getByName(String.valueOf(ClusterEndpoints.NODE1)).isReachable(5);
+                //use node1
+                instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
+            } catch (IOException e) {
+                try {
+                    InetAddress.getByName(String.valueOf(ClusterEndpoints.DEV)).isReachable(5);
+                    //use localhost
+                    instance = new CassandraConnection(ClusterEndpoints.DEV, KeyspaceNames.DEMO);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+
         }
         return instance;
     }
