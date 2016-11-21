@@ -1,6 +1,5 @@
 package fourschlag.services.data;
 
-import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
@@ -51,7 +50,7 @@ public class SalesService extends Service {
         /* Get all of the regions from the region table */
         Set<String> regions = new RegionRequest(getConnection()).getRegions();
         /* Get all of the Product Main Groups from the OrgStructure table*/
-        Set<OrgStructureEntity> products = new OrgStructureRequest(getConnection()).getProductMainGroupsAsSet();
+        Set<String> products = new OrgStructureRequest(getConnection()).getProductMainGroupsAsSetFromSales();
 
         /* Create instance of Period with the given int value */
         Period currentPeriod = new Period(currentPeriodInt);
@@ -61,7 +60,7 @@ public class SalesService extends Service {
                 .flatMap(product -> regions.stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
-                                        product.getProductMainGroup(), product.getSbu(), planYear, currentPeriod, region, salesType,
+                                        product, planYear, currentPeriod, region, salesType,
                                         exchangeRates).calculateSalesKpis().stream())))
                 .collect(Collectors.toList());
 

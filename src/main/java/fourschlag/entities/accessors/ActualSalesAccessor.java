@@ -1,5 +1,6 @@
 package fourschlag.entities.accessors;
 
+import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
@@ -14,4 +15,7 @@ public interface ActualSalesAccessor {
             @Param("region") String region,
             @Param("sales_type") String salesType,
             @Param("data_source") String dataSource);
+
+    @Query("SELECT DISTINCT product_main_group FROM actual_sales;")
+    Result<ActualSalesEntity> getProductMainGroups();
 }

@@ -1,5 +1,6 @@
 package fourschlag.entities.accessors;
 
+import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
@@ -22,4 +23,7 @@ public interface ForecastSalesAccessor {
             @Param("plan_period") int planPeriod,
             @Param("region") String region,
             @Param("sales_type") String salesType);
+
+    @Query("SELECT DISTINCT product_main_group FROM forecast_sales;")
+    Result<ForecastSalesEntity> getProductMainGroups();
 }

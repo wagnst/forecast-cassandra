@@ -133,4 +133,51 @@ public class SalesEntity {
     public String getEntryTs() {
         return entryTs;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SalesEntity that = (SalesEntity) o;
+
+        if (period != that.period) return false;
+        if (Double.compare(that.salesVolumes, salesVolumes) != 0) return false;
+        if (Double.compare(that.netSales, netSales) != 0) return false;
+        if (Double.compare(that.cm1, cm1) != 0) return false;
+        if (periodYear != that.periodYear) return false;
+        if (periodMonth != that.periodMonth) return false;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
+        if (productMainGroup != null ? !productMainGroup.equals(that.productMainGroup) : that.productMainGroup != null)
+            return false;
+        if (region != null ? !region.equals(that.region) : that.region != null) return false;
+        if (salesType != null ? !salesType.equals(that.salesType) : that.salesType != null) return false;
+        if (currency != null ? !currency.equals(that.currency) : that.currency != null) return false;
+        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+        return entryTs != null ? entryTs.equals(that.entryTs) : that.entryTs == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (productMainGroup != null ? productMainGroup.hashCode() : 0);
+        result = 31 * result + period;
+        result = 31 * result + (region != null ? region.hashCode() : 0);
+        result = 31 * result + (salesType != null ? salesType.hashCode() : 0);
+        temp = Double.doubleToLongBits(salesVolumes);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(netSales);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(cm1);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + periodYear;
+        result = 31 * result + periodMonth;
+        result = 31 * result + (currency != null ? currency.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (entryTs != null ? entryTs.hashCode() : 0);
+        return result;
+    }
 }

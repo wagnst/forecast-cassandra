@@ -37,4 +37,26 @@ public class OrgStructureEntity {
     public String getBu() {
         return bu;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrgStructureEntity that = (OrgStructureEntity) o;
+
+        if (productMainGroup != null ? !productMainGroup.equals(that.productMainGroup) : that.productMainGroup != null)
+            return false;
+        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null) return false;
+        return bu != null ? bu.equals(that.bu) : that.bu == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productMainGroup != null ? productMainGroup.hashCode() : 0;
+        result = 31 * result + (sbu != null ? sbu.hashCode() : 0);
+        result = 31 * result + (bu != null ? bu.hashCode() : 0);
+        return result;
+    }
 }

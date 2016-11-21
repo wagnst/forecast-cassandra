@@ -38,7 +38,6 @@ public class SalesRequest extends KpiRequest {
      *
      * @param connection       Cassandra connection that is supposed to be used
      * @param productMainGroup Product Main Group to filter for
-     * @param sbu              SBU of that Product Main Group
      * @param planYear         Indicates the time span for which the KPIs are
      *                         supposed to be queried
      * @param currentPeriod    The point of view in time from which the data is
@@ -47,16 +46,16 @@ public class SalesRequest extends KpiRequest {
      * @param salesType        Sales Type to filter for
      * @param exchangeRates    Desired output currency
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, String sbu, int planYear,
+    public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear,
                         Period currentPeriod, String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
         super(connection);
         this.productMainGroup = productMainGroup;
-        this.sbu = sbu;
         this.planPeriod = Period.getPeriodByYear(planYear);
         this.currentPeriod = currentPeriod;
         this.region = region;
         this.salesType = salesType;
         this.exchangeRates = exchangeRates;
+        this.sbu = new OrgStructureRequest(connection).getSbu(productMainGroup);
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
