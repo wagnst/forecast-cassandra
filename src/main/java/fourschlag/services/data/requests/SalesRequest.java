@@ -45,8 +45,8 @@ public class SalesRequest extends KpiRequest {
      * @param salesType        Sales Type to filter for
      * @param exchangeRates    Desired output currency
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear,
-                        Period currentPeriod, String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
+    public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
+                        String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
         super(connection);
         this.productMainGroup = productMainGroup;
         this.planPeriod = Period.getPeriodByYear(planYear);
@@ -109,8 +109,7 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     * Private method to get KPIs for exactly one period (current value of
-     * planPeriod)
+     * Private method to get KPIs for exactly one period
      */
     private void calculateSalesKpisForSpecificMonth(Period tempPlanPeriod) {
         SalesEntity queryResult;
@@ -191,6 +190,10 @@ public class SalesRequest extends KpiRequest {
         return cm1.getCm1();
     }
 
+    /**
+     * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     */
     private void calculateBj(int zeroMonthPeriod) {
         ForecastSalesEntity queryResult = forecastAccessor.getBudgetYear(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod, region, salesType.toString());
@@ -202,6 +205,13 @@ public class SalesRequest extends KpiRequest {
                 .forEach(kpi -> bjValues.get(kpi).add(map.get(kpi)));
     }
 
+    /**
+     * Private method to validate a query result.
+     *
+     * @param queryResult The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return Map with all the values for the sales KPIs
+     */
     private Map<KeyPerformanceIndicators, Double> validateQueryResult(SalesEntity queryResult, Period tempPlanPeriod) {
         /* Prepare the kpi variables */
         double salesVolume;
