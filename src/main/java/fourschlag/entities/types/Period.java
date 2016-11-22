@@ -48,6 +48,14 @@ public class Period {
         return year * 100;
     }
 
+    public int getPreviousPeriod() {
+        if(month > 1) {
+            return period-1;
+        } else {
+            return period-89;
+        }
+    }
+
     public int getYear() {
         return year;
     }

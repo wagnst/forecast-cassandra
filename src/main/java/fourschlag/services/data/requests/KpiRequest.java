@@ -11,7 +11,7 @@ import java.util.Map;
  * Extends Request. Contains HashMap that is used by all children of KpiRequest
  * to store the KPIs.
  */
-public class KpiRequest extends Request {
+public abstract class KpiRequest extends Request {
 
     protected Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
     protected Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
@@ -23,5 +23,9 @@ public class KpiRequest extends Request {
      */
     public KpiRequest(CassandraConnection connection) {
         super(connection);
+        fillMap(monthlyKpiValues);
+        fillMap(bjValues);
     }
+
+    protected abstract void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map);
 }

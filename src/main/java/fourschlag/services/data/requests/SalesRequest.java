@@ -60,12 +60,13 @@ public class SalesRequest extends KpiRequest {
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+    }
 
-        for (Map<KeyPerformanceIndicators, LinkedList<Double>> map: Arrays.asList(monthlyKpiValues, bjValues)) {
-            Arrays.stream(KeyPerformanceIndicators.values())
-                    .filter(kpi -> kpi.getFcType().equals("sales"))
-                    .forEach(kpi -> map.put(kpi, new LinkedList<>()));
-        }
+    @Override
+    protected void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
+        Arrays.stream(KeyPerformanceIndicators.values())
+                .filter(kpi -> kpi.getFcType().equals("sales"))
+                .forEach(kpi -> map.put(kpi, new LinkedList<>()));
     }
 
     /**
@@ -79,9 +80,9 @@ public class SalesRequest extends KpiRequest {
         List<OutputDataType> resultList;
         Period tempPlanPeriod = new Period(planPeriod);
 
-        /* getSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
+        /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < Service.getNumberOfMonths(); i++) {
-            getSalesKpisForSpecificMonth(tempPlanPeriod);
+            calculateSalesKpisForSpecificMonth(tempPlanPeriod);
             tempPlanPeriod.increment();
         }
 
@@ -107,21 +108,23 @@ public class SalesRequest extends KpiRequest {
         return resultList;
     }
 
-    /* TODO: Return data type maybe as HashMap? Could be bad for performance */
-
     /**
      * Private method to get KPIs for exactly one period (current value of
      * planPeriod)
      */
-    private void getSalesKpisForSpecificMonth(Period tempPlanPeriod) {
+    private void calculateSalesKpisForSpecificMonth(Period tempPlanPeriod) {
         SalesEntity queryResult;
 
-        /* TODO: IF planPeriod = currentPeriod -1 THEN try to get Actual Data ELSE get Forecast Data
         /* IF plan period is in the past compared to current period THEN get data from the actual sales table
          * ELSE get data from the forecast table
          */
-        if (tempPlanPeriod.getPeriod() < currentPeriod.getPeriod()) {
+        if (tempPlanPeriod.getPeriod() < currentPeriod.getPreviousPeriod()) {
             queryResult = getActualData(tempPlanPeriod);
+        } else if (tempPlanPeriod.getPeriod() == currentPeriod.getPreviousPeriod()) {
+            queryResult = getActualData(tempPlanPeriod);
+            if (queryResult == null) {
+                queryResult = getForecastData(tempPlanPeriod);
+            }
         } else {
             queryResult = getForecastData(tempPlanPeriod);
         }
