@@ -3,7 +3,6 @@ package fourschlag.services.data.requests;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -14,7 +13,8 @@ import java.util.Map;
  */
 public class KpiRequest extends Request {
 
-    protected Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues;
+    protected Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+    protected Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
 
     /**
      * Constructor for KpiRequest
@@ -23,10 +23,5 @@ public class KpiRequest extends Request {
      */
     public KpiRequest(CassandraConnection connection) {
         super(connection);
-        monthlyKpiValues = new HashMap<KeyPerformanceIndicators, LinkedList<Double>>() {{
-            Arrays.stream(KeyPerformanceIndicators.values())
-                    .filter(kpi -> kpi.getFcType().equals("sales"))
-                    .forEach(kpi -> put(kpi, new LinkedList<>()));
-        }};
     }
 }

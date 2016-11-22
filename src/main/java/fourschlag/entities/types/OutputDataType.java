@@ -42,8 +42,9 @@ public class OutputDataType {
         this.fcType = kpi.getFcType();
     }
 
-    public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region, String subregion,
-                          String salesType, String entryType, String currency, LinkedList<Double> months) {
+    public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
+                          String subregion, String salesType, String entryType, String currency,
+                          LinkedList<Double> months, LinkedList<Double> bjValues) {
         this.kpi = kpi.getFullName();
         this.orderNumber = kpi.getOrderNumber();
         this.fcType = kpi.getFcType();
@@ -56,6 +57,7 @@ public class OutputDataType {
         this.currency = currency;
         this.unit = convertUnitCurrency(kpi.getUnit(), currency);
         this.setMonths(months);
+        this.setBj(bjValues);
     }
 
     private void setMonths(LinkedList<Double> months) {
@@ -77,6 +79,12 @@ public class OutputDataType {
         this.m16 = months.poll();
         this.m17 = months.poll();
         this.m18 = months.poll();
+    }
+
+    private void setBj(LinkedList<Double> bjValues) {
+        this.bj2 = bjValues.poll();
+        this.bj3 = bjValues.poll();
+        this.bj4 = bjValues.poll();
     }
 
     private String convertUnitCurrency(String unit, String currency) {
