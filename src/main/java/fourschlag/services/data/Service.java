@@ -8,7 +8,8 @@ import fourschlag.services.db.CassandraConnection;
  */
 public class Service {
 
-    private static int NUMBER_OF_MONTHS = 18;
+    private static final int NUMBER_OF_MONTHS = 18;
+    private static final int NUMBER_OF_BJ = 3;
     private CassandraConnection connection;
 
     /**
@@ -27,6 +28,10 @@ public class Service {
      */
     public static int getNumberOfMonths() {
         return NUMBER_OF_MONTHS;
+    }
+
+    public static int getNumberOfBj() {
+        return NUMBER_OF_BJ;
     }
 
     /**
