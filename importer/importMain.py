@@ -2,17 +2,20 @@
 # Anleitung:
 # xlrd muss installiert werden!
 # der Ordner csv_output muss erstellt werden
+# todo csv header validierung überarbeiten
 # todo Ordner csv_output nur temporär anlegen
 # todo Funktionalität Tabelle erst löschen, dann neu anlegen
 # todo Funktionalität Keyspace löschen
 # todo verbose
 # todo timer einbauen um zu schauen was wie lange dauert
+# todo man könnte eventuell noch abfangen, dass man keine zwei gleichen Tabellen importieren kann
 
 import argparse
 import csv
 import os
 import xlrd
 import subprocess
+import time
 
 
 # Funktion für Parser
@@ -47,9 +50,9 @@ USED_KEYSPACE = '-k'
 ORG_STRUCTURE_PARAMS = 'bu, sbu, product_main_group'
 REGIONS_PARAMS = 'region, subregion'
 EXCHANGE_RATE_PARAMS = 'period, period_year, period_month, from_currency, to_currency, rate, userid, entry_ts'
-ACTUAL_SALES_PARAMS = 'sales_volumes, net_sales, cm1, product_main_group, region, sbu, sales_type, data_source, period,' \
+ACTUAL_SALES_PARAMS = 'sales_volumes, net_sales, cm1, product_main_group, region, sbu, sales_type, data_source, period, ' \
                       'period_year, period_half_year, period_quarter, period_month, currency, userid, entry_ts'
-FORECAST_SALES_PARAMS = 'sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales,' \
+FORECAST_SALES_PARAMS = 'sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, ' \
                         'topdown_adjust_cm1, product_main_group, region, sales_type, entry_type, period, period_year, ' \
                         'period_month, plan_period, plan_year, plan_half_year, plan_quarter, plan_month, currency, status, ' \
                         'usercomment, userid, entry_ts'
@@ -76,7 +79,7 @@ ACTUAL_SALES_TABLE_CREATION = '(SALES_VOLUMES double, NET_SALES double, CM1 doub
                               'PERIOD_YEAR int, PERIOD_HALF_YEAR int, PERIOD_QUARTER int, PERIOD_MONTH int, ' \
                               'CURRENCY varchar, USERID varchar, ENTRY_TS varchar, ' \
                               'PRIMARY KEY ((PRODUCT_MAIN_GROUP, Region), PERIOD, SALES_TYPE, DATA_SOURCE));'
-FORECAST_SALES_TABLE_CREATION = 'CREATE COLUMNFAMILY forecast_sales(SALES_VOLUMES double, NET_SALES double, ' \
+FORECAST_SALES_TABLE_CREATION = '(SALES_VOLUMES double, NET_SALES double, ' \
                                 'CM1 double, PRODUCT_MAIN_GROUP varchar, REGION varchar, SALES_TYPE varchar, ' \
                                 'PERIOD int, PERIOD_YEAR int, PERIOD_MONTH int, CURRENCY varchar, USERID varchar, ' \
                                 'ENTRY_TS varchar, TOPDOWN_ADJUST_SALES_VOLUMES double, ' \
@@ -151,6 +154,14 @@ def validate_path(s):
         exit('Wrong datatype. Please import .xls or .xlsx .')
 
 
+def validate_tablenames(s):
+    try:
+        table_params[s]
+    except KeyError:
+        print 'The tablename %s is not valid.' % s
+        exit('Canceled: please use the following tablenames: %s' % table_params.keys())
+
+
 def validate_csv(s, t):
     reader = csv.reader(open(PATH_CSV_OUTPUT + s, 'r'), delimiter=',')
     headerfromcsv = next(reader)
@@ -212,12 +223,12 @@ def create_table(s, t, u):
     print 'Table %s was created or already exists.' % t
 
 
-# Es darf kein newlineelement im string vor kommen.
 def import_file(s, t, u, v):
     temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + s + '.' + t + '(' + u + ') ' + IMPORT_FILE_SUB +\
                       ' \'' + v + '\' ' + IMPORT_FILE_SUB_SUB
-    print temp_parameters
-    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
+    with open(os.devnull, "w") as f:
+        subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
+        print 'File %s was successfully imported' % v
 
 
 def transformation_and_validation():
@@ -229,34 +240,43 @@ def transformation_and_validation():
         first_value_from_tuple = val[0]
         validate_path(first_value_from_tuple)
 
+    # Validiert Tabellennamen
+    for val in firstlistelement_of_inputfiles:
+        second_value_from_tuple = val[1]
+        validate_tablenames(second_value_from_tuple)
+
+    print time.clock()
+
     # Konvertiert das xlsx oder xls zu csv
     for val in firstlistelement_of_inputfiles:
         first_value_from_tuple = val[0]
         second_value_from_tuple = val[1]
         xls_to_csv(first_value_from_tuple, second_value_from_tuple)
 
+    print time.clock()
+
     # Validiert die csv
-    counter = 0
     for val in firstlistelement_of_inputfiles:
         csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
-        validate_csv(csv_output_list[counter], second_value_from_tuple)
-        counter += 1
+        validate_csv(csv_output_list[csv_output_list.index(second_value_from_tuple + '.csv')], second_value_from_tuple)
 
 
 def fileimport():
+    # Legt den Keyspace an
     create_keyspace()
+
+    # Legt die Tabellen an
     for val in firstlistelement_of_inputfiles:
         second_value_from_tuple = val[1]
         create_table(args.keyspace, second_value_from_tuple, table_creation_params[second_value_from_tuple])
 
-    counter = 0
+    # Importiert die Files
     for val in firstlistelement_of_inputfiles:
         csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
-        csv_path = PATH_CSV_OUTPUT + csv_output_list[counter]
+        csv_path = PATH_CSV_OUTPUT + csv_output_list[csv_output_list.index(second_value_from_tuple + '.csv')]
         import_file(args.keyspace, second_value_from_tuple, table_params[second_value_from_tuple], csv_path)
-        counter += 1
 
 
 def main():
@@ -266,6 +286,7 @@ def main():
     finally:
         clear_csvoutput()
         print 'cleaned up!'
+        print time.clock()
 
 
 # Aufruf von Main
