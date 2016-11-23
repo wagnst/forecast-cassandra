@@ -1,5 +1,13 @@
 # coding=utf-8
+# Anleitung:
 # xlrd muss installiert werden!
+# der Ordner csv_output muss erstellt werden
+# todo Ordner csv_output nur temporär anlegen
+# todo Funktionalität Tabelle erst löschen, dann neu anlegen
+# todo Funktionalität Keyspace löschen
+# todo verbose
+# todo timer einbauen um zu schauen was wie lange dauert
+
 import argparse
 import csv
 import os
