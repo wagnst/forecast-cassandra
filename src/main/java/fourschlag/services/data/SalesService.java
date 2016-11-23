@@ -63,7 +63,7 @@ public class SalesService extends Service {
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
                                         product, planYear, currentPeriod, region, salesType,
-                                        exchangeRates, orgAndRegionRequest).calculateSalesKpis().stream())))
+                                        exchangeRates, orgAndRegionRequest).calculateKpis().stream())))
                 .collect(Collectors.toList());
 
         /* Finally the result list will be returned */
