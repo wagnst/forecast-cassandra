@@ -2,7 +2,6 @@ package fourschlag.services.data.requests;
 
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
-import fourschlag.entities.tables.ForecastSalesEntity;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.Service;
@@ -45,7 +44,8 @@ public class SalesRequest extends KpiRequest {
      * @param exchangeRates    Desired output currency
      */
     public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
-                        String region, SalesType salesType, ExchangeRateRequest exchangeRates) {
+                        String region, SalesType salesType, ExchangeRateRequest exchangeRates,
+                        OrgStructureAndRegionRequest orgAndRegionRequest) {
         super(connection);
         this.productMainGroup = productMainGroup;
         this.planPeriod = Period.getPeriodByYear(planYear);
@@ -54,8 +54,9 @@ public class SalesRequest extends KpiRequest {
         this.salesType = salesType;
         this.exchangeRates = exchangeRates;
 
-        /* TODO: Avoid creating new OrgStructureRequest every time */
-        this.sbu = new OrgStructureRequest(connection).getSbu(productMainGroup);
+        System.out.println(productMainGroup + " " + region + " " + salesType);
+        /* TODO: Avoid creating new OrgStructureAndRegionRequest every time */
+        this.sbu = orgAndRegionRequest.getSbu(productMainGroup);
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
@@ -91,11 +92,11 @@ public class SalesRequest extends KpiRequest {
             tempPlanPeriod.increment();
         }
 
-        int bjPeriod = tempPlanPeriod.getZeroMonthPeriod();
+        Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         for (int i = 0; i < Service.getNumberOfBj(); i++) {
             calculateBj(bjPeriod);
             /* Jump to the next zeroMonthPeriod */
-            bjPeriod += 100;
+            bjPeriod.increment();
         }
 
         final EntryType  valueUsedInOutputDataType;
@@ -214,9 +215,9 @@ public class SalesRequest extends KpiRequest {
      * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
-    private void calculateBj(int zeroMonthPeriod) {
-        ForecastSalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
-                zeroMonthPeriod, region, salesType.toString(), EntryType.BUDGET.getType());
+    private void calculateBj(Period zeroMonthPeriod) {
+        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+                zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
         Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, new Period(zeroMonthPeriod));
 

@@ -4,8 +4,7 @@ import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.requests.ExchangeRateRequest;
-import fourschlag.services.data.requests.OrgStructureRequest;
-import fourschlag.services.data.requests.RegionRequest;
+import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
@@ -47,10 +46,13 @@ public class SalesService extends Service {
 
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
+
+        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
+
         /* Get all of the regions from the region table */
-        Set<String> regions = new RegionRequest(getConnection()).getRegions();
+        Set<String> regions = orgAndRegionRequest.getRegionsAsSetFromSales();
         /* Get all of the Product Main Groups from the OrgStructure table*/
-        Set<String> products = new OrgStructureRequest(getConnection()).getProductMainGroupsAsSetFromSales();
+        Set<String> products = orgAndRegionRequest.getProductMainGroupsAsSetFromSales();
 
         /* Create instance of Period with the given int value */
         Period currentPeriod = new Period(currentPeriodInt);
@@ -61,7 +63,7 @@ public class SalesService extends Service {
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
                                         product, planYear, currentPeriod, region, salesType,
-                                        exchangeRates).calculateSalesKpis().stream())))
+                                        exchangeRates, orgAndRegionRequest).calculateSalesKpis().stream())))
                 .collect(Collectors.toList());
 
         /* Finally the result list will be returned */

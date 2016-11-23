@@ -9,8 +9,8 @@ import fourschlag.entities.tables.OrgStructureEntity;
 @Accessor
 public interface OrgStructureAccessor {
     @Query("SELECT product_main_group, sbu FROM org_structure;")
-    Result<OrgStructureEntity> getProducts();
+    Result<OrgStructureEntity> getProductsAndSbus();
 
     @Query("SELECT sbu FROM org_structure WHERE product_main_group = :product_main_group;")
-    OrgStructureEntity getSbu(@Param("product_main_group") String productMainGroup);
+    OrgStructureEntity getSbuForProductMainGroup(@Param("product_main_group") String productMainGroup);
 }

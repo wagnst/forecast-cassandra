@@ -9,25 +9,30 @@ import fourschlag.entities.tables.ForecastSalesEntity;
 import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Extends Request. Offers functionality to request product main groups and
  * sbus.
  */
-public class OrgStructureRequest extends Request {
+public class OrgStructureAndRegionRequest extends Request {
 
     private OrgStructureAccessor orgStructureAccessor;
     private ActualSalesAccessor actualSalesAccessor;
     private ForecastSalesAccessor forecastSalesAccessor;
+    private Set<String> productSet;
+    private Set<String> regionSet;
+    private Map<String, String> sbu;
 
     /**
-     * Constructor for OrgStructureRequest.
+     * Constructor for OrgStructureAndRegionRequest.
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public OrgStructureRequest(CassandraConnection connection) {
+    public OrgStructureAndRegionRequest(CassandraConnection connection) {
         super(connection);
         orgStructureAccessor = getManager().createAccessor(OrgStructureAccessor.class);
         actualSalesAccessor = getManager().createAccessor(ActualSalesAccessor.class);
@@ -40,7 +45,7 @@ public class OrgStructureRequest extends Request {
      * @return Result Iterable with multiple OrgStructure entities
      */
     private Result<OrgStructureEntity> getProductMainGroupsFromOrgStructure() {
-        return orgStructureAccessor.getProducts();
+        return orgStructureAccessor.getProductsAndSbus();
     }
 
     private Result<ActualSalesEntity> getProductMainGroupsFromActualSales() {
@@ -61,21 +66,47 @@ public class OrgStructureRequest extends Request {
     }
 
     public Set<String> getProductMainGroupsAsSetFromSales() {
-        Result<ActualSalesEntity> productsFromActualSales = getProductMainGroupsFromActualSales();
-        Result<ForecastSalesEntity> productsFromForecastSales = getProductMainGroupsFromForecastSales();
-        Set<String> productSet = new HashSet<>();
-        productsFromActualSales.forEach(product -> productSet.add(product.getProductMainGroup()));
-        productsFromForecastSales.forEach(product -> productSet.add(product.getProductMainGroup()));
-
+        if (productSet == null) {
+            getPmgAndRegionAsSetFromSales();
+        }
         return productSet;
     }
 
-    public String getSbu(String productMainGroup) {
-        OrgStructureEntity sbu = orgStructureAccessor.getSbu(productMainGroup);
-        if (sbu == null) {
-            return productMainGroup;
-        } else {
-            return sbu.getSbu();
+    public Set<String> getRegionsAsSetFromSales() {
+        if (regionSet == null) {
+            getPmgAndRegionAsSetFromSales();
         }
+        return regionSet;
+    }
+
+    private void getPmgAndRegionAsSetFromSales() {
+        Result<ActualSalesEntity> entitiesFromActualSales = getProductMainGroupsFromActualSales();
+        Result<ForecastSalesEntity> entitiesFromForecastSales = getProductMainGroupsFromForecastSales();
+        productSet = new HashSet<>();
+        regionSet = new HashSet<>();
+        for (ActualSalesEntity entity : entitiesFromActualSales) {
+            productSet.add(entity.getProductMainGroup());
+            regionSet.add(entity.getRegion());
+        }
+        for (ForecastSalesEntity entity : entitiesFromForecastSales) {
+            productSet.add(entity.getProductMainGroup());
+            regionSet.add(entity.getRegion());
+        }
+    }
+
+    public String getSbu(String productMainGroup) {
+        if (sbu == null) {
+            Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
+            sbu = new HashMap<String, String>() {{
+                for (OrgStructureEntity entity : queryResult) {
+                    put(entity.getProductMainGroup(), entity.getSbu());
+                }
+            }};
+        }
+        String returnValue = sbu.get(productMainGroup);
+        if (returnValue == null) {
+            return productMainGroup;
+        }
+        return returnValue;
     }
 }

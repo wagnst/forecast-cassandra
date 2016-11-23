@@ -2,9 +2,9 @@ package fourschlag.entities.types;
 
 public class Period {
 
-    private int year;
-    private int month;
-    private int period;
+    protected int year;
+    protected int month;
+    protected int period;
 
     public Period(int year, int month) {
         this.year = year;

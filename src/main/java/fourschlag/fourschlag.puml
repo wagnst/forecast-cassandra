@@ -99,7 +99,7 @@ package "fourschlag" {
                     +String : getToCurrency()
                 }
 
-                Class "KpiRequests" {
+                Abstract Class "KpiRequests" {
 
                 }
 
