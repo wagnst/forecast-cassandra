@@ -7,8 +7,10 @@ import fourschlag.entities.tables.FixedCostsEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
@@ -17,44 +19,18 @@ public class FixedCostsRequest extends KpiRequest {
     private final ActualFixedCostsAccessor actualAccessor;
     private final ForecastFixedCostsAccessor forecastAccessor;
 
-    private boolean actualFlag = false;
-    private boolean forecastFlag = false;
+    private static final String FC_TYPE = "fixed costs";
 
     public FixedCostsRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, planYear, currentPeriod, exchangeRates);
+        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
         /* TODO: get Region with orgAndRegionRequest */
 
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
-    }
-
-    /* TODO: Prepare filtered enum */
-
-    @Override
-    protected void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("fixed costs"))
-                .forEach(kpi -> map.put(kpi, new LinkedList<>()));
-    }
-
-    @Override
-    protected List<OutputDataType> prepareResultList(EntryType valueUsedInOutputDataType) {
-        return Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("fixed costs"))
-                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, monthlyKpiValues.get(kpi), bjValues.get(kpi)))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    protected void putValuesIntoMonthlyMap(Map<KeyPerformanceIndicators, Double> map) {
-        /* Add all KPI values to the monthly KPI value map */
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("fixed costs"))
-                .forEach(kpi -> monthlyKpiValues.get(kpi).add(map.get(kpi)));
     }
 
     /**
@@ -96,8 +72,7 @@ public class FixedCostsRequest extends KpiRequest {
 
         Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, new Period(zeroMonthPeriod));
 
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("fixed costs"))
+        Arrays.stream(kpiArray)
                 .forEach(kpi -> bjValues.get(kpi).add(map.get(kpi)));
     }
 
@@ -199,6 +174,8 @@ public class FixedCostsRequest extends KpiRequest {
             }
         }
 
+        /* TODO: add remaining fixed costs kpis */
+
         Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<>();
         resultMap.put(FIX_PRE_MAN_COST, fixPreManCost);
         resultMap.put(SHIP_COST, shipCost);
@@ -207,7 +184,19 @@ public class FixedCostsRequest extends KpiRequest {
         resultMap.put(IDLE_EQUIP_COST, idleEquipCost);
         resultMap.put(RD_COST, rdCost);
         resultMap.put(ADMIN_COST_BU, adminCostBu);
-        /*TODO: Finish... */
+        resultMap.put(ADMIN_COST_OD, adminCostOd);
+        resultMap.put(ADMIN_COST_COMPANY, adminCostCompany);
+        resultMap.put(OTHER_OP_COST_BU, otherOpCostBu);
+        resultMap.put(OTHER_OP_COST_OD, otherOpCostOd);
+        resultMap.put(OTHER_OP_COST_COMPANY, otherOpCostCompany);
+        resultMap.put(SPEC_ITEMS, specItems);
+        resultMap.put(PROVISIONS, provisions);
+        resultMap.put(CURRENCY_GAINS, currencyGains);
+        resultMap.put(VAL_ADJUST_INVENTORIES, valAdjustInventories);
+        resultMap.put(OTHER_FIX_COST, otherFixCost);
+        resultMap.put(DEPRECATION, depreciation);
+        resultMap.put(CAP_COST, capCost);
+        resultMap.put(EQUITY_INCOME, equityIncome);
 
         return resultMap;
     }

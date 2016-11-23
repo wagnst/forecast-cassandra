@@ -5,10 +5,8 @@ import fourschlag.entities.types.*;
 import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Extends Request. Contains HashMap that is used by all children of KpiRequest
@@ -17,11 +15,14 @@ import java.util.Map;
 public abstract class KpiRequest extends Request {
 
     protected final String sbu;
+    protected final String region;
     protected final Period planPeriod;
     protected final Period currentPeriod;
     protected final ExchangeRateRequest exchangeRates;
     protected boolean actualFlag = false;
     protected boolean forecastFlag = false;
+
+    protected final KeyPerformanceIndicators[] kpiArray;
 
     protected Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
     protected Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
@@ -31,18 +32,31 @@ public abstract class KpiRequest extends Request {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public KpiRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod, ExchangeRateRequest exchangeRates) {
+    public KpiRequest(CassandraConnection connection, String sbu, String region, int planYear, Period currentPeriod,
+                      ExchangeRateRequest exchangeRates, String fcType) {
         super(connection);
         this.sbu = sbu;
+        this.region = region;
         this.planPeriod = Period.getPeriodByYear(planYear);
         this.currentPeriod = currentPeriod;
         this.exchangeRates = exchangeRates;
+
+        this.kpiArray = filterKpiArray(fcType);
 
         fillMap(monthlyKpiValues);
         fillMap(bjValues);
     }
 
-    protected abstract void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map);
+    protected KeyPerformanceIndicators[] filterKpiArray(String fcType) {
+        return Arrays.stream(KeyPerformanceIndicators.values())
+                .filter(kpi -> kpi.getFcType().equals(fcType))
+                .toArray(KeyPerformanceIndicators[]::new);
+    }
+
+    protected void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
+        Arrays.stream(kpiArray)
+                .forEach(kpi -> map.put(kpi, new LinkedList<>()));
+    }
 
     public List<OutputDataType> calculateKpis() {
         List<OutputDataType> resultList = calculateKpis(null);
@@ -56,7 +70,7 @@ public abstract class KpiRequest extends Request {
      * @return List of OutputDataTypes that contain all KPIs for given
      * parameters
      */
-    protected List<OutputDataType> calculateKpis(EntryType entryType) {
+    private List<OutputDataType> calculateKpis(EntryType entryType) {
         /* Prepare result list that will be returned later */
         List<OutputDataType> resultList;
         Period tempPlanPeriod = new Period(planPeriod);
@@ -83,15 +97,15 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
 
-        resultList = prepareResultList(valueUsedInOutputDataType);
+        resultList = Arrays.stream(kpiArray)
+                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, monthlyKpiValues.get(kpi), bjValues.get(kpi)))
+                .collect(Collectors.toList());
 
         /* Reset the flags */
         actualFlag = false;
         forecastFlag = false;
         return resultList;
     }
-
-    protected abstract List<OutputDataType> prepareResultList(EntryType valueUsedInOutputDataType);
 
     protected void calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
         Entity queryResult;
@@ -114,10 +128,11 @@ public abstract class KpiRequest extends Request {
             }
         }
 
-        putValuesIntoMonthlyMap(validateQueryResult(queryResult, tempPlanPeriod));
+        Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, tempPlanPeriod);
+        /* Add all KPI values to the monthly KPI value map */
+        Arrays.stream(kpiArray)
+                .forEach(kpi -> monthlyKpiValues.get(kpi).add(map.get(kpi)));
     }
-
-    protected abstract void putValuesIntoMonthlyMap(Map<KeyPerformanceIndicators, Double> map);
 
     protected abstract Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity queryResult, Period tempPlanPeriod);
 

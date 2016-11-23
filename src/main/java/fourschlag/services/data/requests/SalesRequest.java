@@ -7,8 +7,10 @@ import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
@@ -19,10 +21,10 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 public class SalesRequest extends KpiRequest {
 
     private final String productMainGroup;
-    private final String region;
     private final SalesType salesType;
     private final ActualSalesAccessor actualAccessor;
     private final ForecastSalesAccessor forecastAccessor;
+    private static final String FC_TYPE = "sales";
 
     /**
      * Constructor for SalesRequest
@@ -40,37 +42,13 @@ public class SalesRequest extends KpiRequest {
     public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                         OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, orgAndRegionRequest.getSbu(productMainGroup), planYear , currentPeriod, exchangeRates);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planYear , currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
-        this.region = region;
         this.salesType = salesType;
 
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
-    }
-
-    @Override
-    protected void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("sales"))
-                .forEach(kpi -> map.put(kpi, new LinkedList<>()));
-    }
-
-    @Override
-    protected List<OutputDataType> prepareResultList(EntryType valueUsedInOutputDataType) {
-        return Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("sales"))
-                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, monthlyKpiValues.get(kpi), bjValues.get(kpi)))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    protected void putValuesIntoMonthlyMap(Map<KeyPerformanceIndicators, Double> map) {
-        /* Add all KPI values to the monthly KPI value map */
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("sales"))
-                .forEach(kpi -> monthlyKpiValues.get(kpi).add(map.get(kpi)));
     }
 
     /**
@@ -147,8 +125,7 @@ public class SalesRequest extends KpiRequest {
 
         Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, new Period(zeroMonthPeriod));
 
-        Arrays.stream(KeyPerformanceIndicators.values())
-                .filter(kpi -> kpi.getFcType().equals("sales"))
+        Arrays.stream(kpiArray)
                 .forEach(kpi -> bjValues.get(kpi).add(map.get(kpi)));
     }
 
@@ -211,6 +188,7 @@ public class SalesRequest extends KpiRequest {
         }
 
         Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<>();
+
         resultMap.put(SALES_VOLUME, salesVolume);
         resultMap.put(NET_SALES, netSales);
         resultMap.put(CM1, cm1);

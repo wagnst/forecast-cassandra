@@ -4,9 +4,11 @@ import com.datastax.driver.mapping.Result;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.accessors.OrgStructureAccessor;
+import fourschlag.entities.accessors.RegionAccessor;
 import fourschlag.entities.tables.ActualSalesEntity;
 import fourschlag.entities.tables.ForecastSalesEntity;
 import fourschlag.entities.tables.OrgStructureEntity;
+import fourschlag.entities.tables.RegionEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;
@@ -23,9 +25,11 @@ public class OrgStructureAndRegionRequest extends Request {
     private OrgStructureAccessor orgStructureAccessor;
     private ActualSalesAccessor actualSalesAccessor;
     private ForecastSalesAccessor forecastSalesAccessor;
+    private RegionAccessor regionAccessor;
     private Set<String> productSet;
     private Set<String> regionSet;
     private Map<String, String> sbu;
+    private Map<String, String> region;
 
     /**
      * Constructor for OrgStructureAndRegionRequest.
@@ -37,6 +41,7 @@ public class OrgStructureAndRegionRequest extends Request {
         orgStructureAccessor = getManager().createAccessor(OrgStructureAccessor.class);
         actualSalesAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastSalesAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+        regionAccessor = getManager().createAccessor(RegionAccessor.class);
     }
 
     /**
@@ -106,6 +111,22 @@ public class OrgStructureAndRegionRequest extends Request {
         String returnValue = sbu.get(productMainGroup);
         if (returnValue == null) {
             return productMainGroup;
+        }
+        return returnValue;
+    }
+
+    public String getRegion(String subregion) {
+        if (region == null) {
+            Result<RegionEntity> queryResult = regionAccessor.getSubregions();
+            region = new HashMap<String, String>() {{
+                for (RegionEntity entity : queryResult) {
+                    put(entity.getSubregion(), entity.getRegion());
+                }
+            }};
+        }
+        String returnValue = region.get(subregion);
+        if (returnValue == null) {
+            return subregion;
         }
         return returnValue;
     }

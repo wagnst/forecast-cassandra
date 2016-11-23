@@ -1,7 +1,6 @@
 package fourschlag.entities.types;
 
 public enum KeyPerformanceIndicators {
-    /* TODO: inherited enum for each sales and fixed costs kpis */
     SALES_VOLUME(1, "sales", "Sales Volumes", "mt"),
     NET_SALES(2, "sales", "Net Sales", "k€"),
     CM1(3, "sales", "CM1", "k€"),
