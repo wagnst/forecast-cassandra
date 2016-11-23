@@ -6,7 +6,7 @@ http://plantuml.com/class-diagram '/
 title
  <b>Class diagram of <u>FourSchlag</u> project</b>
  <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
- <i>Version:</i> <b>DRAFT</b>, 14th Nov 2016
+ <i>Version:</i> <b>DRAFT</b>, 23th Nov 2016
  <i>Author:</i> Steffen Wagner
 end title
 
@@ -48,6 +48,9 @@ package "fourschlag" {
             }
 
             Enum "SalesType" {
+            }
+
+            Class "ZeroMonthPeriod" {
             }
         }
 
@@ -103,13 +106,9 @@ package "fourschlag" {
 
                 }
 
-                Class "OrgStructureRequest" {
-                    +Result<OrgStructureEntity> : getProductMainGroups()
-                }
-
-                Class "RegionRequest" {
-                     +Result<RegionEntity> : getSubregions()
-                     +Set<String> : getRegions()
+                Class "OrgStructureAndRegionRequest" {
+                    +Set<String> : getRegionsAsSetFromSales()
+                    +Set<String> : getProductMainGroupsAsSetFromSales()
                 }
 
                 Class "Request" {
@@ -126,8 +125,7 @@ package "fourschlag" {
                 KpiRequests <|-- SalesRequest
 
                 ' inherits for Request
-                Request <|-- OrgStructureRequest
-                Request <|-- RegionRequest
+                Request <|-- OrgStructureAndRegionRequest
 
                 ' ExchangeRateRequest gets data from ExchangeRateAccessor
                 ExchangeRateRequest *-- ExchangeRateAccessor : use
@@ -156,8 +154,7 @@ package "fourschlag" {
             ' internal uses of SalesService
             SalesService *-- SalesRequest : use
             SalesService *-- ExchangeRateRequest : use
-            SalesService *-- OrgStructureRequest : use
-            SalesService *-- RegionRequest : use
+            SalesService *-- OrgStructureAndRegionRequest : use
             SalesService *-- Period : use
             SalesService *-- OutputDataType : use
             SalesService *-- SalesType : use
