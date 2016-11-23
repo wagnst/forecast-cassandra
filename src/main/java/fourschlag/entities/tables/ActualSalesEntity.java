@@ -22,7 +22,6 @@ public class ActualSalesEntity extends SalesEntity {
     @Column(name = "period_quarter")
     private int periodQuarter;
 
-
     public ActualSalesEntity() {
     }
 

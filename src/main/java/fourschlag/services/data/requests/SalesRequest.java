@@ -2,9 +2,9 @@ package fourschlag.services.data.requests;
 
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
+import fourschlag.entities.tables.Entity;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
-import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.*;
@@ -19,16 +19,10 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 public class SalesRequest extends KpiRequest {
 
     private final String productMainGroup;
-    private final String sbu;
-    private final Period planPeriod;
-    private final Period currentPeriod;
     private final String region;
     private final SalesType salesType;
-    private final ExchangeRateRequest exchangeRates;
     private final ActualSalesAccessor actualAccessor;
     private final ForecastSalesAccessor forecastAccessor;
-    private boolean actualFlag = false;
-    private boolean forecastFlag = false;
 
     /**
      * Constructor for SalesRequest
@@ -46,17 +40,11 @@ public class SalesRequest extends KpiRequest {
     public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                         OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), planYear , currentPeriod, exchangeRates);
         this.productMainGroup = productMainGroup;
-        this.planPeriod = Period.getPeriodByYear(planYear);
-        this.currentPeriod = currentPeriod;
         this.region = region;
         this.salesType = salesType;
-        this.exchangeRates = exchangeRates;
 
-        System.out.println(productMainGroup + " " + region + " " + salesType);
-        /* TODO: Avoid creating new OrgStructureAndRegionRequest every time */
-        this.sbu = orgAndRegionRequest.getSbu(productMainGroup);
         /* Create needed accessors to be able to do queries */
         actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
@@ -69,83 +57,16 @@ public class SalesRequest extends KpiRequest {
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
     }
 
-    public List<OutputDataType> calculateSalesKpis() {
-        List<OutputDataType> resultList = calculateSalesKpis(null);
-        resultList.addAll(calculateSalesKpis(EntryType.BUDGET));
-        return resultList;
-    }
-
-    /**
-     * Calculates sales KPIs for the attributes saved in this request
-     *
-     * @return List of OutputDataTypes that contain all KPIs for given
-     * parameters
-     */
-    private List<OutputDataType> calculateSalesKpis(EntryType entryType) {
-        /* Prepare result list that will be returned later */
-        List<OutputDataType> resultList;
-        Period tempPlanPeriod = new Period(planPeriod);
-
-        /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
-        for (int i = 0; i < Service.getNumberOfMonths(); i++) {
-            calculateSalesKpisForSpecificMonth(tempPlanPeriod, entryType);
-            tempPlanPeriod.increment();
-        }
-
-        Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
-        for (int i = 0; i < Service.getNumberOfBj(); i++) {
-            calculateBj(bjPeriod);
-            /* Jump to the next zeroMonthPeriod */
-            bjPeriod.increment();
-        }
-
-        final EntryType  valueUsedInOutputDataType;
-        if(entryType != EntryType.BUDGET) {
-            valueUsedInOutputDataType = setEntryTypeWithFlags();
-        } else {
-            valueUsedInOutputDataType = EntryType.BUDGET;
-        }
-
-        /* All the values are put together in OutputDataType objects and are added to the result list */
-
-        resultList = Arrays.stream(KeyPerformanceIndicators.values())
+    @Override
+    protected List<OutputDataType> prepareResultList(EntryType valueUsedInOutputDataType) {
+        return Arrays.stream(KeyPerformanceIndicators.values())
                 .filter(kpi -> kpi.getFcType().equals("sales"))
                 .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, monthlyKpiValues.get(kpi), bjValues.get(kpi)))
                 .collect(Collectors.toList());
-
-        /* Reset the flags */
-        actualFlag = false;
-        forecastFlag = false;
-        return resultList;
     }
 
-    /**
-     * Private method to get KPIs for exactly one period
-     */
-    private void calculateSalesKpisForSpecificMonth(Period tempPlanPeriod, EntryType entryType) {
-        SalesEntity queryResult;
-
-        if(entryType == EntryType.BUDGET) {
-            queryResult = getBudgetData(tempPlanPeriod);
-        } else {
-            if (tempPlanPeriod.getPeriod() < currentPeriod.getPreviousPeriod()) {
-                queryResult = getActualData(tempPlanPeriod);
-            } else if (tempPlanPeriod.getPeriod() == currentPeriod.getPreviousPeriod()) {
-                queryResult = getActualData(tempPlanPeriod);
-                if (queryResult == null) {
-                    queryResult = getForecastData(tempPlanPeriod, EntryType.FORECAST);
-                }
-            } else {
-                queryResult = getForecastData(tempPlanPeriod, EntryType.FORECAST);
-            }
-        }
-        /* IF plan period is in the past compared to current period THEN get data from the actual sales table
-         * ELSE get data from the forecast table
-         */
-
-
-        Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, tempPlanPeriod);
-
+    @Override
+    protected void putValuesIntoMonthlyMap(Map<KeyPerformanceIndicators, Double> map) {
         /* Add all KPI values to the monthly KPI value map */
         Arrays.stream(KeyPerformanceIndicators.values())
                 .filter(kpi -> kpi.getFcType().equals("sales"))
@@ -157,7 +78,8 @@ public class SalesRequest extends KpiRequest {
      *
      * @return SalesEntity Object with query result
      */
-    private SalesEntity getActualData(Period tempPlanPeriod) {
+    @Override
+    protected SalesEntity getActualData(Period tempPlanPeriod) {
         /* Set this flag to true, so the entry type can be set correctly later */
         actualFlag = true;
         /* Send query to the database with data source BW B */
@@ -181,7 +103,8 @@ public class SalesRequest extends KpiRequest {
      *
      * @return SalesEntity Object with query result
      */
-    private SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
+    @Override
+    protected SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         return forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
@@ -197,25 +120,28 @@ public class SalesRequest extends KpiRequest {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         /* TODO: Currency conversion */
-        SalesEntity cm1 =  forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+        SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
 
-        if(cm1 == null) {
+        if (cm1 == null) {
             return 0;
         }
         return cm1.getCm1();
     }
 
-    private SalesEntity getBudgetData(Period tempPlanPeriod) {
+    @Override
+    protected SalesEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getSalesKpis(productMainGroup, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
                 region, salesType.toString(), EntryType.BUDGET.toString());
     }
 
     /**
      * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
-    private void calculateBj(Period zeroMonthPeriod) {
+    @Override
+    protected void calculateBj(Period zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
@@ -229,11 +155,13 @@ public class SalesRequest extends KpiRequest {
     /**
      * Private method to validate a query result.
      *
-     * @param queryResult The query result that will be validated
+     * @param result    The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
      * @return Map with all the values for the sales KPIs
      */
-    private Map<KeyPerformanceIndicators, Double> validateQueryResult(SalesEntity queryResult, Period tempPlanPeriod) {
+    @Override
+    protected Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity result, Period tempPlanPeriod) {
+        SalesEntity queryResult = (SalesEntity)result;
         /* Prepare the kpi variables */
         double salesVolume;
         double netSales;
@@ -300,30 +228,14 @@ public class SalesRequest extends KpiRequest {
      * @param kpi           KPI that is supposed to be set in the
      *                      OutputDataType
      * @param monthlyValues The monthly values for the KPI
-     *
      * @return OutputDataType object
      */
-    private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
+    @Override
+    protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                 LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);
-    }
-
-    /**
-     * Sets the entry type of this request
-     */
-    private EntryType setEntryTypeWithFlags() {
-        /* IF both flags are set true THEN set entry type to actual/forecast
-         * ELSE IF only the forecast flag is set true THEN set entry type to forecast
-         * ELSE set entry type to actual*/
-        if (actualFlag && forecastFlag) {
-            return EntryType.ACTUAL_FORECAST;
-        } else if (forecastFlag) {
-            return EntryType.FORECAST;
-        } else {
-            return EntryType.ACTUAL;
-        }
     }
 
 }
