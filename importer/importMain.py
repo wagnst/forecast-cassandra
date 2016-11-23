@@ -1,9 +1,11 @@
 # coding=utf-8
+# xlrd muss installiert werden!
 import argparse
 import csv
 import os
 import xlrd
 import subprocess
+
 
 # Funktion für Parser
 def inputpath_and_tablename(s):
@@ -27,7 +29,7 @@ args = parser.parse_args()
 
 # todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
 # Konstanten, die je nachdem wo das Script liegt befüllt werden müssen:
-PATH_CSV_OUTPUT = '/Users/katharinaspinner/PycharmProjects/uiidForCSV/Import/csv_output/'
+PATH_CSV_OUTPUT = '/Users/katharinaspinner/IdeaProjects/fourschlag/importer/csv_output/'
 CQLSH_BINARY = "/usr/local/bin/cqlsh"
 
 # Konstanten
@@ -94,7 +96,7 @@ FORECAST_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST doubl
                                 'PLAN_YEAR int, PLAN_HALF_YEAR int, PLAN_QUARTER int, PLAN_MONTH int, CURRENCY varchar, ' \
                                 'STATUS varchar, USERCOMMENT text, USERID varchar, ENTRY_TS varchar, ' \
                                 'ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, EQUITY_INCOME double, ' \
-                                'PRIMARY KEY(SBU, SUBREGION, ENTRY_TYPE, PLAN_PERIOD));'
+                                'PRIMARY KEY(SBU, SUBREGION, PERIOD, ENTRY_TYPE, PLAN_PERIOD));'
 
 CREATE_KEY_SPACE = "CREATE KEYSPACE IF NOT EXISTS"
 CREATE_KEY_SPACE_SUB = "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
@@ -125,7 +127,6 @@ table_creation_params = {
 }
 
 firstlistelement_of_inputfiles = args.inputfile[0]
-csv_output_list = os.listdir(PATH_CSV_OUTPUT)
 
 
 # Allgemeine Funktionen
@@ -229,6 +230,7 @@ def transformation_and_validation():
     # Validiert die csv
     counter = 0
     for val in firstlistelement_of_inputfiles:
+        csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
         validate_csv(csv_output_list[counter], second_value_from_tuple)
         counter += 1
@@ -242,10 +244,11 @@ def fileimport():
 
     counter = 0
     for val in firstlistelement_of_inputfiles:
+        csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
         csv_path = PATH_CSV_OUTPUT + csv_output_list[counter]
         import_file(args.keyspace, second_value_from_tuple, table_params[second_value_from_tuple], csv_path)
-        counter +=1
+        counter += 1
 
 
 def main():
