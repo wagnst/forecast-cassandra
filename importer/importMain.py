@@ -1,5 +1,6 @@
 # coding=utf-8
 # Anleitung:
+# Python 3.5 verwenden
 # xlrd muss installiert werden!
 # der Ordner csv_output muss erstellt werden
 # todo csv header validierung überarbeiten
@@ -25,6 +26,7 @@ def inputpath_and_tablename(s):
         return x, y
     except:
         raise argparse.ArgumentTypeError("Error: format must be inputpath,tablename")
+
 
 # Parser
 parser = argparse.ArgumentParser()
@@ -98,16 +100,16 @@ ACTUAL_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST double,
                                     'ENTRY_TS varchar, ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, ' \
                                     'EQUITY_INCOME double, PRIMARY KEY (SBU, PERIOD, SUBREGION));'
 FORECAST_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST double, SELL_COST double, ' \
-                                'DIFF_ACT_PRE_MAN_COST double, IDLE_EQUIP_COST double, RD_COST double, ' \
-                                'ADMIN_COST_BU double, ADMIN_COST_OD double, OTHER_OP_COST_BU double, ' \
-                                'OTHER_OP_COST_OD double, SPEC_ITEMS double, PROVISIONS double, CURRENCY_GAINS double, ' \
-                                'VAL_ADJUST_INVENTORIES double, OTHER_FIX_COST double, TOPDOWN_ADJUST_FIX_COSTS double, ' \
-                                'DEPRECIATION double, CAP_COST double, SBU varchar, REGION varchar, SUBREGION varchar, ' \
-                                'ENTRY_TYPE varchar, PERIOD int, PERIOD_YEAR int, PERIOD_MONTH int, PLAN_PERIOD int, ' \
-                                'PLAN_YEAR int, PLAN_HALF_YEAR int, PLAN_QUARTER int, PLAN_MONTH int, CURRENCY varchar, ' \
-                                'STATUS varchar, USERCOMMENT text, USERID varchar, ENTRY_TS varchar, ' \
-                                'ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, EQUITY_INCOME double, ' \
-                                'PRIMARY KEY(SBU, SUBREGION, PERIOD, ENTRY_TYPE, PLAN_PERIOD));'
+                                      'DIFF_ACT_PRE_MAN_COST double, IDLE_EQUIP_COST double, RD_COST double, ' \
+                                      'ADMIN_COST_BU double, ADMIN_COST_OD double, OTHER_OP_COST_BU double, ' \
+                                      'OTHER_OP_COST_OD double, SPEC_ITEMS double, PROVISIONS double, CURRENCY_GAINS double, ' \
+                                      'VAL_ADJUST_INVENTORIES double, OTHER_FIX_COST double, TOPDOWN_ADJUST_FIX_COSTS double, ' \
+                                      'DEPRECIATION double, CAP_COST double, SBU varchar, REGION varchar, SUBREGION varchar, ' \
+                                      'ENTRY_TYPE varchar, PERIOD int, PERIOD_YEAR int, PERIOD_MONTH int, PLAN_PERIOD int, ' \
+                                      'PLAN_YEAR int, PLAN_HALF_YEAR int, PLAN_QUARTER int, PLAN_MONTH int, CURRENCY varchar, ' \
+                                      'STATUS varchar, USERCOMMENT text, USERID varchar, ENTRY_TS varchar, ' \
+                                      'ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, EQUITY_INCOME double, ' \
+                                      'PRIMARY KEY(SBU, SUBREGION, PERIOD, ENTRY_TYPE, PLAN_PERIOD));'
 
 CREATE_KEY_SPACE = "CREATE KEYSPACE IF NOT EXISTS"
 CREATE_KEY_SPACE_SUB = "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
@@ -144,12 +146,12 @@ firstlistelement_of_inputfiles = args.inputfile[0]
 def validate_path(s):
     try:
         os.stat(s)
-        print "The path %s exists." % s
+        print("The path %s exists." % s)
     except OSError:
-        print "The path %s does not exist." % s
+        print("The path %s does not exist." % s)
         exit('Canceled: path %s for import does not exist or is not valid (whitespaces or special characters)' % s)
     if s[-4:] == '.xls' or s[-5:] == '.xlsx':
-        print "The filetyp is valid."
+        print("The filetyp is valid.")
     else:
         exit('Wrong datatype. Please import .xls or .xlsx .')
 
@@ -158,18 +160,18 @@ def validate_tablenames(s):
     try:
         table_params[s]
     except KeyError:
-        print 'The tablename %s is not valid.' % s
+        print('The tablename %s is not valid.' % s)
         exit('Canceled: please use the following tablenames: %s' % table_params.keys())
 
 
 def validate_csv(s, t):
     reader = csv.reader(open(PATH_CSV_OUTPUT + s, 'r'), delimiter=',')
     headerfromcsv = next(reader)
-    validation = cmp(headerfromcsv, table_params[t].upper().split(', '))
+    validation = (headerfromcsv > table_params[t].upper().split(', ')) - \
+                 (table_params[t].upper().split(', ') < headerfromcsv)
     if validation == 0:
         return True
     else:
-        print
         exit('Canceled: CSV Header from %s isn\'t valide!' % s)
 
 
@@ -183,7 +185,7 @@ def xls_to_csv(s, t):
         worksheet = workbook.sheet_by_name(worksheet_name)
         csv_file = open(PATH_CSV_OUTPUT + t + '.csv', 'wb')
         wr = csv.writer(csv_file, quoting=csv.QUOTE_NONE)
-        for rownum in xrange(worksheet.nrows):
+        for rownum in range(worksheet.nrows):
             wr.writerow([unicode(entry).encode("utf-8") for entry in worksheet.row_values(rownum)])
         csv_file.close()
 
@@ -206,7 +208,7 @@ def test_databaseconnection():
     databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
 
     if databaseconnection_exit_code == 0:
-        print 'Databaseconnection is runnig.'
+        print('Databaseconnection is runnig.')
     else:
         exit('Databaseconnection is not possible!')
 
@@ -214,21 +216,21 @@ def test_databaseconnection():
 def create_keyspace():
     temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
     subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
-    print 'Datatbase %s was created or already exists.' % args.keyspace
+    print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
 def create_table(s, t, u):
     temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + s + '.' + t + u
     subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
-    print 'Table %s was created or already exists.' % t
+    print('Table %s was created or already exists.' % t)
 
 
 def import_file(s, t, u, v):
-    temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + s + '.' + t + '(' + u + ') ' + IMPORT_FILE_SUB +\
+    temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + s + '.' + t + '(' + u + ') ' + IMPORT_FILE_SUB + \
                       ' \'' + v + '\' ' + IMPORT_FILE_SUB_SUB
     with open(os.devnull, "w") as f:
         subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
-        print 'File %s was successfully imported' % v
+        print('File %s was successfully imported' % v)
 
 
 def transformation_and_validation():
@@ -245,7 +247,7 @@ def transformation_and_validation():
         second_value_from_tuple = val[1]
         validate_tablenames(second_value_from_tuple)
 
-    print time.clock()
+    print(time.clock())
 
     # Konvertiert das xlsx oder xls zu csv
     for val in firstlistelement_of_inputfiles:
@@ -253,7 +255,7 @@ def transformation_and_validation():
         second_value_from_tuple = val[1]
         xls_to_csv(first_value_from_tuple, second_value_from_tuple)
 
-    print time.clock()
+    print(time.clock())
 
     # Validiert die csv
     for val in firstlistelement_of_inputfiles:
@@ -284,9 +286,9 @@ def main():
         transformation_and_validation()
         fileimport()
     finally:
-        clear_csvoutput()
-        print 'cleaned up!'
-        print time.clock()
+        #clear_csvoutput()
+        print('cleaned up!')
+        print(time.clock())
 
 
 # Aufruf von Main
