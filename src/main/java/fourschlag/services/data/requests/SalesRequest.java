@@ -7,6 +7,7 @@ import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -136,62 +137,41 @@ public class SalesRequest extends KpiRequest {
     protected Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity result, Period tempPlanPeriod) {
         SalesEntity queryResult = (SalesEntity)result;
         /* Prepare the kpi variables */
-        double salesVolume;
-        double netSales;
-        double cm1;
-        double price;
-        double varCost;
-        double cm1Specific;
-        double cm1Percent;
+        Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<KeyPerformanceIndicators, Double>(){{
+            Arrays.stream(kpiArray)
+                    .forEach(kpi -> put(kpi, 0.0));
+        }};
 
         /* IF the result of the query is empty THEN set these KPIs to 0
          * ELSE get the values from the query result
          */
         if (queryResult == null) {
-            salesVolume = 0;
-            netSales = 0;
-            cm1 = 0;
         } else {
-            salesVolume = queryResult.getSalesVolumes();
-            netSales = queryResult.getNetSales();
-            cm1 = queryResult.getCm1();
+            resultMap.put(SALES_VOLUME, queryResult.getSalesVolumes());
+            resultMap.put(NET_SALES, queryResult.getNetSales());
+            resultMap.put(CM1, queryResult.getCm1());
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
                 double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
-                salesVolume *= exchangeRate;
-                netSales *= exchangeRate;
-                cm1 *= exchangeRate;
+
+                for (KeyPerformanceIndicators kpi : resultMap.keySet()) {
+                    resultMap.put(kpi, resultMap.get(kpi) * exchangeRate);
+                }
             }
         }
 
-         /* IF sales volume is 0 THEN these other KPIs are 0 too*/
-        if (salesVolume == 0) {
-            price = 0;
-            varCost = 0;
-            cm1Specific = 0;
-        } else {
-            price = netSales / salesVolume * 1000;
-            varCost = (netSales - cm1) * 1000 / salesVolume;
-            cm1Specific = cm1 / salesVolume * 1000;
+         /* IF sales volume is not 0 THEN calculate these other KPIs */
+        if (resultMap.get(SALES_VOLUME) != 0) {
+            resultMap.put(PRICE, resultMap.get(NET_SALES) / resultMap.get(SALES_VOLUME) * 1000);
+            resultMap.put(VAR_COSTS, (resultMap.get(NET_SALES) - resultMap.get(CM1)) * 1000 / resultMap.get(SALES_VOLUME));
+            resultMap.put(CM1_SPECIFIC, resultMap.get(CM1) / resultMap.get(SALES_VOLUME) * 1000);
         }
 
-        /* IF net sales is 0 THEN this other KPI is 0 too */
-        if (netSales == 0) {
-            cm1Percent = 0;
-        } else {
-            cm1Percent = cm1 / netSales;
+        /* IF net sales is not 0 THEN calculate these other KPIs  */
+        if (resultMap.get(NET_SALES) != 0) {
+            resultMap.put(CM1_PERCENT, resultMap.get(CM1) / resultMap.get(NET_SALES));
         }
-
-        Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<>();
-
-        resultMap.put(SALES_VOLUME, salesVolume);
-        resultMap.put(NET_SALES, netSales);
-        resultMap.put(CM1, cm1);
-        resultMap.put(PRICE, price);
-        resultMap.put(VAR_COSTS, varCost);
-        resultMap.put(CM1_SPECIFIC, cm1Specific);
-        resultMap.put(CM1_PERCENT, cm1Percent);
 
         return resultMap;
     }

@@ -9,9 +9,8 @@ import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Extends Service. Provides functionality to get sales KPIs
@@ -40,9 +39,9 @@ public class SalesService extends Service {
      * @return List of the OutputDataTypes that contain all KPIs for the given
      * parameters
      */
-    public List<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
+    public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
         /* Prepare result list that will be returned later */
-        List<OutputDataType> resultList;
+        Stream<OutputDataType> resultStream;
 
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
@@ -58,15 +57,14 @@ public class SalesService extends Service {
         Period currentPeriod = new Period(currentPeriodInt);
 
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
-        resultList = products.stream().parallel()
+        resultStream = products.stream().parallel()
                 .flatMap(product -> regions.stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
                                         product, planYear, currentPeriod, region, salesType,
-                                        exchangeRates, orgAndRegionRequest).calculateKpis().stream())))
-                .collect(Collectors.toList());
+                                        exchangeRates, orgAndRegionRequest).calculateKpis())));
 
         /* Finally the result list will be returned */
-        return resultList;
+        return resultStream;
     }
 }

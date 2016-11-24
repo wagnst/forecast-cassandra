@@ -5,8 +5,11 @@ import fourschlag.entities.types.*;
 import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Extends Request. Contains HashMap that is used by all children of KpiRequest
@@ -58,10 +61,9 @@ public abstract class KpiRequest extends Request {
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
     }
 
-    public List<OutputDataType> calculateKpis() {
-        List<OutputDataType> resultList = calculateKpis(null);
-        resultList.addAll(calculateKpis(EntryType.BUDGET));
-        return resultList;
+    public Stream<OutputDataType> calculateKpis() {
+        return calculateKpis(null)
+                .flatMap(result -> calculateKpis(EntryType.BUDGET));
     }
 
     /**
@@ -70,9 +72,9 @@ public abstract class KpiRequest extends Request {
      * @return List of OutputDataTypes that contain all KPIs for given
      * parameters
      */
-    private List<OutputDataType> calculateKpis(EntryType entryType) {
+    private Stream<OutputDataType> calculateKpis(EntryType entryType) {
         /* Prepare result list that will be returned later */
-        List<OutputDataType> resultList;
+        Stream<OutputDataType> resultStream;
 
         Period tempPlanPeriod = new Period(planPeriod);
 
@@ -108,14 +110,13 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
 
-        resultList = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)))
-                .collect(Collectors.toList());
+        resultStream = Arrays.stream(kpiArray)
+                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 
         /* Reset the flags */
         actualFlag = false;
         forecastFlag = false;
-        return resultList;
+        return resultStream;
     }
 
     private Map<KeyPerformanceIndicators, Double> calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
