@@ -16,8 +16,6 @@ public enum ClusterEndpoints {
     DEV("127.0.0.1", "", "");
 
     private final String address;
-
-
     private final String username;
     private final String password;
 
