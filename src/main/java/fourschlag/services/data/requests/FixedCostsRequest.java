@@ -66,137 +66,71 @@ public class FixedCostsRequest extends KpiRequest {
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     @Override
-    protected void calculateBj(Period zeroMonthPeriod) {
+    protected Map<KeyPerformanceIndicators, Double> calculateBj(Period zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
-        Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, new Period(zeroMonthPeriod));
-
-        Arrays.stream(kpiArray)
-                .forEach(kpi -> bjValues.get(kpi).add(map.get(kpi)));
+        return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
     @Override
     protected Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity result, Period tempPlanPeriod) {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
         /* Prepare the kpi variables */
-        double fixPreManCost;
-        double shipCost;
-        double sellCost;
-        double diffActPreManCost;
-        double idleEquipCost;
-        double rdCost;
-        double adminCostBu;
-        double adminCostOd;
-        double adminCostCompany;
-        double otherOpCostBu;
-        double otherOpCostOd;
-        double otherOpCostCompany;
-        double specItems;
-        double provisions;
-        double currencyGains;
-        double valAdjustInventories;
-        double otherFixCost;
-        double depreciation;
-        double capCost;
-        double equityIncome;
+        Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<KeyPerformanceIndicators, Double>(){{
+            Arrays.stream(kpiArray)
+                    .forEach(kpi -> put(kpi, 0.0));
+        }};
 
-        /* IF the result of the query is empty THEN set these KPIs to 0
-         * ELSE get the values from the query result
-         */
-        if (queryResult == null) {
-            fixPreManCost = 0;
-            shipCost = 0;
-            sellCost = 0;
-            diffActPreManCost = 0;
-            idleEquipCost = 0;
-            rdCost = 0;
-            adminCostBu = 0;
-            adminCostOd = 0;
-            adminCostCompany = 0;
-            otherOpCostBu = 0;
-            otherOpCostOd = 0;
-            otherOpCostCompany = 0;
-            specItems = 0;
-            provisions = 0;
-            currencyGains = 0;
-            valAdjustInventories = 0;
-            otherFixCost = 0;
-            depreciation = 0;
-            capCost = 0;
-            equityIncome = 0;
-        } else {
-            fixPreManCost = queryResult.getFixPreManCost();
-            shipCost = queryResult.getShipCost();
-            sellCost = queryResult.getSellCost();
-            diffActPreManCost = queryResult.getDiffActPreManCost();
-            idleEquipCost = queryResult.getIdleEquipCost();
-            rdCost = queryResult.getRdCost();
-            adminCostBu = queryResult.getAdminCostBu();
-            adminCostOd = queryResult.getAdminCostOd();
-            adminCostCompany = queryResult.getAdminCostCompany();
-            otherOpCostBu = queryResult.getOtherOpCostBu();
-            otherOpCostOd = queryResult.getOtherOpCostOd();
-            otherOpCostCompany = queryResult.getOtherOpCostCompany();
-            specItems = queryResult.getSpecItems();
-            provisions = queryResult.getProvisions();
-            currencyGains = queryResult.getCurrencyGains();
-            valAdjustInventories = queryResult.getValAdjustInventories();
-            otherFixCost = queryResult.getOtherFixCost();
-            depreciation = queryResult.getDepreciation();
-            capCost = queryResult.getCapCost();
-            equityIncome = queryResult.getEquityIncome();
+        /* IF the result of the query is not empty THEN get the values from the query result */
+        if (queryResult != null) {
+            resultMap.put(FIX_PRE_MAN_COST, queryResult.getFixPreManCost());
+            resultMap.put(SHIP_COST, queryResult.getShipCost());
+            resultMap.put(SELL_COST, queryResult.getSellCost());
+            resultMap.put(DIFF_ACT_PRE_MAN_COST, queryResult.getDiffActPreManCost());
+            resultMap.put(IDLE_EQUIP_COST, queryResult.getIdleEquipCost());
+
+            /* TODO: Check alternative with saving each kpi to a double variable first, instead of getting them all from the map */
+            double fixCostBetweenCm1Cm2 = resultMap.get(FIX_PRE_MAN_COST) + resultMap.get(SHIP_COST) +
+                    resultMap.get(SELL_COST) + resultMap.get(DIFF_ACT_PRE_MAN_COST) + resultMap.get(IDLE_EQUIP_COST);
+
+            resultMap.put(FIX_COST_BETWEEN_CM1_CM2, fixCostBetweenCm1Cm2);
+            resultMap.put(RD_COST, queryResult.getRdCost());
+            resultMap.put(ADMIN_COST_BU, queryResult.getAdminCostBu());
+            resultMap.put(ADMIN_COST_OD, queryResult.getAdminCostOd());
+            resultMap.put(ADMIN_COST_COMPANY, queryResult.getAdminCostCompany());
+            resultMap.put(OTHER_OP_COST_BU, queryResult.getOtherOpCostBu());
+            resultMap.put(OTHER_OP_COST_OD, queryResult.getOtherOpCostOd());
+            resultMap.put(OTHER_OP_COST_COMPANY, queryResult.getOtherOpCostCompany());
+            resultMap.put(SPEC_ITEMS, queryResult.getSpecItems());
+            resultMap.put(PROVISIONS, queryResult.getProvisions());
+            resultMap.put(CURRENCY_GAINS, queryResult.getCurrencyGains());
+            resultMap.put(VAL_ADJUST_INVENTORIES, queryResult.getValAdjustInventories());
+            resultMap.put(OTHER_FIX_COST, queryResult.getOtherFixCost());
+
+            double fixCostBelowCm2 = resultMap.get(RD_COST) + resultMap.get(ADMIN_COST_BU) +
+                    resultMap.get(ADMIN_COST_OD) + resultMap.get(ADMIN_COST_COMPANY) + resultMap.get(OTHER_OP_COST_BU) +
+                    resultMap.get(OTHER_OP_COST_OD) + resultMap.get(OTHER_OP_COST_COMPANY) + resultMap.get(SPEC_ITEMS) +
+                    resultMap.get(PROVISIONS) + resultMap.get(CURRENCY_GAINS) + resultMap.get(VAL_ADJUST_INVENTORIES) +
+                    resultMap.get(OTHER_FIX_COST);
+
+            resultMap.put(FIX_COST_BELOW_CM2, fixCostBelowCm2);
+            resultMap.put(TOTAL_FIX_COST, fixCostBetweenCm1Cm2 + fixCostBelowCm2);
+            resultMap.put(DEPRECATION, queryResult.getDepreciation());
+            resultMap.put(CAP_COST, queryResult.getCapCost());
+            resultMap.put(EQUITY_INCOME, queryResult.getEquityIncome());
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
                 double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
-                /* TODO: Loop maybe? :D */
-                fixPreManCost *= exchangeRate;
-                shipCost *= exchangeRate;
-                sellCost *= exchangeRate;
-                diffActPreManCost *= exchangeRate;
-                idleEquipCost *= exchangeRate;
-                rdCost *= exchangeRate;
-                adminCostBu *= exchangeRate;
-                adminCostOd *= exchangeRate;
-                adminCostCompany *= exchangeRate;
-                otherOpCostBu *= exchangeRate;
-                otherOpCostOd *= exchangeRate;
-                otherOpCostCompany *= exchangeRate;
-                specItems *= exchangeRate;
-                provisions *= exchangeRate;
-                currencyGains *= exchangeRate;
-                valAdjustInventories *= exchangeRate;
-                otherFixCost *= exchangeRate;
-                depreciation *= exchangeRate;
-                capCost *= exchangeRate;
-                equityIncome *= exchangeRate;
+
+                for (KeyPerformanceIndicators kpi : resultMap.keySet()) {
+                    resultMap.put(kpi, resultMap.get(kpi) * exchangeRate);
+                }
             }
         }
 
-        /* TODO: add remaining fixed costs kpis */
-
-        Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<>();
-        resultMap.put(FIX_PRE_MAN_COST, fixPreManCost);
-        resultMap.put(SHIP_COST, shipCost);
-        resultMap.put(SELL_COST, sellCost);
-        resultMap.put(DIFF_ACT_PRE_MAN_COST, diffActPreManCost);
-        resultMap.put(IDLE_EQUIP_COST, idleEquipCost);
-        resultMap.put(RD_COST, rdCost);
-        resultMap.put(ADMIN_COST_BU, adminCostBu);
-        resultMap.put(ADMIN_COST_OD, adminCostOd);
-        resultMap.put(ADMIN_COST_COMPANY, adminCostCompany);
-        resultMap.put(OTHER_OP_COST_BU, otherOpCostBu);
-        resultMap.put(OTHER_OP_COST_OD, otherOpCostOd);
-        resultMap.put(OTHER_OP_COST_COMPANY, otherOpCostCompany);
-        resultMap.put(SPEC_ITEMS, specItems);
-        resultMap.put(PROVISIONS, provisions);
-        resultMap.put(CURRENCY_GAINS, currencyGains);
-        resultMap.put(VAL_ADJUST_INVENTORIES, valAdjustInventories);
-        resultMap.put(OTHER_FIX_COST, otherFixCost);
-        resultMap.put(DEPRECATION, depreciation);
-        resultMap.put(CAP_COST, capCost);
-        resultMap.put(EQUITY_INCOME, equityIncome);
+        /* TODO: add topdown_adjust_fix_costs */
 
         return resultMap;
     }
@@ -204,9 +138,8 @@ public class FixedCostsRequest extends KpiRequest {
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                   LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
-        /* TODO: use region instead of subregion.. */
         /* TODO: why do we need the sales type in fixed costs */
-        return new OutputDataType(kpi, sbu, sbu, subregion, subregion, SalesType.THIRD_PARTY.toString(),
+        return new OutputDataType(kpi, sbu, sbu, region , subregion, SalesType.THIRD_PARTY.toString(),
                 entryType.toString(), exchangeRates.getToCurrency(), monthlyValues, bjValues);
     }
 }

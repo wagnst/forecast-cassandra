@@ -7,7 +7,6 @@ import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -119,14 +118,11 @@ public class SalesRequest extends KpiRequest {
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     @Override
-    protected void calculateBj(Period zeroMonthPeriod) {
+    protected Map<KeyPerformanceIndicators, Double> calculateBj(Period zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
-        Map<KeyPerformanceIndicators, Double> map = validateQueryResult(queryResult, new Period(zeroMonthPeriod));
-
-        Arrays.stream(kpiArray)
-                .forEach(kpi -> bjValues.get(kpi).add(map.get(kpi)));
+        return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
     /**
