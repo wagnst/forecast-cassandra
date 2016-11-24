@@ -13,10 +13,10 @@ import java.net.InetAddress;
  */
 public class CassandraConnection {
 
+    private static CassandraConnection instance = null;
     private Cluster cluster;
     private Session session;
     private MappingManager manager;
-    private static CassandraConnection instance = null;
 
     /**
      * Constructor for Cassandra Connection.

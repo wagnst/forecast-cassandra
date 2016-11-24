@@ -4,6 +4,7 @@ import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
+import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
@@ -99,8 +100,8 @@ public class SalesRequest extends KpiRequest {
             bjPeriod.increment();
         }
 
-        final EntryType  valueUsedInOutputDataType;
-        if(entryType != EntryType.BUDGET) {
+        final EntryType valueUsedInOutputDataType;
+        if (entryType != EntryType.BUDGET) {
             valueUsedInOutputDataType = setEntryTypeWithFlags();
         } else {
             valueUsedInOutputDataType = EntryType.BUDGET;
@@ -125,7 +126,7 @@ public class SalesRequest extends KpiRequest {
     private void calculateSalesKpisForSpecificMonth(Period tempPlanPeriod, EntryType entryType) {
         SalesEntity queryResult;
 
-        if(entryType == EntryType.BUDGET) {
+        if (entryType == EntryType.BUDGET) {
             queryResult = getBudgetData(tempPlanPeriod);
         } else {
             if (tempPlanPeriod.getPeriod() < currentPeriod.getPreviousPeriod()) {
@@ -197,10 +198,10 @@ public class SalesRequest extends KpiRequest {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
         /* TODO: Currency conversion */
-        SalesEntity cm1 =  forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+        SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
 
-        if(cm1 == null) {
+        if (cm1 == null) {
             return 0;
         }
         return cm1.getCm1();
@@ -213,6 +214,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     private void calculateBj(Period zeroMonthPeriod) {
@@ -229,7 +231,7 @@ public class SalesRequest extends KpiRequest {
     /**
      * Private method to validate a query result.
      *
-     * @param queryResult The query result that will be validated
+     * @param queryResult    The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
      * @return Map with all the values for the sales KPIs
      */
@@ -300,7 +302,6 @@ public class SalesRequest extends KpiRequest {
      * @param kpi           KPI that is supposed to be set in the
      *                      OutputDataType
      * @param monthlyValues The monthly values for the KPI
-     *
      * @return OutputDataType object
      */
     private OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
