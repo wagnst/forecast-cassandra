@@ -24,12 +24,22 @@ public class CassandraConnection {
      * @param endpoint Endpoint of the database cluster to connect to
      * @param keyspace Keyspace in the database to connect to
      */
-    private CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
-        cluster = Cluster
-                .builder()
-                .addContactPoint(endpoint.getAddress())
-                .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
-                .build();
+    private CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentication) {
+        // in case database has "authenticator: PasswordAuthenticator" set, use given credentials
+        if (authentication) {
+            cluster = Cluster
+                    .builder()
+                    .addContactPoint(endpoint.getAddress())
+                    .withCredentials(endpoint.getUsername(), endpoint.getPassword())
+                    .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
+                    .build();
+        } else {
+            cluster = Cluster
+                    .builder()
+                    .addContactPoint(endpoint.getAddress())
+                    .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
+                    .build();
+        }
         session = cluster.connect(keyspace.getKeyspace());
         manager = new MappingManager(session);
     }
@@ -45,18 +55,16 @@ public class CassandraConnection {
             try {
                 InetAddress.getByName(String.valueOf(ClusterEndpoints.NODE1)).isReachable(5);
                 //use node1
-                instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION);
+                instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
             } catch (IOException e) {
                 try {
                     InetAddress.getByName(String.valueOf(ClusterEndpoints.DEV)).isReachable(5);
                     //use localhost
-                    instance = new CassandraConnection(ClusterEndpoints.DEV, KeyspaceNames.DEMO);
+                    instance = new CassandraConnection(ClusterEndpoints.DEV, KeyspaceNames.DEMO, false);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
             }
-
         }
         return instance;
     }
