@@ -62,8 +62,9 @@ public abstract class KpiRequest extends Request {
     }
 
     public Stream<OutputDataType> calculateKpis() {
-        return calculateKpis(null)
-                .flatMap(result -> calculateKpis(EntryType.BUDGET));
+        Stream<OutputDataType> entryTypeNull = calculateKpis(null);
+        Stream<OutputDataType> entryTypeBudget = calculateKpis(EntryType.BUDGET);
+        return Stream.concat(entryTypeNull, entryTypeBudget);
     }
 
     /**
@@ -72,7 +73,7 @@ public abstract class KpiRequest extends Request {
      * @return List of OutputDataTypes that contain all KPIs for given
      * parameters
      */
-    private Stream<OutputDataType> calculateKpis(EntryType entryType) {
+    private Stream<OutputDataType> calculateKpis(final EntryType entryType) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
 
@@ -112,6 +113,7 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
 
+        System.out.println(valueUsedInOutputDataType);
         resultStream = Arrays.stream(kpiArray)
                 .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 

@@ -1,6 +1,7 @@
 package fourschlag.entities.tables;
 
 import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
 
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ public class FixedCostsEntity extends Entity {
     @Column(name = "sbu")
     private String sbu;
 
+    @PartitionKey
     @Column(name = "subregion")
     private String subregion;
 

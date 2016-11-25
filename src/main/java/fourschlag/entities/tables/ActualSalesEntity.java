@@ -1,7 +1,6 @@
 package fourschlag.entities.tables;
 
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
@@ -9,7 +8,6 @@ import java.util.UUID;
 @Table(name = "actual_sales")
 public class ActualSalesEntity extends SalesEntity {
 
-    @PartitionKey(4)
     @Column(name = "data_source")
     private String dataSource;
 
