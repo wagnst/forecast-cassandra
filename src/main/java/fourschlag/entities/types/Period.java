@@ -49,10 +49,10 @@ public class Period {
     }
 
     public int getPreviousPeriod() {
-        if(month > 1) {
-            return period-1;
+        if (month > 1) {
+            return period - 1;
         } else {
-            return period-89;
+            return period - 89;
         }
     }
 

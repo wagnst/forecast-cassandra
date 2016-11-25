@@ -49,3 +49,8 @@ fabric.properties
 
 # tomcat
 /target/
+
+## python
+
+*.csv
+*.xlsx

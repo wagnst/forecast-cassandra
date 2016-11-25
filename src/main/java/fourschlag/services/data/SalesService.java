@@ -35,7 +35,6 @@ public class SalesService extends Service {
      * @param currentPeriodInt The point of view in time from which the data is
      *                         supposed to be looked at
      * @param toCurrency       The desired output currency
-     *
      * @return List of the OutputDataTypes that contain all KPIs for the given
      * parameters
      */
