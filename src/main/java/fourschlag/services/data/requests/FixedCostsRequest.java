@@ -5,9 +5,9 @@ import fourschlag.entities.accessors.ForecastFixedCostsAccessor;
 import fourschlag.entities.tables.Entity;
 import fourschlag.entities.tables.FixedCostsEntity;
 import fourschlag.entities.types.*;
+import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -83,8 +83,9 @@ public class FixedCostsRequest extends KpiRequest {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
         /* Prepare the kpi variables */
         Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<KeyPerformanceIndicators, Double>(){{
-            Arrays.stream(kpiArray)
-                    .forEach(kpi -> put(kpi, 0.0));
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                put(kpi, 0.0);
+            }
         }};
 
         /* IF the result of the query is not empty THEN get the values from the query result */

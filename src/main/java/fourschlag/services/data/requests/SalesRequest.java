@@ -5,9 +5,9 @@ import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.tables.Entity;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
+import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -143,8 +143,9 @@ public class SalesRequest extends KpiRequest {
         SalesEntity queryResult = (SalesEntity)result;
         /* Prepare the kpi variables */
         Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<KeyPerformanceIndicators, Double>(){{
-            Arrays.stream(kpiArray)
-                    .forEach(kpi -> put(kpi, 0.0));
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                put(kpi, 0.0);
+            }
         }};
 
         /* IF the result of the query is empty THEN set these KPIs to 0
