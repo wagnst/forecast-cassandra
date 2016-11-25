@@ -1,9 +1,8 @@
 # coding=utf-8
 # Anleitung:
-# Python 3.5 verwenden
+# Python 2.7 verwenden
 # xlrd muss installiert werden!
 # der Ordner csv_output muss erstellt werden
-# todo was passiert wenn inputfile nicht angegeben?
 # todo Ordner csv_output nur temporär anlegen
 # todo Funktionalität Tabelle erst löschen, dann neu anlegen
 # todo Funktionalität Keyspace löschen
@@ -81,7 +80,7 @@ ACTUAL_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST double,
                                     'SUBREGION varchar, PERIOD int, PERIOD_YEAR int, PERIOD_HALF_YEAR int, ' \
                                     'PERIOD_QUARTER int, PERIOD_MONTH int, CURRENCY varchar, USERID varchar, ' \
                                     'ENTRY_TS varchar, ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, ' \
-                                    'EQUITY_INCOME double, PRIMARY KEY (SBU, PERIOD, SUBREGION));'
+                                    'EQUITY_INCOME double, PRIMARY KEY ((SBU, SUBREGION), PERIOD));'
 FORECAST_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST double, SELL_COST double, ' \
                                       'DIFF_ACT_PRE_MAN_COST double, IDLE_EQUIP_COST double, RD_COST double, ' \
                                       'ADMIN_COST_BU double, ADMIN_COST_OD double, OTHER_OP_COST_BU double, ' \
@@ -92,7 +91,7 @@ FORECAST_FIXED_COSTS_TABLE_CREATION = '(FIX_PRE_MAN_COST double, SHIP_COST doubl
                                       'PLAN_YEAR int, PLAN_HALF_YEAR int, PLAN_QUARTER int, PLAN_MONTH int, CURRENCY varchar, ' \
                                       'STATUS varchar, USERCOMMENT text, USERID varchar, ENTRY_TS varchar, ' \
                                       'ADMIN_COST_COMPANY double, OTHER_OP_COST_COMPANY double, EQUITY_INCOME double, ' \
-                                      'PRIMARY KEY(SBU, SUBREGION, PERIOD, ENTRY_TYPE, PLAN_PERIOD));'
+                                      'PRIMARY KEY((SBU, SUBREGION), PERIOD, ENTRY_TYPE, PLAN_PERIOD));'
 
 CREATE_KEY_SPACE = "CREATE KEYSPACE IF NOT EXISTS"
 CREATE_KEY_SPACE_SUB = "WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
@@ -151,6 +150,7 @@ args = parser.parse_args()
 
 
 # Allgemeine Funktionen
+
 def validate_path(s):
     try:
         os.stat(s)
@@ -219,19 +219,24 @@ def clear_csvoutput():
             print(e)
 
 
+def run_query(query):
+    if args.user is None and args.password is None:
+        return subprocess.call([CQLSH_BINARY, args.ip, query])
+    else:
+        return subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + query, shell=True)
+
+
 def test_databaseconnection():
-    if args.user and args.password is None:
+    if args.user is None and args.password is None:
         connection_test_param = INTERACTIVE_MODE + 'EXIT'
-        databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
+        databaseconnection_exit_code = run_query(connection_test_param)
         if databaseconnection_exit_code == 0:
             print('Databaseconnection is runnig.')
         else:
             exit('Databaseconnection is not possible!')
     else:
-        # todo das funktioniert noch nicht... ist die frage ob man es wirklich braucht
-        connection_test_param = USER + ' ' + args.user + ' ' + PASSWORD + ' ' + getpass.getpass() + ' ' + INTERACTIVE_MODE + 'EXIT'
-        print connection_test_param
-        databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
+        connection_test_param = USER + args.user + ' ' + PASSWORD + args.password + ' ' + INTERACTIVE_MODE + 'EXIT'
+        databaseconnection_exit_code = run_query(connection_test_param)
         if databaseconnection_exit_code == 0:
             print('Databaseconnection is runnig.')
         else:
@@ -239,39 +244,75 @@ def test_databaseconnection():
 
 
 def create_keyspace():
-    temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
-    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
-    print('Datatbase %s was created or already exists.' % args.keyspace)
+    if args.user is None and args.password is None:
+        temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
+        run_query(temp_parameters)
+        print('Datatbase %s was created or already exists.' % args.keyspace)
+    else:
+        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+                          INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
+        run_query(temp_parameters)
+        print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
 def delete_keyspace():
-    temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
-    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
-    print('Datatbase %s was created or already exists.' % args.keyspace)
+    if args.user is None and args.password is None:
+        temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
+        run_query(temp_parameters)
+        print('Keyspace %s was deleted.' % args.keyspace)
+    else:
+        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+                          INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
+        run_query(temp_parameters)
+        print('Keyspace %s was deleted.' % args.keyspace)
 
 
-def create_table(s, t):
-    temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + s + t
-    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
-    print('Table %s was created or already exists.' % t)
+def create_table(tablename, table_parameter):
+    if args.user is None and args.password is None:
+        temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
+                          tablename + table_parameter
+        run_query(temp_parameters)
+        print('Table %s was created or already exists.' % tablename)
+    else:
+        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+                          INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
+                          tablename + table_parameter
+        run_query(temp_parameters)
+        print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
-def delete_table(s, t):
-    temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + s + '.' + t
-    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
+def delete_table(tablename):
+    if args.user is None and args.password is None:
+        temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename
+        run_query(temp_parameters)
+        print('Table %s was deleted.' % tablename)
+    else:
+        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+                          INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename
+        run_query(temp_parameters)
+        print('Table %s was deleted.' % tablename)
 
 
-def import_file(s, t, u):
-    temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + s + '(' + t + ') ' + IMPORT_FILE_SUB + \
-                      ' \'' + u + '\' ' + IMPORT_FILE_SUB_SUB
-    with open(os.devnull, "w") as f:
-        subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
-        print('File %s was successfully imported' % v)
-
-firstlistelement_of_inputfiles = args.inputfile[0]
+def import_file(tablename, import_params, import_path):
+    if args.user is None and args.password is None:
+        temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
+                          '(' + import_params + ') ' + IMPORT_FILE_SUB + \
+                          "'" + import_path + "'" + ' ' + IMPORT_FILE_SUB_SUB
+        with open(os.devnull, "w") as f:
+            subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
+            print('File %s was successfully imported' % tablename)
+    else:
+        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+                          INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
+                          '(' + import_params + ') ' + IMPORT_FILE_SUB + \
+                          "'" + import_path + "'" + ' ' + IMPORT_FILE_SUB_SUB
+        with open(os.devnull, "w") as f:
+            subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + temp_parameters, shell=True, stdout=f)
+            print('File %s was successfully imported' % tablename)
 
 
 def transformation_and_validation():
+    firstlistelement_of_inputfiles = args.inputfile[0]
     # Testet die Datenbankconnection
     test_databaseconnection()
 
@@ -299,24 +340,23 @@ def transformation_and_validation():
 
     # Validiert die csv
     for val in firstlistelement_of_inputfiles:
-        csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
-        validate_csv(csv_output_list[csv_output_list.index(second_value_from_tuple + '.csv')], second_value_from_tuple)
+        validate_csv(second_value_from_tuple + '.csv', second_value_from_tuple)
 
 
 def delete():
-    if args.inputfile is None:
-        if args.dtable is None:
-            delete_keyspace()
-        else:
-            for val in args.dtable:
-                validate_tablenames(val)
-                delete_table(val)
+    if args.dtable is None and args.dkeyspace is True:
+        delete_keyspace()
+    elif args.dkeyspace is False:
+        for val in args.dtable:
+            validate_tablenames(val)
+            delete_table(val)
     else:
-        return
+        delete_keyspace()
 
 
 def fileimport():
+    firstlistelement_of_inputfiles = args.inputfile[0]
     # Legt den Keyspace an
     create_keyspace()
 
@@ -335,9 +375,14 @@ def fileimport():
 
 def main():
     try:
-        validate_arguments()
-        transformation_and_validation()
-        fileimport()
+        if args.inputfile is None:
+            validate_arguments()
+            delete()
+        else:
+            validate_arguments()
+            delete()
+            transformation_and_validation()
+            fileimport()
     finally:
         clear_csvoutput()
         print('cleaned up!')
