@@ -3,13 +3,16 @@
 # Python 3.5 verwenden
 # xlrd muss installiert werden!
 # der Ordner csv_output muss erstellt werden
-# todo csv header validierung überarbeiten
+# todo was passiert wenn inputfile nicht angegeben?
 # todo Ordner csv_output nur temporär anlegen
 # todo Funktionalität Tabelle erst löschen, dann neu anlegen
 # todo Funktionalität Keyspace löschen
 # todo verbose
 # todo timer einbauen um zu schauen was wie lange dauert
 # todo man könnte eventuell noch abfangen, dass man keine zwei gleichen Tabellen importieren kann
+# todo user und password einbinden --> ist irgendwie etwas schwierig :/
+# todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
+# Todo ist threading möglich?
 
 import argparse
 import csv
@@ -17,30 +20,8 @@ import os
 import xlrd
 import subprocess
 import time
+import getpass
 
-
-# Funktion für Parser
-def inputpath_and_tablename(s):
-    try:
-        x, y = map(str, s.split(','))
-        return x, y
-    except:
-        raise argparse.ArgumentTypeError("Error: format must be inputpath,tablename")
-
-
-# Parser
-parser = argparse.ArgumentParser()
-parser.add_argument('--verbose', '-v', action='count', help='verbose level')
-parser.add_argument('--password', '-p', help='password for the database')
-parser.add_argument('--user', '-u', help='user for the database')
-parser.add_argument('--ip', '-n', required=True, help='IP Address of the database')
-parser.add_argument('--keyspace', '-k', help='keyspace name for creation or keyspace to add data')
-parser.add_argument('--inputfile', '-i', action='append', type=inputpath_and_tablename, nargs='*',
-                    help='Input files for tables. Format inputpath,tablename')
-
-args = parser.parse_args()
-
-# todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
 # Konstanten, die je nachdem wo das Script liegt befüllt werden müssen:
 PATH_CSV_OUTPUT = '/Users/katharinaspinner/IdeaProjects/fourschlag/importer/csv_output/'
 CQLSH_BINARY = "/usr/local/bin/cqlsh"
@@ -48,6 +29,8 @@ CQLSH_BINARY = "/usr/local/bin/cqlsh"
 # Konstanten
 INTERACTIVE_MODE = "-e"
 USED_KEYSPACE = '-k'
+USER = '-u'
+PASSWORD = '-p'
 
 ORG_STRUCTURE_PARAMS = 'bu, sbu, product_main_group'
 REGIONS_PARAMS = 'region, subregion'
@@ -117,6 +100,8 @@ CREATE_TABLE = "CREATE TABLE IF NOT EXISTS"
 IMPORT_FILE = 'COPY'
 IMPORT_FILE_SUB = 'FROM'
 IMPORT_FILE_SUB_SUB = 'WITH HEADER = TRUE;'
+DELETE_KEYSPACE = 'DROP KEYSPACE IF EXISTS'
+DELETE_TABLE = 'DROP TABLE IF EXISTS'
 
 # Allgemeine Parameter
 table_params = {
@@ -139,7 +124,30 @@ table_creation_params = {
     'ACTUAL_FIXED_COSTS': ACTUAL_FIXED_COSTS_TABLE_CREATION,
 }
 
-firstlistelement_of_inputfiles = args.inputfile[0]
+
+# Funktion für Parser
+def inputpath_and_tablename(s):
+    try:
+        x, y = map(str, s.split(','))
+        return x, y
+    except:
+        raise argparse.ArgumentTypeError("Error: format must be inputpath,tablename")
+
+
+# Parser
+parser = argparse.ArgumentParser()
+parser.add_argument('--verbose', '-v', action='count', help='verbose level')
+parser.add_argument('--password', '-p', help='password for the database')
+parser.add_argument('--user', '-u', help='user for the database')
+parser.add_argument('--ip', '-n', required=True, help='IP Address of the database')
+parser.add_argument('--keyspace', '-k', required=True, help='keyspace name for creation or keyspace to add data')
+parser.add_argument('--dtable', '-t', action='append', help='table witch should be deleted')
+parser.add_argument('--dkeyspace', '-d', action="store_true", help='Keyspace should be deleted')
+parser.add_argument('--inputfile', '-i', action='append', type=inputpath_and_tablename, nargs='*',
+                    help='Input files for tables. Format inputpath,tablename. Following Tablenames are valid: %s'
+                         % table_params.keys())
+
+args = parser.parse_args()
 
 
 # Allgemeine Funktionen
@@ -167,17 +175,28 @@ def validate_tablenames(s):
 def validate_csv(s, t):
     reader = csv.reader(open(PATH_CSV_OUTPUT + s, 'r'), delimiter=',')
     headerfromcsv = next(reader)
-    validation = (headerfromcsv > table_params[t].upper().split(', ')) - \
-                 (table_params[t].upper().split(', ') < headerfromcsv)
-    if validation == 0:
+    if headerfromcsv == table_params[t].upper().split(', '):
         return True
     else:
         exit('Canceled: CSV Header from %s isn\'t valide!' % s)
 
 
+def validate_arguments():
+    if args.user is None and args.password is not None:
+        parser.error('-p password requires -u user! Use --help for more information.')
+    if args.password is None and args.user is not None:
+        parser.error('-u user requires -p password! Use --help for more information.')
+    if args.inputfile is not None and args.keyspace is None:
+        parser.error('-i inputfile requires -k keyspace!')
+    if args.dtable is not None and args.keyspace is None:
+        parser.error('-d dtable requires -k keyspace!')
+    if args.inputfile is None and args.dtable is None and args.dkeyspace is None:
+        parser.error('-i inputfile or -t dtable or -d dkeyspace required.')
+
+
 # Quelle: http://stackoverflow.com/questions/9884353/xls-to-csv-converter/9884551#9884551
 # Konvertiert eine xls oder xlsx zu einer csv
-# Todo ist threading möglich?
+
 def xls_to_csv(s, t):
     workbook = xlrd.open_workbook(s)
     all_worksheets = workbook.sheet_names()
@@ -200,17 +219,23 @@ def clear_csvoutput():
             print(e)
 
 
-# todo validierung von tabellennamen
-# todo user und password einbinden
-
 def test_databaseconnection():
-    connection_test_param = INTERACTIVE_MODE + 'EXIT'
-    databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
-
-    if databaseconnection_exit_code == 0:
-        print('Databaseconnection is runnig.')
+    if args.user and args.password is None:
+        connection_test_param = INTERACTIVE_MODE + 'EXIT'
+        databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
+        if databaseconnection_exit_code == 0:
+            print('Databaseconnection is runnig.')
+        else:
+            exit('Databaseconnection is not possible!')
     else:
-        exit('Databaseconnection is not possible!')
+        # todo das funktioniert noch nicht... ist die frage ob man es wirklich braucht
+        connection_test_param = USER + ' ' + args.user + ' ' + PASSWORD + ' ' + getpass.getpass() + ' ' + INTERACTIVE_MODE + 'EXIT'
+        print connection_test_param
+        databaseconnection_exit_code = subprocess.call([CQLSH_BINARY, args.ip, connection_test_param])
+        if databaseconnection_exit_code == 0:
+            print('Databaseconnection is runnig.')
+        else:
+            exit('Databaseconnection is not possible!')
 
 
 def create_keyspace():
@@ -219,18 +244,31 @@ def create_keyspace():
     print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
-def create_table(s, t, u):
-    temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + s + '.' + t + u
+def delete_keyspace():
+    temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
+    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
+    print('Datatbase %s was created or already exists.' % args.keyspace)
+
+
+def create_table(s, t):
+    temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + s + t
     subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
     print('Table %s was created or already exists.' % t)
 
 
-def import_file(s, t, u, v):
-    temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + s + '.' + t + '(' + u + ') ' + IMPORT_FILE_SUB + \
-                      ' \'' + v + '\' ' + IMPORT_FILE_SUB_SUB
+def delete_table(s, t):
+    temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + s + '.' + t
+    subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
+
+
+def import_file(s, t, u):
+    temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + s + '(' + t + ') ' + IMPORT_FILE_SUB + \
+                      ' \'' + u + '\' ' + IMPORT_FILE_SUB_SUB
     with open(os.devnull, "w") as f:
         subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
         print('File %s was successfully imported' % v)
+
+firstlistelement_of_inputfiles = args.inputfile[0]
 
 
 def transformation_and_validation():
@@ -240,11 +278,13 @@ def transformation_and_validation():
     # Validiert den Pfad und den Filetyp
     for val in firstlistelement_of_inputfiles:
         first_value_from_tuple = val[0]
+
         validate_path(first_value_from_tuple)
 
     # Validiert Tabellennamen
     for val in firstlistelement_of_inputfiles:
         second_value_from_tuple = val[1]
+
         validate_tablenames(second_value_from_tuple)
 
     print(time.clock())
@@ -264,6 +304,18 @@ def transformation_and_validation():
         validate_csv(csv_output_list[csv_output_list.index(second_value_from_tuple + '.csv')], second_value_from_tuple)
 
 
+def delete():
+    if args.inputfile is None:
+        if args.dtable is None:
+            delete_keyspace()
+        else:
+            for val in args.dtable:
+                validate_tablenames(val)
+                delete_table(val)
+    else:
+        return
+
+
 def fileimport():
     # Legt den Keyspace an
     create_keyspace()
@@ -271,22 +323,23 @@ def fileimport():
     # Legt die Tabellen an
     for val in firstlistelement_of_inputfiles:
         second_value_from_tuple = val[1]
-        create_table(args.keyspace, second_value_from_tuple, table_creation_params[second_value_from_tuple])
+        create_table(second_value_from_tuple, table_creation_params[second_value_from_tuple])
 
     # Importiert die Files
     for val in firstlistelement_of_inputfiles:
         csv_output_list = os.listdir(PATH_CSV_OUTPUT)
         second_value_from_tuple = val[1]
         csv_path = PATH_CSV_OUTPUT + csv_output_list[csv_output_list.index(second_value_from_tuple + '.csv')]
-        import_file(args.keyspace, second_value_from_tuple, table_params[second_value_from_tuple], csv_path)
+        import_file(second_value_from_tuple, table_params[second_value_from_tuple], csv_path)
 
 
 def main():
     try:
+        validate_arguments()
         transformation_and_validation()
         fileimport()
     finally:
-        #clear_csvoutput()
+        clear_csvoutput()
         print('cleaned up!')
         print(time.clock())
 
