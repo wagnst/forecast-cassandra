@@ -3,10 +3,8 @@
 # Python 2.7 verwenden
 # xlrd muss installiert werden!
 # todo verbose
-# todo timer einbauen um zu schauen was wie lange dauert
 # todo man könnte eventuell noch abfangen, dass man keine zwei gleichen Tabellen importieren kann
 # todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
-# Todo ist threading möglich?
 
 import argparse
 import csv
@@ -313,7 +311,7 @@ def transformation_and_validation():
         validate_tablenames(second_value_from_tuple)
 
     # Konvertiert das xlsx oder xls zu csv
-    p = multiprocessing.Pool(4)
+    p = multiprocessing.Pool()
     p.map(xls_to_csv, firstlistelement_of_inputfiles)
 
     # Validiert die csv
@@ -332,7 +330,7 @@ def delete():
     elif args.dtable is not None and args.dkeyspace is True:
         delete_keyspace()
     else:
-        return 
+        return
 
 
 def fileimport():
