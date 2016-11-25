@@ -2,14 +2,9 @@
 # Anleitung:
 # Python 2.7 verwenden
 # xlrd muss installiert werden!
-# der Ordner csv_output muss erstellt werden
-# todo Ordner csv_output nur temporär anlegen
-# todo Funktionalität Tabelle erst löschen, dann neu anlegen
-# todo Funktionalität Keyspace löschen
 # todo verbose
 # todo timer einbauen um zu schauen was wie lange dauert
 # todo man könnte eventuell noch abfangen, dass man keine zwei gleichen Tabellen importieren kann
-# todo user und password einbinden --> ist irgendwie etwas schwierig :/
 # todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
 # Todo ist threading möglich?
 
@@ -19,10 +14,11 @@ import os
 import xlrd
 import subprocess
 import time
-import getpass
+import shutil
+import multiprocessing
 
 # Konstanten, die je nachdem wo das Script liegt befüllt werden müssen:
-PATH_CSV_OUTPUT = '/Users/katharinaspinner/IdeaProjects/fourschlag/importer/csv_output/'
+PATH_CSV_OUTPUT = os.path.dirname(__file__) + '/csv_output/'
 CQLSH_BINARY = "/usr/local/bin/cqlsh"
 
 # Konstanten
@@ -197,26 +193,16 @@ def validate_arguments():
 # Quelle: http://stackoverflow.com/questions/9884353/xls-to-csv-converter/9884551#9884551
 # Konvertiert eine xls oder xlsx zu einer csv
 
-def xls_to_csv(s, t):
-    workbook = xlrd.open_workbook(s)
+def xls_to_csv((file_path, tablename)):
+    workbook = xlrd.open_workbook(file_path)
     all_worksheets = workbook.sheet_names()
+    csv_file = open(PATH_CSV_OUTPUT + tablename + '.csv', 'wb')
+    wr = csv.writer(csv_file, quoting=csv.QUOTE_NONE)
     for worksheet_name in all_worksheets:
         worksheet = workbook.sheet_by_name(worksheet_name)
-        csv_file = open(PATH_CSV_OUTPUT + t + '.csv', 'wb')
-        wr = csv.writer(csv_file, quoting=csv.QUOTE_NONE)
         for rownum in range(worksheet.nrows):
             wr.writerow([unicode(entry).encode("utf-8") for entry in worksheet.row_values(rownum)])
         csv_file.close()
-
-
-def clear_csvoutput():
-    for the_file in os.listdir(PATH_CSV_OUTPUT):
-        file_path = os.path.join(PATH_CSV_OUTPUT, the_file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
 
 
 def run_query(query):
@@ -313,8 +299,6 @@ def import_file(tablename, import_params, import_path):
 
 def transformation_and_validation():
     firstlistelement_of_inputfiles = args.inputfile[0]
-    # Testet die Datenbankconnection
-    test_databaseconnection()
 
     # Validiert den Pfad und den Filetyp
     for val in firstlistelement_of_inputfiles:
@@ -328,15 +312,9 @@ def transformation_and_validation():
 
         validate_tablenames(second_value_from_tuple)
 
-    print(time.clock())
-
     # Konvertiert das xlsx oder xls zu csv
-    for val in firstlistelement_of_inputfiles:
-        first_value_from_tuple = val[0]
-        second_value_from_tuple = val[1]
-        xls_to_csv(first_value_from_tuple, second_value_from_tuple)
-
-    print(time.clock())
+    p = multiprocessing.Pool(4)
+    p.map(xls_to_csv, firstlistelement_of_inputfiles)
 
     # Validiert die csv
     for val in firstlistelement_of_inputfiles:
@@ -347,12 +325,14 @@ def transformation_and_validation():
 def delete():
     if args.dtable is None and args.dkeyspace is True:
         delete_keyspace()
-    elif args.dkeyspace is False:
+    elif args.dtable is not None and args.dkeyspace is False:
         for val in args.dtable:
             validate_tablenames(val)
             delete_table(val)
-    else:
+    elif args.dtable is not None and args.dkeyspace is True:
         delete_keyspace()
+    else:
+        return 
 
 
 def fileimport():
@@ -373,22 +353,42 @@ def fileimport():
         import_file(second_value_from_tuple, table_params[second_value_from_tuple], csv_path)
 
 
+def create_csv_folder():
+    os.makedirs(os.path.dirname(__file__) + '/csv_output')
+
+
+def delete_csvoutput():
+    for the_file in os.listdir(PATH_CSV_OUTPUT):
+        file_path = os.path.join(PATH_CSV_OUTPUT, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)
+    shutil.rmtree(os.path.dirname(__file__) + '/csv_output')
+
+start_time = time.time()
+
+
 def main():
     try:
         if args.inputfile is None:
+            test_databaseconnection()
             validate_arguments()
             delete()
         else:
+            test_databaseconnection()
             validate_arguments()
             delete()
+            create_csv_folder()
             transformation_and_validation()
             fileimport()
     finally:
-        clear_csvoutput()
+        delete_csvoutput()
         print('cleaned up!')
-        print(time.clock())
 
 
 # Aufruf von Main
 if __name__ == '__main__':
     main()
+    print("--- %s seconds ---" % (time.time() - start_time))
