@@ -1,4 +1,4 @@
-package fourschlag.services.web.ws;
+package fourschlag.entities.types.comparators;
 
 import fourschlag.entities.types.OutputDataType;
 

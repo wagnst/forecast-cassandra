@@ -1,6 +1,7 @@
 package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.OutputDataType;
+import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.FixedCostsService;
 import fourschlag.services.data.SalesService;
 import fourschlag.services.db.CassandraConnection;
@@ -45,7 +46,6 @@ public class ForecastWS {
                 .sorted(new OutputDataTypeComparator())
                 .collect(Collectors.toList());
 
-        System.out.println(resultList.size());
         salesKpis.close();
         fixedCostsKpis.close();
         return Response.ok(resultList, Params.MEDIATYPE).build();
