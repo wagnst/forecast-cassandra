@@ -6,7 +6,7 @@ import fourschlag.services.db.CassandraConnection;
  * Super class Service. Contains information about the connection to the
  * database.
  */
-public class Service {
+public abstract class Service {
 
     private static final int NUMBER_OF_MONTHS = 18;
     private static final int NUMBER_OF_BJ = 3;

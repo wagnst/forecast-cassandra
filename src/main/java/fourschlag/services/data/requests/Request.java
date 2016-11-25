@@ -7,7 +7,7 @@ import fourschlag.services.db.CassandraConnection;
 /**
  * Super class Request. Contains information about the current session.
  */
-public class Request {
+public abstract class Request {
     private Session session;
     private MappingManager manager;
 
