@@ -85,8 +85,13 @@ public class SalesRequest extends KpiRequest {
     protected SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
-        return forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
+        if (queryResult == null) {
+            queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
+                    tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
+        }
+        return queryResult;
     }
 
     /**

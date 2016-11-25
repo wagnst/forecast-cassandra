@@ -50,8 +50,13 @@ public class FixedCostsRequest extends KpiRequest {
     protected FixedCostsEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         /* Set this flag to true, so the entry type can be set correctly later */
         forecastFlag = true;
-        return forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
-                entryType.toString());
+        FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
+                tempPlanPeriod.getPeriod(), entryType.toString());
+        if (queryResult == null) {
+            queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPreviousPeriod(),
+                    tempPlanPeriod.getPeriod(), entryType.toString());
+        }
+        return queryResult;
     }
 
     @Override

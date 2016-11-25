@@ -78,25 +78,27 @@ public abstract class KpiRequest extends Request {
 
         Period tempPlanPeriod = new Period(planPeriod);
 
-        Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
-        Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
 
         Map<KeyPerformanceIndicators, Double> kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < Service.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
-            tempPlanPeriod.increment();
             /* Add all KPI values to the monthly KPI value map */
-            Arrays.stream(kpiArray)
-                    .forEach(kpi -> tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.get(kpi)));
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.get(kpi));
+            }
+            tempPlanPeriod.increment();
         }
 
         Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         Map<KeyPerformanceIndicators, Double> bjValuesForSpecificMonth;
         for (int i = 0; i < Service.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBj(bjPeriod);
-            Arrays.stream(kpiArray)
-                    .forEach(kpi -> tempBjValues.get(kpi).add(bjValuesForSpecificMonth.get(kpi)));
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.get(kpi));
+            }
             /* Jump to the next zeroMonthPeriod */
             bjPeriod.increment();
         }
