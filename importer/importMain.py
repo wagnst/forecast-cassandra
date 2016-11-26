@@ -2,7 +2,6 @@
 # Anleitung:
 # Python 2.7 verwenden
 # xlrd muss installiert werden!
-# todo verbose
 # todo man könnte eventuell noch abfangen, dass man keine zwei gleichen Tabellen importieren kann
 # todo evaluieren ob Konstanten auch in ein Configfile ausgelagert werden könnten
 
@@ -22,8 +21,8 @@ CQLSH_BINARY = "/usr/local/bin/cqlsh"
 # Konstanten
 INTERACTIVE_MODE = "-e"
 USED_KEYSPACE = '-k'
-USER = '-u'
-PASSWORD = '-p'
+USER = '--username='
+PASSWORD = '--password='
 
 ORG_STRUCTURE_PARAMS = 'bu, sbu, product_main_group'
 REGIONS_PARAMS = 'region, subregion'
@@ -144,35 +143,55 @@ args = parser.parse_args()
 
 
 # Allgemeine Funktionen
+def check_verbose():
+    if args.verbose is None:
+        return 0
+    elif args.verbose == 1:
+        return 1
+    else:
+        return 2
 
-def validate_path(s):
+
+def run_query(query):
+    if args.user is None and args.password is None:
+        return subprocess.call([CQLSH_BINARY, args.ip, query])
+    else:
+        return subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + query, shell=True)
+
+
+def validate_path(file_path):
     try:
-        os.stat(s)
-        print("The path %s exists." % s)
+        os.stat(file_path)
+        if check_verbose() >= 1:
+            print("The path %s exists." % file_path)
     except OSError:
-        print("The path %s does not exist." % s)
-        exit('Canceled: path %s for import does not exist or is not valid (whitespaces or special characters)' % s)
-    if s[-4:] == '.xls' or s[-5:] == '.xlsx':
-        print("The filetyp is valid.")
+        print("The path %s does not exist." % file_path)
+        exit('Canceled: path %s for import does not exist or is not valid (whitespaces or special characters)' % file_path)
+    if file_path[-4:] == '.xls' or file_path[-5:] == '.xlsx':
+        if check_verbose() >= 1:
+            print("The filetyp is valid.")
     else:
         exit('Wrong datatype. Please import .xls or .xlsx .')
 
 
-def validate_tablenames(s):
+def validate_tablenames(tablename):
     try:
-        table_params[s]
+        table_params[tablename]
     except KeyError:
-        print('The tablename %s is not valid.' % s)
+        print('The tablename %s is not valid.' % tablename)
         exit('Canceled: please use the following tablenames: %s' % table_params.keys())
 
 
-def validate_csv(s, t):
-    reader = csv.reader(open(PATH_CSV_OUTPUT + s, 'r'), delimiter=',')
-    headerfromcsv = next(reader)
-    if headerfromcsv == table_params[t].upper().split(', '):
+def validate_csv(name, reference_file):
+    reader = csv.reader(open(PATH_CSV_OUTPUT + name, 'r'), delimiter=',')
+    header_from_csv = next(reader)
+    if header_from_csv == table_params[reference_file].upper().split(', '):
+        if check_verbose() == 1:
+            print ('The header from %s.csv is valid.' % name)
         return True
+
     else:
-        exit('Canceled: CSV Header from %s isn\'t valide!' % s)
+        exit("Canceled: CSV Header from %s.csv isn't valide!" % name)
 
 
 def validate_arguments():
@@ -201,13 +220,8 @@ def xls_to_csv((file_path, tablename)):
         for rownum in range(worksheet.nrows):
             wr.writerow([unicode(entry).encode("utf-8") for entry in worksheet.row_values(rownum)])
         csv_file.close()
-
-
-def run_query(query):
-    if args.user is None and args.password is None:
-        return subprocess.call([CQLSH_BINARY, args.ip, query])
-    else:
-        return subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + query, shell=True)
+    if check_verbose() >= 1:
+        print ('File %s was successfully converted to .csv' % file_path)
 
 
 def test_databaseconnection():
@@ -215,40 +229,46 @@ def test_databaseconnection():
         connection_test_param = INTERACTIVE_MODE + 'EXIT'
         databaseconnection_exit_code = run_query(connection_test_param)
         if databaseconnection_exit_code == 0:
-            print('Databaseconnection is runnig.')
+            if check_verbose() >= 1:
+                print('Database connection to %s is running.' % args.ip)
         else:
-            exit('Databaseconnection is not possible!')
+            exit('Database connection to %s is not possible!' % args.ip)
     else:
-        connection_test_param = USER + args.user + ' ' + PASSWORD + args.password + ' ' + INTERACTIVE_MODE + 'EXIT'
+        connection_test_param = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + INTERACTIVE_MODE + 'EXIT'
         databaseconnection_exit_code = run_query(connection_test_param)
         if databaseconnection_exit_code == 0:
-            print('Databaseconnection is runnig.')
+            if check_verbose() >= 1:
+                print('Database connection to %s is running.' % args.ip)
         else:
-            exit('Databaseconnection is not possible!')
+            exit('Database connection to %s is not possible!' % args.ip)
 
 
 def create_keyspace():
     if args.user is None and args.password is None:
         temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
         run_query(temp_parameters)
-        print('Datatbase %s was created or already exists.' % args.keyspace)
+        if check_verbose() >= 1:
+            print('Datatbase %s was created or already exists.' % args.keyspace)
     else:
-        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+        temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + \
                           INTERACTIVE_MODE + ' ' + CREATE_KEY_SPACE + ' ' + args.keyspace + ' ' + CREATE_KEY_SPACE_SUB
         run_query(temp_parameters)
-        print('Datatbase %s was created or already exists.' % args.keyspace)
+        if check_verbose() >= 1:
+            print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
 def delete_keyspace():
     if args.user is None and args.password is None:
         temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
         run_query(temp_parameters)
-        print('Keyspace %s was deleted.' % args.keyspace)
+        if check_verbose() >= 1:
+            print('Keyspace %s was deleted.' % args.keyspace)
     else:
-        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+        temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + \
                           INTERACTIVE_MODE + ' ' + DELETE_KEYSPACE + ' ' + args.keyspace
         run_query(temp_parameters)
-        print('Keyspace %s was deleted.' % args.keyspace)
+        if check_verbose() >= 1:
+            print('Keyspace %s was deleted.' % args.keyspace)
 
 
 def create_table(tablename, table_parameter):
@@ -256,25 +276,29 @@ def create_table(tablename, table_parameter):
         temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
                           tablename + table_parameter
         run_query(temp_parameters)
-        print('Table %s was created or already exists.' % tablename)
+        if check_verbose() >= 1:
+            print('Table %s was created or already exists.' % tablename)
     else:
-        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+        temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + \
                           INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
                           tablename + table_parameter
         run_query(temp_parameters)
-        print('Datatbase %s was created or already exists.' % args.keyspace)
+        if check_verbose() >= 1:
+            print('Datatbase %s was created or already exists.' % args.keyspace)
 
 
 def delete_table(tablename):
     if args.user is None and args.password is None:
         temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename
         run_query(temp_parameters)
-        print('Table %s was deleted.' % tablename)
+        if check_verbose() >= 1:
+            print('Table %s was deleted.' % tablename)
     else:
-        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+        temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + \
                           INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename
         run_query(temp_parameters)
-        print('Table %s was deleted.' % tablename)
+        if check_verbose() >= 1:
+            print('Table %s was deleted.' % tablename)
 
 
 def import_file(tablename, import_params, import_path):
@@ -282,17 +306,23 @@ def import_file(tablename, import_params, import_path):
         temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
                           '(' + import_params + ') ' + IMPORT_FILE_SUB + \
                           "'" + import_path + "'" + ' ' + IMPORT_FILE_SUB_SUB
-        with open(os.devnull, "w") as f:
-            subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
-            print('File %s was successfully imported' % tablename)
+        if check_verbose() == 1:
+            with open(os.devnull, "w") as f:
+                subprocess.call([CQLSH_BINARY, args.ip, temp_parameters], stdout=f)
+                print('File %s was successfully imported' % tablename)
+        if check_verbose() == 2:
+            subprocess.call([CQLSH_BINARY, args.ip, temp_parameters])
     else:
-        temp_parameters = USER + args.user + ' ' + PASSWORD + args.password + ' ' + \
+        temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + \
                           INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
                           '(' + import_params + ') ' + IMPORT_FILE_SUB + \
                           "'" + import_path + "'" + ' ' + IMPORT_FILE_SUB_SUB
-        with open(os.devnull, "w") as f:
-            subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + temp_parameters, shell=True, stdout=f)
-            print('File %s was successfully imported' % tablename)
+        if check_verbose() == 1:
+            with open(os.devnull, "w") as f:
+                subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + temp_parameters, shell=True, stdout=f)
+                print('File %s was successfully imported' % tablename)
+        if check_verbose() == 2:
+            subprocess.call(CQLSH_BINARY + ' ' + args.ip + ' ' + temp_parameters, shell=True)
 
 
 def transformation_and_validation():
@@ -383,7 +413,8 @@ def main():
             fileimport()
     finally:
         delete_csvoutput()
-        print('cleaned up!')
+        if check_verbose() >= 1:
+            print('cleaned up!')
 
 
 # Aufruf von Main
