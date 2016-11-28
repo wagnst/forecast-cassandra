@@ -19,6 +19,13 @@ public enum ClusterEndpoints {
     private final String username;
     private final String password;
 
+    /**
+     * Constructor
+     *
+     * @param address IP address of the endpoint
+     * @param username username to login with
+     * @param password password to login with
+     */
     ClusterEndpoints(final String address, final String username, final String password) {
         this.address = address;
         this.username = username;

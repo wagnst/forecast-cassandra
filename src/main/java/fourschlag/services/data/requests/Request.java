@@ -8,6 +8,7 @@ import fourschlag.services.db.CassandraConnection;
  * Super class Request. Contains information about the current session.
  */
 public abstract class Request {
+    private CassandraConnection connection;
     private Session session;
     private MappingManager manager;
 
@@ -17,6 +18,7 @@ public abstract class Request {
      * @param connection Cassandra connection that is supposed to be used
      */
     public Request(CassandraConnection connection) {
+        this.connection = connection;
         this.session = connection.getSession();
         this.manager = connection.getManager();
     }
@@ -37,5 +39,9 @@ public abstract class Request {
      */
     public MappingManager getManager() {
         return manager;
+    }
+
+    public CassandraConnection getConnection() {
+        return connection;
     }
 }

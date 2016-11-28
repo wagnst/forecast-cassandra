@@ -2,10 +2,12 @@ package fourschlag.services.data.requests;
 
 import fourschlag.entities.tables.Entity;
 import fourschlag.entities.types.*;
-import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -56,44 +58,54 @@ public abstract class KpiRequest extends Request {
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
     }
 
-    /* TODO: Refactor Entry-Types */
+    /**
+     * Initiates the calculation for all KPIs with the attributes of this instance
+     * @return Stream of OutputDataTypes
+     */
     public Stream<OutputDataType> calculateKpis() {
+        /* Calculate Actual/Forecast KPIs */
         Stream<OutputDataType> entryTypeNull = calculateKpisWithTopdown(EntryType.ACTUAL_FORECAST);
+        /* Calculate Budget KPIs */
         Stream<OutputDataType> entryTypeBudget = calculateKpisWithoutTopdown(EntryType.BUDGET);
+
+        /* Concat and return both streams */
         return Stream.concat(entryTypeNull, entryTypeBudget);
     }
 
     /**
-     * Calculates sales KPIs for the attributes saved in this request
+     * Calculates KPIs excluding topdown values
      *
-     * @return List of OutputDataTypes that contain all KPIs for given
-     * parameters
+     * @return Stream of OutputDataTypes
      */
     private Stream<OutputDataType> calculateKpisWithoutTopdown(final EntryType entryType) {
-        /* Prepare result list that will be returned later */
+        /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
 
         Period tempPlanPeriod = new Period(planPeriod);
 
+        /* Prepare maps that will store the monthly values */
         final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
         final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
 
+        /*Prepare ValidatedResult object */
         ValidatedResult kpisForSpecificMonth;
-        /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
-        for (int i = 0; i < Service.getNumberOfMonths(); i++) {
+        /* calculateKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
+        for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
             /* Add all KPI values to the monthly KPI value map */
 
+            /* The values from the validated result are written into their corresponding location in the monthly map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
                 tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
             }
 
+            /* increment the plan period */
             tempPlanPeriod.increment();
         }
 
-        Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
+        ZeroMonthPeriod bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         ValidatedResult bjValuesForSpecificMonth;
-        for (int i = 0; i < Service.getNumberOfBj(); i++) {
+        for (int i = 0; i < OutputDataType.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBj(bjPeriod);
             for (KeyPerformanceIndicators kpi : kpiArray) {
                 tempBjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
@@ -123,7 +135,7 @@ public abstract class KpiRequest extends Request {
 
         ValidatedResultTopdown kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
-        for (int i = 0; i < Service.getNumberOfMonths(); i++) {
+        for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = (ValidatedResultTopdown) calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
 
             /* Add all KPI values to the monthly KPI value map */
@@ -135,9 +147,9 @@ public abstract class KpiRequest extends Request {
             tempPlanPeriod.increment();
         }
 
-        Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
+        ZeroMonthPeriod bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         ValidatedResultTopdown bjValuesForSpecificMonth;
-        for (int i = 0; i < Service.getNumberOfBj(); i++) {
+        for (int i = 0; i < OutputDataType.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBjTopdown(bjPeriod);
 
             for (KeyPerformanceIndicators kpi : kpiArray) {
@@ -183,8 +195,22 @@ public abstract class KpiRequest extends Request {
         return validateTopdownQueryResult(queryResult, tempPlanPeriod);
     }
 
-    protected abstract ValidatedResultTopdown validateTopdownQueryResult(Entity queryResult, Period tempPlanPeriod);
+    /**
+     * method to validate a query result including the topdown values
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return ValidatedResult with all the values for the sales KPIs
+     */
+    protected abstract ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod);
 
+    /**
+     * method to validate a query result excluding the topdown values
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return ValidatedResult with all the values for the sales KPIs
+     */
     protected abstract ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod);
 
     protected abstract Entity getActualData(Period tempPlanPeriod);
@@ -193,10 +219,30 @@ public abstract class KpiRequest extends Request {
 
     protected abstract Entity getBudgetData(Period tempPlanPeriod);
 
-    protected abstract ValidatedResult calculateBj(Period zeroMonthPeriod);
+    /**
+     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     */
+    protected abstract ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod);
 
-    protected abstract ValidatedResultTopdown calculateBjTopdown(Period zeroMonthPeriod);
+    /**
+     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
+     * including the topdown values
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     */
+    protected abstract ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod);
 
+    /**
+     * Creates a OutputDataType Object with all given attributes
+     *
+     * @param kpi KPI that will be set in the OutputDataType
+     * @param entryType Entry Type of that KPI entry
+     * @param monthlyValues All the monthly kpi values
+     * @param bjValues The budget year values
+     * @return Instance of OutputDataType
+     */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                            LinkedList<Double> monthlyValues, LinkedList<Double> bjValues);
 

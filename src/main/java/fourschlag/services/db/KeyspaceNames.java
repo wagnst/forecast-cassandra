@@ -10,6 +10,11 @@ public enum KeyspaceNames {
 
     private final String keyspace;
 
+    /**
+     * Constructor
+     *
+     * @param keyspace name of the keyspace in the database
+     */
     KeyspaceNames(final String keyspace) {
         this.keyspace = keyspace;
     }

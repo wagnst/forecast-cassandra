@@ -87,6 +87,16 @@ public class OutputDataType {
         this.bj4 = bjValues.poll();
     }
 
+    /**
+     * Getter for the number of months the OutputDataType is built for
+     *
+     * @return number of months
+     */
+    /* TODO: Remove 'magic numbers' and create class for constants */
+    public static int getNumberOfMonths() { return 18; }
+
+    public static int getNumberOfBj() { return 3; }
+
     public int getOrderNumber() {
         return orderNumber;
     }

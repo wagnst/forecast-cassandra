@@ -36,21 +36,22 @@ public class SalesService extends Service {
      * @param currentPeriodInt The point of view in time from which the data is
      *                         supposed to be looked at
      * @param toCurrency       The desired output currency
-     * @return List of the OutputDataTypes that contain all KPIs for the given
+     * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
     public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, Currency toCurrency) {
-        /* Prepare result list that will be returned later */
+        /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
 
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
 
+        /* Create Request to be able to retrieve all distinct regions and products from different tables */
         OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        /* Get all of the regions from the region table */
+        /* Get all of the regions from the sales tables --> Sales are identified by the region and PMG*/
         Set<String> regions = orgAndRegionRequest.getRegionsAsSetFromSales();
-        /* Get all of the Product Main Groups from the OrgStructure table*/
+        /* Get all of the Product Main Groups from the sales tables */
         Set<String> products = orgAndRegionRequest.getProductMainGroupsAsSetFromSales();
 
         /* Create instance of Period with the given int value */
@@ -64,7 +65,7 @@ public class SalesService extends Service {
                                         product, planYear, currentPeriod, region, salesType,
                                         exchangeRates, orgAndRegionRequest).calculateKpis())));
 
-        /* Finally the result list will be returned */
+        /* Finally the result stream will be returned */
         return resultStream;
     }
 }

@@ -23,9 +23,11 @@ public class CassandraConnection {
      *
      * @param endpoint Endpoint of the database cluster to connect to
      * @param keyspace Keyspace in the database to connect to
+     * @param authentication True: authentication is required ; False: authentication is not required
      */
     private CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentication) {
-        // in case database has "authenticator: PasswordAuthenticator" set, use given credentials
+        /* in case database has "authenticator: PasswordAuthenticator" set, use given credentials */
+        /* Build database cluster */
         if (authentication) {
             cluster = Cluster
                     .builder()
@@ -40,7 +42,9 @@ public class CassandraConnection {
                     .withRetryPolicy(DefaultRetryPolicy.INSTANCE)
                     .build();
         }
+        /* Connect to the keyspace and retrieve the session object */
         session = cluster.connect(keyspace.getKeyspace());
+        /* Create a new Mapping Manager */
         manager = new MappingManager(session);
     }
 
