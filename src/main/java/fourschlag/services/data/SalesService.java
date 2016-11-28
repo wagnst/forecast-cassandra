@@ -1,5 +1,6 @@
 package fourschlag.services.data;
 
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
@@ -38,7 +39,7 @@ public class SalesService extends Service {
      * @return List of the OutputDataTypes that contain all KPIs for the given
      * parameters
      */
-    public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, String toCurrency) {
+    public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, Currency toCurrency) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
 

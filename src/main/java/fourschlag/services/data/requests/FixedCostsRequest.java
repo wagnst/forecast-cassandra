@@ -102,7 +102,7 @@ public class FixedCostsRequest extends KpiRequest {
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
 
                 for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
                     topdownMap.put(kpi, topdownMap.get(kpi) * exchangeRate);
@@ -161,7 +161,7 @@ public class FixedCostsRequest extends KpiRequest {
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
 
                 for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
                     kpiMap.put(kpi, kpiMap.get(kpi) * exchangeRate);

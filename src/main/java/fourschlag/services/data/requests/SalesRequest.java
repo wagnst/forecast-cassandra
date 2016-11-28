@@ -6,6 +6,7 @@ import fourschlag.entities.tables.Entity;
 import fourschlag.entities.tables.ForecastSalesEntity;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
 
@@ -161,7 +162,7 @@ public class SalesRequest extends KpiRequest {
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
 
                 for (KeyPerformanceIndicators kpi : kpiArray) {
                     topdownMap.put(kpi, topdownMap.get(kpi) * exchangeRate);
@@ -191,7 +192,7 @@ public class SalesRequest extends KpiRequest {
 
             /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
 
                 for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
                     kpiMap.put(kpi, kpiMap.get(kpi) * exchangeRate);

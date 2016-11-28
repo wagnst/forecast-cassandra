@@ -1,5 +1,6 @@
 package fourschlag.services.web.ws;
 
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.FixedCostsService;
@@ -40,8 +41,10 @@ public class ForecastWS {
             @PathParam("currency") String currency) {
         //TODO: period must be the present or the past, but must not be the future (I guess so --> to be confirmed by SP)
 
-        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planYear, period, currency);
-        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planYear, period, currency);
+        Currency curr = Currency.getCurrencyByAbbreviation(currency);
+
+        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planYear, period, curr);
+        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planYear, period, curr);
         List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
                 .sorted(new OutputDataTypeComparator())
                 .collect(Collectors.toList());
