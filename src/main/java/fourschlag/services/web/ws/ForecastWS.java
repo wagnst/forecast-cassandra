@@ -46,6 +46,7 @@ public class ForecastWS {
 
         /* If no currency is found, abort the request */
         if (curr == null) {
+
             /* TODO: Send code 400: Bad Request */
         }
 

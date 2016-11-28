@@ -67,7 +67,7 @@ public class FixedCostsRequest extends KpiRequest {
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     @Override
-    protected ValidatedResultTopdown calculateBjTopdown(Period zeroMonthPeriod) {
+    protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
@@ -75,7 +75,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResult calculateBj(Period zeroMonthPeriod) {
+    protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
