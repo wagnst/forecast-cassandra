@@ -1,5 +1,6 @@
 package fourschlag.services.web.ws;
 
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.FixedCostsService;
@@ -40,14 +41,30 @@ public class ForecastWS {
             @PathParam("currency") String currency) {
         //TODO: period must be the present or the past, but must not be the future (I guess so --> to be confirmed by SP)
 
-        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planYear, period, currency);
-        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planYear, period, currency);
+        /* Get correct currency object from currency enum */
+        Currency curr = Currency.getCurrencyByAbbreviation(currency);
+
+        /* If no currency is found, abort the request */
+        if (curr == null) {
+            /* TODO: Send code 400: Bad Request */
+        }
+
+        /* Get all Sales KPIs and save them to a stream */
+        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planYear, period, curr);
+        /* Also save the Fixed Costs KPIs to a stream */
+        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planYear, period, curr);
+
+        /* Combine both streams to one */
         List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
+                /* Sort the whole stream */
                 .sorted(new OutputDataTypeComparator())
+                /* Convert the stream to a List */
                 .collect(Collectors.toList());
 
+        /* Close both streams */
         salesKpis.close();
         fixedCostsKpis.close();
+        /* Return the result list with a code 200 */
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 }

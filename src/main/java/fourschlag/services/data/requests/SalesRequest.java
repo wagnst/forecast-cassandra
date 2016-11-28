@@ -3,12 +3,12 @@ package fourschlag.services.data.requests;
 import fourschlag.entities.accessors.ActualSalesAccessor;
 import fourschlag.entities.accessors.ForecastSalesAccessor;
 import fourschlag.entities.tables.Entity;
+import fourschlag.entities.tables.ForecastSalesEntity;
 import fourschlag.entities.tables.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -58,8 +58,6 @@ public class SalesRequest extends KpiRequest {
      */
     @Override
     protected SalesEntity getActualData(Period tempPlanPeriod) {
-        /* Set this flag to true, so the entry type can be set correctly later */
-        actualFlag = true;
         /* Send query to the database with data source BW B */
         SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
                 salesType.getType(), DataSource.BW_B.toString());
@@ -68,9 +66,12 @@ public class SalesRequest extends KpiRequest {
         if (queryResult == null) {
             queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
                     salesType.getType(), DataSource.BW_A.toString());
-            /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result */
+            /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result because BW A
+             * has no cm1 values
+             */
             if (queryResult != null) {
-                queryResult.setCm1(getForecastCm1(tempPlanPeriod));
+                /* The CM1 value is directly written in the query result */
+                queryResult.setCm1(getForecastCm1(tempPlanPeriod, queryResult.getCurrency()));
             }
         }
         return queryResult;
@@ -83,10 +84,10 @@ public class SalesRequest extends KpiRequest {
      */
     @Override
     protected SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
-        /* Set this flag to true, so the entry type can be set correctly later */
-        forecastFlag = true;
+        /* Request data from forecast sales */
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
+        /* IF result is null THEN retry query with currentPeriod - 1 */
         if (queryResult == null) {
             queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
                     tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
@@ -97,99 +98,152 @@ public class SalesRequest extends KpiRequest {
     /**
      * Gets the cm1 value from the forecast sales table
      *
-     * @return double value of cm1
+     * @param tempPlanPeriod period of the desired cm1 value
+     * @param toCurrency desired return currency
+     * @return cm1 value as double
      */
-    private double getForecastCm1(Period tempPlanPeriod) {
-        /* Set this flag to true, so the entry type can be set correctly later */
-        forecastFlag = true;
-        /* TODO: Currency conversion */
+    private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
+        /* Request data from forecast sales */
         SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
 
+        /* IF result is null THEN return 0
+         * ELSE Use CM1 value from result
+         */
         if (cm1 == null) {
             return 0;
+        } else {
+            /* IF currency from this query is equal to the one calling this method THEN return the value as it is
+             * ELSE create a new exchange rate request and get the exchange rate for the desired period and currency
+             */
+            if (cm1.getCurrency().equals(toCurrency)) {
+                return cm1.getCm1();
+            } else {
+                /* TODO: Check for better way to convert currency */
+                double exchangeRate = new ExchangeRateRequest(getConnection(), Currency.getCurrencyByAbbreviation(toCurrency))
+                        .getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(cm1.getCurrency()));
+                return cm1.getCm1() * exchangeRate;
+            }
         }
-        return cm1.getCm1();
     }
 
+    /**
+     * Gets Budget KPIs from the database where the plan period is equal to the period
+     *
+     * @param tempPlanPeriod Desired period for the budget KPIs
+     * @return SalesEntity that contains the query result
+     */
     @Override
     protected SalesEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getSalesKpis(productMainGroup, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
                 region, salesType.toString(), EntryType.BUDGET.toString());
     }
 
-    /**
-     * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
-     *
-     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
-     */
     @Override
-    protected Map<KeyPerformanceIndicators, Double> calculateBj(Period zeroMonthPeriod) {
+    protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
         return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
-    /**
-     * Private method to validate a query result.
-     *
-     * @param result    The query result that will be validated
-     * @param tempPlanPeriod planPeriod of that query result
-     * @return Map with all the values for the sales KPIs
-     */
     @Override
-    protected Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity result, Period tempPlanPeriod) {
-        SalesEntity queryResult = (SalesEntity)result;
-        /* Prepare the kpi variables */
-        Map<KeyPerformanceIndicators, Double> resultMap = new HashMap<KeyPerformanceIndicators, Double>(){{
-            for (KeyPerformanceIndicators kpi : kpiArray) {
-                put(kpi, 0.0);
-            }
-        }};
+    protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
+        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+                zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
-        /* IF the result of the query is empty THEN set these KPIs to 0
-         * ELSE get the values from the query result
-         */
-        if (queryResult == null) {
-        } else {
-            resultMap.put(SALES_VOLUME, queryResult.getSalesVolumes());
-            resultMap.put(NET_SALES, queryResult.getNetSales());
-            resultMap.put(CM1, queryResult.getCm1());
+        return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
+    }
 
-            /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
-            if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, queryResult.getCurrency());
+    @Override
+    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
+        /* Parse the query result to a SalesEntity Instance */
+        SalesEntity queryResult = (SalesEntity) result;
 
-                for (KeyPerformanceIndicators kpi : resultMap.keySet()) {
-                    resultMap.put(kpi, resultMap.get(kpi) * exchangeRate);
+        /* Prepare the ValidatedRequest object. One of the parameters is the validated result without topdown values */
+        ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());
+
+        /* This map will contain the topdown values */
+        Map<KeyPerformanceIndicators, Double> topdownMap = validatedResult.getTopdownResult();
+
+        /* IF the result of the query is NOT empty THEN get the topdown values from the query result */
+        if (queryResult != null) {
+            /* IF the result is an instance of ForecastSalesEntity THEN get the topdown values (actual doesnt have topdown) */
+            if(queryResult.getClass().isInstance(ForecastSalesEntity.class)) {
+                ForecastSalesEntity fcEntity = (ForecastSalesEntity) queryResult;
+                topdownMap.put(SALES_VOLUME, fcEntity.getTopdownAdjustSalesVolumes());
+                topdownMap.put(NET_SALES, fcEntity.getTopdownAdjustNetSales());
+                topdownMap.put(CM1, fcEntity.getTopdownAdjustCm1());
+
+                /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
+                if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
+                    double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
+
+                    for (KeyPerformanceIndicators kpi : kpiArray) {
+                        topdownMap.put(kpi, topdownMap.get(kpi) * exchangeRate);
+                    }
                 }
             }
         }
 
-         /* IF sales volume is not 0 THEN calculate these other KPIs */
-        if (resultMap.get(SALES_VOLUME) != 0) {
-            resultMap.put(PRICE, resultMap.get(NET_SALES) / resultMap.get(SALES_VOLUME) * 1000);
-            resultMap.put(VAR_COSTS, (resultMap.get(NET_SALES) - resultMap.get(CM1)) * 1000 / resultMap.get(SALES_VOLUME));
-            resultMap.put(CM1_SPECIFIC, resultMap.get(CM1) / resultMap.get(SALES_VOLUME) * 1000);
+        /* calculate the other KPIs such as price, varCost, etc. */
+        calculateRemainingSalesKpis(topdownMap);
+
+        return validatedResult;
+    }
+
+    @Override
+    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
+        /* Parse the query result to a SalesEntity Instance */
+        SalesEntity queryResult = (SalesEntity) result;
+
+        /* Prepare the ValidatedRequest object */
+        ValidatedResult validatedResult = new ValidatedResult(kpiArray);
+
+        /* Prepare the map that will store the kpi values */
+        Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
+
+        /* IF the result of the query is NOT empty THEN get the values from the query result */
+        if (queryResult != null) {
+            kpiMap.put(SALES_VOLUME, queryResult.getSalesVolumes());
+            kpiMap.put(NET_SALES, queryResult.getNetSales());
+            kpiMap.put(CM1, queryResult.getCm1());
+
+            /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
+            if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
+                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
+
+                for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
+                    kpiMap.put(kpi, kpiMap.get(kpi) * exchangeRate);
+                }
+            }
         }
 
-        /* IF net sales is not 0 THEN calculate these other KPIs  */
-        if (resultMap.get(NET_SALES) != 0) {
-            resultMap.put(CM1_PERCENT, resultMap.get(CM1) / resultMap.get(NET_SALES));
-        }
+        /* calculate the other KPIs such as price, varCost, etc. */
+        calculateRemainingSalesKpis(kpiMap);
 
-        return resultMap;
+        return validatedResult;
     }
 
     /**
-     * Creates a OutputDataType Object with all given attributes
+     * Calculates the remaining KPIs PRICE, VAR_COST, CM1_SPECIFIC, CM1_PERCENT
      *
-     * @param kpi           KPI that is supposed to be set in the
-     *                      OutputDataType
-     * @param monthlyValues The monthly values for the KPI
-     * @return OutputDataType object
+     * @param map that contains all sales KPIs
      */
+    private void calculateRemainingSalesKpis(Map<KeyPerformanceIndicators, Double> map) {
+        /* IF sales volume is not 0 THEN calculate these other KPIs */
+        if (map.get(SALES_VOLUME) != 0) {
+            map.put(PRICE, map.get(NET_SALES) / map.get(SALES_VOLUME) * 1000);
+            map.put(VAR_COSTS, (map.get(NET_SALES) - map.get(CM1)) * 1000 / map.get(SALES_VOLUME));
+            map.put(CM1_SPECIFIC, map.get(CM1) / map.get(SALES_VOLUME) * 1000);
+        }
+
+        /* IF net sales is not 0 THEN calculate these other KPIs  */
+        if (map.get(NET_SALES) != 0) {
+            map.put(CM1_PERCENT, map.get(CM1) / map.get(NET_SALES));
+        }
+    }
+
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                 LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
