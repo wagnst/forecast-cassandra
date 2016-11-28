@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="3.1" jmeter="3.1 r1770033">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="FourschlagTest" enabled="true">
+      <stringProp name="TestPlan.comments">Copyright Steffen Wagner</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="host" elementType="Argument">
+            <stringProp name="Argument.name">host</stringProp>
+            <stringProp name="Argument.value">141.19.145.133</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Host of Webserver</stringProp>
+          </elementProp>
+          <elementProp name="port" elementType="Argument">
+            <stringProp name="Argument.name">port</stringProp>
+            <stringProp name="Argument.value">8080</stringProp>
+            <stringProp name="Argument.desc">Port of Webserver</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="package_url" elementType="Argument">
+            <stringProp name="Argument.name">package_url</stringProp>
+            <stringProp name="Argument.value">/fourschlag/api</stringProp>
+            <stringProp name="Argument.desc">Package URL</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="forecast_sales" elementType="Argument">
+            <stringProp name="Argument.name">forecast_sales</stringProp>
+            <stringProp name="Argument.value">/forecast/sales</stringProp>
+            <stringProp name="Argument.desc">Sample API URL for forecast sales KPI</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Number of Requests" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">3</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">3</stringProp>
+        <longProp name="ThreadGroup.start_time">1375525852000</longProp>
+        <longProp name="ThreadGroup.end_time">1375525852000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <RandomOrderController guiclass="RandomOrderControllerGui" testclass="RandomOrderController" testname="Randomize Order" enabled="true"/>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T1_WS Forecast Sales" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Variables pré-définies" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">${host}</stringProp>
+            <stringProp name="HTTPSampler.port">${port}</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">${package_url}${forecast_sales}/2013/201611/eur</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="732538997">{&quot;orderNumber&quot;:1,&quot;kpi&quot;:&quot;Sales Volumes&quot;,&quot;m01&quot;:663.32876,&quot;m02&quot;:663.32876,&quot;m03&quot;:506.18376,&quot;m04&quot;:506.18376,&quot;m05&quot;:620.480988,&quot;m06&quot;:620.480988,&quot;m07&quot;:1102.74376,&quot;m08&quot;:1102.74376,&quot;m09&quot;:768.11376,&quot;m10&quot;:768.11376,&quot;m11&quot;:519.67376,&quot;m12&quot;:519.67376,&quot;m13&quot;:1068.12,&quot;m14&quot;:1068.12,&quot;m15&quot;:780.10376,&quot;m16&quot;:780.10376,&quot;m17&quot;:561.4512,&quot;m18&quot;:561.4512,&quot;bj2&quot;:0.0,&quot;bj3&quot;:0.0,&quot;bj4&quot;:0.0,&quot;region&quot;:&quot;Asia&quot;,&quot;subregion&quot;:&quot;Asia&quot;,&quot;sbu&quot;:&quot;Beck&apos;s&quot;,&quot;entryType&quot;:&quot;actual/forecast&quot;,&quot;productMainGroup&quot;:&quot;Beck&apos;s Gold&quot;,&quot;salesType&quot;:&quot;3rd_party&quot;,&quot;currency&quot;:&quot;eur&quot;,&quot;unit&quot;:&quot;€&quot;,&quot;fcType&quot;:&quot;sales&quot;}</stringProp>
+              </collectionProp>
+              <stringProp name="TestPlan.comments">Verify content in response</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T2_WS Forecast Sales" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Variables pré-définies" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">${host}</stringProp>
+            <stringProp name="HTTPSampler.port">${port}</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">${package_url}${forecast_sales}/2016/201611/usd</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="135515309">{&quot;orderNumber&quot;:1,&quot;kpi&quot;:&quot;Sales Volumes&quot;,&quot;m01&quot;:738.1936136630001,&quot;m02&quot;:801.65242766154,&quot;m03&quot;:420.39196770829494,&quot;m04&quot;:466.338707818973,&quot;m05&quot;:972.39628591204,&quot;m06&quot;:1079.7867593318797,&quot;m07&quot;:994.3790639302799,&quot;m08&quot;:1127.545313792759,&quot;m09&quot;:827.023103128411,&quot;m10&quot;:935.4532751564738,&quot;m11&quot;:1136.6150395543998,&quot;m12&quot;:1276.29366176524,&quot;m13&quot;:774.32678483344,&quot;m14&quot;:857.0651504464627,&quot;m15&quot;:905.85540279744,&quot;m16&quot;:1015.6206195206141,&quot;m17&quot;:0.0,&quot;m18&quot;:0.0,&quot;bj2&quot;:0.0,&quot;bj3&quot;:0.0,&quot;bj4&quot;:0.0,&quot;region&quot;:&quot;Asia&quot;,&quot;subregion&quot;:&quot;Asia&quot;,&quot;sbu&quot;:&quot;Beck&apos;s&quot;,&quot;entryType&quot;:&quot;actual/forecast&quot;,&quot;productMainGroup&quot;:&quot;Beck&apos;s Gold&quot;,&quot;salesType&quot;:&quot;3rd_party&quot;,&quot;currency&quot;:&quot;usd&quot;,&quot;unit&quot;:&quot;$&quot;,&quot;fcType&quot;:&quot;sales&quot;}</stringProp>
+              </collectionProp>
+              <stringProp name="TestPlan.comments">Verify content in response</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T3_WS Forecast Sales" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Variables pré-définies" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">${host}</stringProp>
+            <stringProp name="HTTPSampler.port">${port}</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">${package_url}${forecast_sales}/2014/201608/eur</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json;charset=UTF-8</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-278544877">{&quot;orderNumber&quot;:1,&quot;kpi&quot;:&quot;Sales Volumes&quot;,&quot;m01&quot;:645.91376,&quot;m02&quot;:645.91376,&quot;m03&quot;:692.953761,&quot;m04&quot;:692.953761,&quot;m05&quot;:582.93,&quot;m06&quot;:582.93,&quot;m07&quot;:489.22752,&quot;m08&quot;:489.22752,&quot;m09&quot;:163.21,&quot;m10&quot;:163.21,&quot;m11&quot;:713.10076,&quot;m12&quot;:713.10076,&quot;m13&quot;:756.6528,&quot;m14&quot;:756.6528,&quot;m15&quot;:915.38248,&quot;m16&quot;:915.38248,&quot;m17&quot;:678.3491,&quot;m18&quot;:678.3491,&quot;bj2&quot;:0.0,&quot;bj3&quot;:0.0,&quot;bj4&quot;:0.0,&quot;region&quot;:&quot;Asia&quot;,&quot;subregion&quot;:&quot;Asia&quot;,&quot;sbu&quot;:&quot;Beck&apos;s&quot;,&quot;entryType&quot;:&quot;actual/forecast&quot;,&quot;productMainGroup&quot;:&quot;Beck&apos;s Gold&quot;,&quot;salesType&quot;:&quot;3rd_party&quot;,&quot;currency&quot;:&quot;eur&quot;,&quot;unit&quot;:&quot;€&quot;,&quot;fcType&quot;:&quot;sales&quot;}</stringProp>
+              </collectionProp>
+              <stringProp name="TestPlan.comments">Verify content in response</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">16</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>false</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>false</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>true</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <hostname>true</hostname>
+            <threadCounts>true</threadCounts>
+            <sampleCount>true</sampleCount>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>false</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>false</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>true</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <hostname>true</hostname>
+            <threadCounts>true</threadCounts>
+            <sampleCount>true</sampleCount>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
