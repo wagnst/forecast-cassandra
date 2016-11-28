@@ -3,19 +3,19 @@ package fourschlag.entities.types;
 import java.util.Currency;
 
 public enum CurrencyType {
-    EURO("EUR","€"),
-    DOLLAR("USD","$");
+    EURO("eur","€"),
+    DOLLAR("usd","$");
 
-    private final String kuerzel;
+    private final String Abbreviations;
     private final String symbol;
 
-    CurrencyType(String kuerzel, String symbol){
-        this.kuerzel = kuerzel;
+    CurrencyType(String Abbreviations, String symbol){
+        this.Abbreviations = Abbreviations;
         this.symbol = symbol;
     }
 
-    public String getKuerzel() {
-        return kuerzel;
+    public String getAbbreviations() {
+        return Abbreviations;
     }
 
     public String getSymbol() {
@@ -24,6 +24,6 @@ public enum CurrencyType {
 
     @Override
     public String toString() {
-        return getKuerzel();
+        return getAbbreviations();
     }
 }

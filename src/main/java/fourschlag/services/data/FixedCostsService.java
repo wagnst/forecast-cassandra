@@ -1,5 +1,6 @@
 package fourschlag.services.data;
 
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
@@ -14,7 +15,7 @@ public class FixedCostsService extends Service {
 
     public FixedCostsService(CassandraConnection connection) {super(connection);}
 
-    public Stream<OutputDataType> getFixedCostsKpis(int planYear, int currentPeriodInt, String toCurrency) {
+    public Stream<OutputDataType> getFixedCostsKpis(int planYear, int currentPeriodInt, Currency toCurrency) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
 

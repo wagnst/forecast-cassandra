@@ -10,13 +10,13 @@ import java.util.UUID;
 public class ForecastSalesEntity extends SalesEntity {
 
     @Column(name = "topdown_adjust_sales_volumes")
-    private int topdownAdjustSalesVolumes;
+    private double topdownAdjustSalesVolumes;
 
     @Column(name = "topdown_adjust_net_sales")
-    private int topdownAdjustNetSales;
+    private double topdownAdjustNetSales;
 
     @Column(name = "topdown_adjust_cm1")
-    private int topdownAdjustCm1;
+    private double topdownAdjustCm1;
 
     @Column(name = "plan_period")
     private int planPeriod;
@@ -61,15 +61,15 @@ public class ForecastSalesEntity extends SalesEntity {
         this.entryType = entryType;
     }
 
-    public int getTopdownAdjustSalesVolumes() {
+    public double getTopdownAdjustSalesVolumes() {
         return topdownAdjustSalesVolumes;
     }
 
-    public int getTopdownAdjustNetSales() {
+    public double getTopdownAdjustNetSales() {
         return topdownAdjustNetSales;
     }
 
-    public int getTopdownAdjustCm1() {
+    public double getTopdownAdjustCm1() {
         return topdownAdjustCm1;
     }
 

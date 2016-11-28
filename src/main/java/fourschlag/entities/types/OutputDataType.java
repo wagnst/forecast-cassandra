@@ -43,7 +43,7 @@ public class OutputDataType {
     }
 
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
-                          String subregion, String salesType, String entryType, String currency,
+                          String subregion, String salesType, String entryType, Currency currency,
                           LinkedList<Double> months, LinkedList<Double> bjValues) {
         this.kpi = kpi.getFullName();
         this.orderNumber = kpi.getOrderNumber();
@@ -54,8 +54,8 @@ public class OutputDataType {
         this.subregion = subregion;
         this.salesType = salesType;
         this.entryType = entryType;
-        this.currency = currency;
-        this.unit = convertUnitCurrency(kpi.getUnit(), currency);
+        this.currency = currency.getAbbreviation();
+        this.unit = currency.getSymbol();
         this.setMonths(months);
         this.setBj(bjValues);
     }
@@ -85,18 +85,6 @@ public class OutputDataType {
         this.bj2 = bjValues.poll();
         this.bj3 = bjValues.poll();
         this.bj4 = bjValues.poll();
-    }
-
-    private String convertUnitCurrency(String unit, String currency) {
-        if (currency.equals("eur")) {
-            return unit;
-        } else if (unit.indexOf('€') == -1) {
-            return unit;
-        } else if (currency.equals("usd")) {
-            return unit.replace("€", "$");
-        } else {
-            return unit.replace("€", currency);
-        }
     }
 
     public int getOrderNumber() {
