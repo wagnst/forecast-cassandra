@@ -5,10 +5,7 @@ import fourschlag.entities.types.*;
 import fourschlag.services.data.Service;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -22,8 +19,6 @@ public abstract class KpiRequest extends Request {
     private final Period planPeriod;
     protected final Period currentPeriod;
     protected final ExchangeRateRequest exchangeRates;
-    protected boolean actualFlag = false;
-    protected boolean forecastFlag = false;
 
     protected final KeyPerformanceIndicators[] kpiArray;
 
@@ -61,9 +56,10 @@ public abstract class KpiRequest extends Request {
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
     }
 
+    /* TODO: Refactor Entry-Types */
     public Stream<OutputDataType> calculateKpis() {
-        Stream<OutputDataType> entryTypeNull = calculateKpis(null);
-        Stream<OutputDataType> entryTypeBudget = calculateKpis(EntryType.BUDGET);
+        Stream<OutputDataType> entryTypeNull = calculateKpisWithTopdown(EntryType.ACTUAL_FORECAST);
+        Stream<OutputDataType> entryTypeBudget = calculateKpisWithoutTopdown(EntryType.BUDGET);
         return Stream.concat(entryTypeNull, entryTypeBudget);
     }
 
@@ -73,7 +69,7 @@ public abstract class KpiRequest extends Request {
      * @return List of OutputDataTypes that contain all KPIs for given
      * parameters
      */
-    private Stream<OutputDataType> calculateKpis(final EntryType entryType) {
+    private Stream<OutputDataType> calculateKpisWithoutTopdown(final EntryType entryType) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
 
@@ -82,52 +78,92 @@ public abstract class KpiRequest extends Request {
         final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
         final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
 
-        Map<KeyPerformanceIndicators, Double> kpisForSpecificMonth;
+        ValidatedResult kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < Service.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
             /* Add all KPI values to the monthly KPI value map */
+
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.get(kpi));
+                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
             }
+
             tempPlanPeriod.increment();
         }
 
         Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
-        Map<KeyPerformanceIndicators, Double> bjValuesForSpecificMonth;
+        ValidatedResult bjValuesForSpecificMonth;
         for (int i = 0; i < Service.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBj(bjPeriod);
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.get(kpi));
+                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
             }
             /* Jump to the next zeroMonthPeriod */
             bjPeriod.increment();
         }
 
-        final EntryType valueUsedInOutputDataType;
-        if (entryType != EntryType.BUDGET) {
-            valueUsedInOutputDataType = setEntryTypeWithFlags();
-        } else {
-            valueUsedInOutputDataType = EntryType.BUDGET;
-        }
-
         /* All the values are put together in OutputDataType objects and are added to the result list */
-
-        System.out.println(valueUsedInOutputDataType);
         resultStream = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, valueUsedInOutputDataType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, entryType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 
-        /* Reset the flags */
-        actualFlag = false;
-        forecastFlag = false;
         return resultStream;
     }
 
-    private Map<KeyPerformanceIndicators, Double> calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
+    private Stream<OutputDataType> calculateKpisWithTopdown(final EntryType entryType) {
+        /* Prepare result list that will be returned later */
+        Stream<OutputDataType> resultStream;
+        Stream<OutputDataType> resultStream2;
+
+        Period tempPlanPeriod = new Period(planPeriod);
+
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyTopdownValues = new HashMap<>(monthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempTopdownBjValues = new HashMap<>(bjValues);
+
+        ValidatedResultTopdown kpisForSpecificMonth;
+        /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
+        for (int i = 0; i < Service.getNumberOfMonths(); i++) {
+            kpisForSpecificMonth = (ValidatedResultTopdown) calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
+
+            /* Add all KPI values to the monthly KPI value map */
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
+                tempMonthlyTopdownValues.get(kpi).add(kpisForSpecificMonth.getTopdownResult().get(kpi));
+            }
+
+            tempPlanPeriod.increment();
+        }
+
+        Period bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
+        ValidatedResultTopdown bjValuesForSpecificMonth;
+        for (int i = 0; i < Service.getNumberOfBj(); i++) {
+            bjValuesForSpecificMonth = calculateBjTopdown(bjPeriod);
+
+            for (KeyPerformanceIndicators kpi : kpiArray) {
+                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
+                tempTopdownBjValues.get(kpi).add(bjValuesForSpecificMonth.getTopdownResult().get(kpi));
+            }
+            /* Jump to the next zeroMonthPeriod */
+            bjPeriod.increment();
+        }
+
+        /* All the values are put together in OutputDataType objects and are added to the result list */
+        resultStream = Arrays.stream(kpiArray)
+                .map(kpi -> createOutputDataType(kpi, entryType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+
+        resultStream2 = Arrays.stream(kpiArray)
+                .map(kpi -> createOutputDataType(kpi, EntryType.TOPDOWN, tempMonthlyTopdownValues.get(kpi), tempTopdownBjValues.get(kpi)));
+
+        return Stream.concat(resultStream, resultStream2);
+    }
+
+    private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
         Entity queryResult;
 
         if (entryType == EntryType.BUDGET) {
             queryResult = getBudgetData(tempPlanPeriod);
+            return validateQueryResult(queryResult, tempPlanPeriod);
         } else {
             /* IF plan period is in the past compared to current period THEN get data from the actual sales table
              * ELSE get data from the forecast table
@@ -144,10 +180,12 @@ public abstract class KpiRequest extends Request {
             }
         }
 
-        return validateQueryResult(queryResult, tempPlanPeriod);
+        return validateTopdownQueryResult(queryResult, tempPlanPeriod);
     }
 
-    protected abstract Map<KeyPerformanceIndicators, Double> validateQueryResult(Entity queryResult, Period tempPlanPeriod);
+    protected abstract ValidatedResultTopdown validateTopdownQueryResult(Entity queryResult, Period tempPlanPeriod);
+
+    protected abstract ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod);
 
     protected abstract Entity getActualData(Period tempPlanPeriod);
 
@@ -155,24 +193,11 @@ public abstract class KpiRequest extends Request {
 
     protected abstract Entity getBudgetData(Period tempPlanPeriod);
 
-    protected abstract Map<KeyPerformanceIndicators, Double> calculateBj(Period zeroMonthPeriod);
+    protected abstract ValidatedResult calculateBj(Period zeroMonthPeriod);
+
+    protected abstract ValidatedResultTopdown calculateBjTopdown(Period zeroMonthPeriod);
 
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
-                                                  LinkedList<Double> monthlyValues, LinkedList<Double> bjValues);
+                                                           LinkedList<Double> monthlyValues, LinkedList<Double> bjValues);
 
-    /**
-     * Sets the entry type of this request
-     */
-    private EntryType setEntryTypeWithFlags() {
-        /* IF both flags are set true THEN set entry type to actual/forecast
-         * ELSE IF only the forecast flag is set true THEN set entry type to forecast
-         * ELSE set entry type to actual*/
-        if (actualFlag && forecastFlag) {
-            return EntryType.ACTUAL_FORECAST;
-        } else if (forecastFlag) {
-            return EntryType.FORECAST;
-        } else {
-            return EntryType.ACTUAL;
-        }
-    }
 }

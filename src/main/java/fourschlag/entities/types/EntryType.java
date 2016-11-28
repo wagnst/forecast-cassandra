@@ -4,7 +4,8 @@ public enum EntryType {
     ACTUAL("actual"),
     FORECAST("forecast"),
     ACTUAL_FORECAST("actual/forecast"),
-    BUDGET("budget");
+    BUDGET("budget"),
+    TOPDOWN("topdown");
 
     private final String type;
 
