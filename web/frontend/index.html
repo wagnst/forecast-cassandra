@@ -18,6 +18,7 @@
     <script src="js/jquery.jqGrid.min.js" type="text/javascript"></script>
     <script src="js/i18n/grid.locale-en.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
+
     <script>
         $(function () {
             $.fn.runGrid = function (backendServer, kpiType, year, period, currency) {
@@ -180,7 +181,7 @@
                 //trigger for refresh
                 $("#resultList").jqGrid().setGridParam({url: endpointScheme + endpointUrl + endpointPath + year + '/' + period + '/' + currency}).trigger("reloadGrid")
             }
-
+<
             // listener on submit input form
             $('#inputForm').submit(function (e) {
                 // to stop the form from submitting

@@ -1,99 +1,20 @@
 <!DOCTYPE html>
-
+<html lang="de">
 <head>
-
-    <link rel="stylesheet" type="text/css" media="screen"
-          href="css/jquery.dataTables.min.css"/>
-
-    <script src="js/jquery.dataTables.min.js" type="text/javascript"></script>
-    <script src="js/jquery-1.12.3.js" type="text/javascript"></script>
-
-    <script> $(document).ready(function() {
-            $('#table').DataTable(
-                    {
-    "processing": true,
-    "ajax": "data/objects_deep.txt",
-    "columns": [
-    { "data": "ORDER_NUMBER" },
-    { "data": "KPI" },
-    { "data": "M01" },
-    { "data": "M02" },
-    { "data": "M03" },
-    { "data": "M04" },
-    { "data": "M05" },
-    { "data": "M06" },
-    { "data": "M07" },
-    { "data": "M08" },
-    { "data": "M09" },
-    { "data": "M10" },
-    { "data": "M11" },
-    { "data": "M12" },
-    { "data": "M13" },
-    { "data": "M14" },
-    { "data": "M15" },
-    { "data": "M16" },
-    { "data": "M17" },
-    { "data": "M18" },
-    { "data": "BJ2" },
-    { "data": "BJ3" },
-    { "data": "BJ4" },
-    { "data": "REGION" },
-    { "data": "SUBREGION" },
-    { "data": "SBU" },
-    { "data": "ENTRY_TYPE" },
-    { "data": "PRODUCT_MAIN_GROUP" },
-    { "data": "SALES_TYPE" },
-    { "data": "CURRENCY" },
-    { "data": "UNIT" },
-    { "data": "FC_TYPE" }
-    ]
-    } );
-    } ); </script>
-
-
+    <meta charset="UTF-8">
+    <title>Menü</title>
 </head>
-
-    <title>FourSchlag WS Client</title>
-
 <body>
 
-<table id="table" class="display" cellspacing="0" width="100%">
-    <thead>
-    <tr>
-        <th>ORDER_NUMBER</th>
-        <th>KPI</th>
-        <th>M01</th>
-        <th>M02</th>
-        <th>M03</th>
-        <th>M04</th>
-        <th>M05</th>
-        <th>M06</th>
-        <th>M07</th>
-        <th>M08</th>
-        <th>M09</th>
-        <th>M10</th>
-        <th>M11</th>
-        <th>M12</th>
-        <th>M13</th>
-        <th>M14</th>
-        <th>M15</th>
-        <th>M16</th>
-        <th>M17</th>
-        <th>M18</th>
-        <th>BJ2</th>
-        <th>BJ3</th>
-        <th>BJ4</th>
-        <th>REGION</th>
-        <th>SUBREGION</th>
-        <th>SBU</th>
-        <th>ENTRY_TYPE</th>
-        <th>PRODUCT_MAIN_GROUP</th>
-        <th>SALES_TYPE</th>
-        <th>CURRENCY</th>
-        <th>UNIT</th>
-        <th>FC_TYPE</th>
-    </tr>
-    </thead>
-</table>
+<ul id="menu">
+    <li><a href="index.html">Startseite</a></li>
+    <li><a href="import.html">Daten importieren</a></li>
+    <li><a class="active" href="get.html">Daten abfragen</a></li>
+    <li><a href="manipulate.html">Daten ändern</a></li>
+</ul>
+
+
+
+
 </body>
 </html>

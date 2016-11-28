@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+
+
+    <meta charset="UTF-8">
+    <title>Daten abfragen</title>
+
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript"
+            src="https://code.jquery.com/jquery-1.12.3.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+            $("#col-lg-2").click(function () {
+
+                $.get('http://141.19.145.142:8080/fourschlag/api/forecast/'
+                        + document.getElementById("planyear").value + '/'
+                        + document.getElementById("period").value + '/'
+                        + document.getElementById("currency").value, function (data) {
+                    console.log(data);
+
+                    $('#myTable').DataTable({
+                        data: data,
+                        aaSorting: [],
+                        "scrollY": "600px",
+                        "scrollX": "600px ",
+                        "scrollCollapse": true,
+                        "paging": false,
+                        "deferRender": true,
+
+                        columns: [
+                            {data: 'ORDER_NUMBER'},
+                            {data: 'KPI'},
+                            {data: 'M01'},
+                            {data: 'M02'},
+                            {data: 'M03'},
+                            {data: 'M04'},
+                            {data: 'M05'},
+                            {data: 'M06'},
+                            {data: 'M07'},
+                            {data: 'M08'},
+                            {data: 'M09'},
+                            {data: 'M10'},
+                            {data: 'M11'},
+                            {data: 'M12'},
+                            {data: 'M13'},
+                            {data: 'M14'},
+                            {data: 'M15'},
+                            {data: 'M16'},
+                            {data: 'M17'},
+                            {data: 'M18'},
+                            {data: 'BJ2'},
+                            {data: 'BJ3'},
+                            {data: 'BJ4'},
+                            {data: 'REGION'},
+                            {data: 'SUBREGION'},
+                            {data: 'SBU'},
+                            {data: 'ENTRY_TYPE'},
+                            {data: 'PRODUCT_MAIN_GROUP'},
+                            {data: 'SALES_TYPE'},
+                            {data: 'CURRENCY'},
+                            {data: 'UNIT'},
+                            {data: 'FC_TYPE'}
+                        ]
+                    })
+                })
+            })
+        });
+
+
+    </script>
+
+
+</head>
+
+<title>FourSchlag WS Client</title>
+
+<body>
+
+
+<ul id="menu">
+    <li><a href="index.html">Startseite</a></li>
+</ul>
+
+<div class="panel panel-default">
+    <div class="panel-heading">FourSchlag JS Sample Frontend</div>
+    <div class="panel-body">
+        <div class="jumbotron">
+            <form id="inputForm" class="form-horizontal" role="form">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="backendServer">Backend</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="backendServer"
+                                           value="141.19.145.142:8080">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="kpiType">Area</label>
+                                <div class="col-lg-8">
+                                    <select class="form-control" id="kpiType">
+                                        <option>sales</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-12 col-md-2">
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="year">Plan-Year</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="year"
+                                           value="2013">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="period">Period</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="period"
+                                           value="201611">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3 control-label"
+                                       for="currency">Currency</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control"
+                                           name="currency"
+                                           value="eur">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-1">
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label"
+                                       for=""></label>
+                                <div class="col-lg-2">
+                                    <button type="submit"
+                                            class="btn btn-default"><img
+                                            width="120px"
+                                            height="120px"
+                                            src="img/fourschlag-logo.png"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table id="resultList"></table>
+        <div id="resultPager"></div>
+    </div>
+</div>
+
+<table id="myTable" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>ORDER_NUMBER</th>
+        <th>KPI</th>
+        <th>M01</th>
+        <th>M02</th>
+        <th>M03</th>
+        <th>M04</th>
+        <th>M05</th>
+        <th>M06</th>
+        <th>M07</th>
+        <th>M08</th>
+        <th>M09</th>
+        <th>M10</th>
+        <th>M11</th>
+        <th>M12</th>
+        <th>M13</th>
+        <th>M14</th>
+        <th>M15</th>
+        <th>M16</th>
+        <th>M17</th>
+        <th>M18</th>
+        <th>BJ2</th>
+        <th>BJ3</th>
+        <th>BJ4</th>
+        <th>REGION</th>
+        <th>SUBREGION</th>
+        <th>SBU</th>
+        <th>ENTRY_TYPE</th>
+        <th>PRODUCT_MAIN_GROUP</th>
+        <th>SALES_TYPE</th>
+        <th>CURRENCY</th>
+        <th>UNIT</th>
+        <th>FC_TYPE</th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>
