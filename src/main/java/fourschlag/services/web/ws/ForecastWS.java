@@ -42,6 +42,9 @@ public class ForecastWS {
         //TODO: period must be the present or the past, but must not be the future (I guess so --> to be confirmed by SP)
 
         Currency curr = Currency.getCurrencyByAbbreviation(currency);
+        if (curr == null) {
+            /* TODO: Send code 400: Bad Request */
+        }
 
         Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planYear, period, curr);
         Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planYear, period, curr);
