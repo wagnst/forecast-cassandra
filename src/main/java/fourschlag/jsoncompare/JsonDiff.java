@@ -23,7 +23,7 @@ public class JsonDiff {
     private static FixedCostsService fixedCostsService = new FixedCostsService(connection);
 
     public static void main(String[] args) {
-        Set<CompareObject> ourSet = getOurJson();
+        Set<CompareObject> ourSet = getTheirJson(new File("ourJson.json"));
         Set<CompareObject> theirSet = getTheirJson(new File("spJson.json"));
 
         List<CompareObject> ourList = getSortedList(ourSet);
@@ -39,7 +39,6 @@ public class JsonDiff {
             }
         }
 
-        /*
         System.out.println("Checking if theirList contains every object from ourList");
         for (CompareObject param : ourList) {
             if (!theirList.contains(param)) {
@@ -48,7 +47,7 @@ public class JsonDiff {
                 }
             }
         }
-        */
+
 
         for (CompareObject object : noDuplicates) {
             System.out.println(object);
@@ -88,7 +87,7 @@ public class JsonDiff {
 
         return Arrays.stream(spEntries)
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                        entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
+                        entry.getSalesType(), entry.getEntryType()))
                 .collect(Collectors.toSet());
     }
 
@@ -109,7 +108,7 @@ public class JsonDiff {
                 .sorted(new OutputDataTypeComparator())
                 /* Convert the stream to a List */
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
+                entry.getSalesType(), entry.getEntryType()))
                 .collect(Collectors.toSet());
 
         /* Close both streams */
