@@ -15,11 +15,6 @@ public interface ActualFixedCostsAccessor {
             @Param("period") int period
     );
 
-    @Query("SELECT DISTINCT sbu FROM actual_fixed_costs")
-    Result<ActualFixedCostsEntity> getSbu();
-
-    @Query("SELECT subregion FROM actual_fixed_costs WHERE sbu = :sbu")
-    Result<ActualFixedCostsEntity> getSubregionForSpecificSbu(
-            @Param("sbu") String sbu
-    );
+    @Query("SELECT DISTINCT sbu, subregion FROM actual_fixed_costs")
+    Result<ActualFixedCostsEntity> getDistinctSbuAndSubregions();
 }

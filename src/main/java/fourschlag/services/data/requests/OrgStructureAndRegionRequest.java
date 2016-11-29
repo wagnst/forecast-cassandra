@@ -60,32 +60,29 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     private void queryPmgAndRegionsFromSales() {
-        Result<ActualSalesEntity> entitiesFromActual = actualSalesAccessor.getProductMainGroups();
-        Result<ForecastSalesEntity> entitiesFromForecast = forecastSalesAccessor.getProductMainGroups();
-        Set<String> productSet = new HashSet<String>(){{
-            entitiesFromActual.forEach(product -> add(product.getProductMainGroup()));
-            entitiesFromForecast.forEach(product -> add(product.getProductMainGroup()));
-        }};
+        Result<ActualSalesEntity> entitiesFromActual = actualSalesAccessor.getDistinctPmgAndRegions();
+        Result<ForecastSalesEntity> entitiesFromForecast = forecastSalesAccessor.getDistinctPmgAndRegions();
+        productMap = new HashMap<>();
 
-        productMap = new HashMap<String, Set<String>>() {{
-            Result<ActualSalesEntity> actualRegions;
-            Result<ForecastSalesEntity> forecastRegions;
-            Set<String> regionSet;
-            for (String product : productSet) {
-                regionSet = new HashSet<>();
-                actualRegions = actualSalesAccessor.getRegionForSpecificPmg(product);
-                forecastRegions = forecastSalesAccessor.getRegionForSpecificPmg(product);
-
-                for (ActualSalesEntity entity : actualRegions) {
-                    regionSet.add(entity.getRegion());
-                }
-                for (ForecastSalesEntity entity : forecastRegions) {
-                    regionSet.add(entity.getRegion());
-                }
-
-                put(product, regionSet);
+        for (ActualSalesEntity entity : entitiesFromActual) {
+            if (productMap.containsKey(entity.getProductMainGroup())) {
+                productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
+            } else {
+                productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
+                    add(entity.getRegion());
+                }});
             }
-        }};
+        }
+
+        for (ForecastSalesEntity entity : entitiesFromForecast) {
+            if (productMap.containsKey(entity.getProductMainGroup())) {
+                productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
+            } else {
+                productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
+                    add(entity.getRegion());
+                }});
+            }
+        }
     }
 
     public Map<String, Set<String>> getSubregionsAndSbuFromFixedCosts() {
@@ -96,31 +93,29 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     private void querySubregionsAndSbuFromFixedCosts() {
-        Result<ActualFixedCostsEntity> entitiesFromActual = actualFixedCostsAccessor.getSbu();
-        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastFixedCostsAccessor.getSbu();
-        Set<String> sbuSet = new HashSet<String>(){{
-            entitiesFromActual.forEach(sbu -> add(sbu.getSbu()));
-            entitiesFromForecast.forEach(sbu -> add(sbu.getSbu()));
-        }};
+        Result<ActualFixedCostsEntity> entitiesFromActual = actualFixedCostsAccessor.getDistinctSbuAndSubregions();
+        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastFixedCostsAccessor.getDistinctSbuAndSubregions();
+        sbuMap = new HashMap<>();
 
-        sbuMap = new HashMap<String, Set<String>>() {{
-            Result<ActualFixedCostsEntity> actualSubregions;
-            Result<ForecastFixedCostsEntity> forecastSubregions;
-            Set<String> subregionSet;
-            for (String sbu : sbuSet) {
-                subregionSet = new HashSet<>();
-                actualSubregions = actualFixedCostsAccessor.getSubregionForSpecificSbu(sbu);
-                forecastSubregions = forecastFixedCostsAccessor.getSubregionForSpecificSbu(sbu);
-
-                for (ActualFixedCostsEntity entity : actualSubregions) {
-                    subregionSet.add(entity.getSubregion());
-                }
-                for (ForecastFixedCostsEntity entity : forecastSubregions) {
-                    subregionSet.add(entity.getSubregion());
-                }
-                put(sbu, subregionSet);
+        for (ActualFixedCostsEntity entity : entitiesFromActual) {
+            if (sbuMap.containsKey(entity.getSbu())) {
+                sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+            } else {
+                sbuMap.put(entity.getSbu(), new HashSet<String>(){{
+                    add(entity.getSubregion());
+                }});
             }
-        }};
+        }
+
+        for (ForecastFixedCostsEntity entity : entitiesFromForecast) {
+            if (sbuMap.containsKey(entity.getSbu())) {
+                sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+            } else {
+                sbuMap.put(entity.getSbu(), new HashSet<String>(){{
+                    add(entity.getSubregion());
+                }});
+            }
+        }
     }
 
     public String getSbu(String productMainGroup) {
