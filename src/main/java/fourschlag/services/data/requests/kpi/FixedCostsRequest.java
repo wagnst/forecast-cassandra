@@ -155,7 +155,7 @@ public class FixedCostsRequest extends KpiRequest {
 
             kpiMap.put(FIX_COST_BELOW_CM2, fixCostBelowCm2);
             kpiMap.put(TOTAL_FIX_COST, fixCostBetweenCm1Cm2 + fixCostBelowCm2);
-            kpiMap.put(DEPRECATION, queryResult.getDepreciation());
+            kpiMap.put(DEPRECIATION, queryResult.getDepreciation());
             kpiMap.put(CAP_COST, queryResult.getCapCost());
             kpiMap.put(EQUITY_INCOME, queryResult.getEquityIncome());
 
