@@ -1,6 +1,6 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.tables.Entity;
+import fourschlag.entities.tables.kpi.KpiEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.db.CassandraConnection;
 
@@ -171,7 +171,7 @@ public abstract class KpiRequest extends Request {
     }
 
     private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
-        Entity queryResult;
+        KpiEntity queryResult;
 
         if (entryType == EntryType.BUDGET) {
             queryResult = getBudgetData(tempPlanPeriod);
@@ -202,7 +202,7 @@ public abstract class KpiRequest extends Request {
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
-    protected abstract ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod);
+    protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
 
     /**
      * method to validate a query result excluding the topdown values
@@ -211,13 +211,13 @@ public abstract class KpiRequest extends Request {
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
-    protected abstract ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod);
+    protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
-    protected abstract Entity getActualData(Period tempPlanPeriod);
+    protected abstract KpiEntity getActualData(Period tempPlanPeriod);
 
-    protected abstract Entity getForecastData(Period tempPlanPeriod, EntryType entryType);
+    protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
 
-    protected abstract Entity getBudgetData(Period tempPlanPeriod);
+    protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 
     /**
      * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)

@@ -1,4 +1,4 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi.fixedcosts;
 
 
 import com.datastax.driver.mapping.annotations.Column;

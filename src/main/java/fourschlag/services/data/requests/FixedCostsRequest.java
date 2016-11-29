@@ -1,10 +1,10 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.accessors.ActualFixedCostsAccessor;
-import fourschlag.entities.accessors.ForecastFixedCostsAccessor;
-import fourschlag.entities.tables.Entity;
-import fourschlag.entities.tables.FixedCostsEntity;
-import fourschlag.entities.tables.ForecastFixedCostsEntity;
+import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
+import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
+import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
@@ -81,7 +81,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
         /* Prepare the kpi variables */
         ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());
@@ -112,7 +112,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
 
         ValidatedResult validatedResult = new ValidatedResult(kpiArray);

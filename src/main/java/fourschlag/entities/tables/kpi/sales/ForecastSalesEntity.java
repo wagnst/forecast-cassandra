@@ -1,4 +1,4 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi.sales;
 
 
 import com.datastax.driver.mapping.annotations.Column;

@@ -1,12 +1,13 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi.sales;
 
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
+import fourschlag.entities.tables.kpi.KpiEntity;
 
 import java.util.UUID;
 
-public class SalesEntity extends Entity {
+public class SalesEntity extends KpiEntity {
 
 
     @PartitionKey

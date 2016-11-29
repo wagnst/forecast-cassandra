@@ -1,4 +1,4 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Transient;
@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Created by thor on 23.11.2016.
  */
-public class Entity {
+public class KpiEntity {
     /* comment in if uuid is part of primary key
 @PartitionKey
 @Column(name = "uuid")
@@ -37,10 +37,10 @@ public class Entity {
     @Column(name = "entry_ts")
     private String entryTs;
 
-    public Entity() {
+    public KpiEntity() {
     }
 
-    public Entity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs) {
+    public KpiEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs) {
         this.uuid = uuid;
         this.period = period;
         this.region = region;

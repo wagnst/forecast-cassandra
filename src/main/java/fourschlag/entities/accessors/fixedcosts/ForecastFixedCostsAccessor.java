@@ -1,10 +1,10 @@
-package fourschlag.entities.accessors;
+package fourschlag.entities.accessors.fixedcosts;
 
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
-import fourschlag.entities.tables.ForecastFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 
 @Accessor
 public interface ForecastFixedCostsAccessor {

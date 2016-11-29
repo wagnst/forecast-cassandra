@@ -2,7 +2,15 @@ package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.Result;
 import fourschlag.entities.accessors.*;
+import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
+import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
+import fourschlag.entities.accessors.sales.ActualSalesAccessor;
+import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
 import fourschlag.entities.tables.*;
+import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
+import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;

@@ -1,11 +1,12 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi.fixedcosts;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
+import fourschlag.entities.tables.kpi.KpiEntity;
 
 import java.util.UUID;
 
-public class FixedCostsEntity extends Entity {
+public class FixedCostsEntity extends KpiEntity {
     @Column(name = "sbu")
     private String sbu;
 

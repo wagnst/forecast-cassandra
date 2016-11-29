@@ -1,10 +1,10 @@
-package fourschlag.entities.accessors;
+package fourschlag.entities.accessors.sales;
 
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
 import com.datastax.driver.mapping.annotations.Query;
-import fourschlag.entities.tables.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 
 @Accessor
 public interface ForecastSalesAccessor {

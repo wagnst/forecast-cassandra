@@ -1,10 +1,10 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.accessors.ActualSalesAccessor;
-import fourschlag.entities.accessors.ForecastSalesAccessor;
-import fourschlag.entities.tables.Entity;
-import fourschlag.entities.tables.ForecastSalesEntity;
-import fourschlag.entities.tables.SalesEntity;
+import fourschlag.entities.accessors.sales.ActualSalesAccessor;
+import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
+import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.db.CassandraConnection;
@@ -156,7 +156,7 @@ public class SalesRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
         SalesEntity queryResult = (SalesEntity) result;
 
@@ -193,7 +193,7 @@ public class SalesRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
         SalesEntity queryResult = (SalesEntity) result;
 
