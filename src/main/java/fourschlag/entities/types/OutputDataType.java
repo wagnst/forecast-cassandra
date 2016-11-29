@@ -90,7 +90,7 @@ public class OutputDataType {
         this.salesType = salesType;
         this.entryType = entryType;
         this.currency = currency.getAbbreviation();
-        this.unit = currency.getSymbol();
+        this.unit = convertUnitCurrency(kpi.getUnit(), currency);
         this.setMonths(months);
         this.setBj(bjValues);
     }
@@ -122,16 +122,34 @@ public class OutputDataType {
         this.bj4 = bjValues.poll();
     }
 
+    private String convertUnitCurrency(String unit, Currency currency) {
+        if (currency == Currency.EURO) {
+            return unit;
+        } else if (unit.indexOf(Currency.EURO.getSymbol()) == -1) {
+            return unit;
+        } else if (currency == Currency.DOLLAR) {
+            return unit.replace(Currency.EURO.getSymbol(), Currency.DOLLAR.getSymbol());
+        } else {
+            return unit.replace(Currency.EURO.getSymbolAsString(), currency.getAbbreviation());
+        }
+    }
+
     /**
      * Getter for the number of months the OutputDataType is built for
      *
      * @return number of months
      */
-    public static int getNumberOfMonths() { return NUMBER_OF_MONTHS; }
+    public static int getNumberOfMonths() {
+        return NUMBER_OF_MONTHS;
+    }
 
-    public static int getNumberOfBj() { return NUMBER_OF_BJ; }
+    public static int getNumberOfBj() {
+        return NUMBER_OF_BJ;
+    }
 
-    public int getOrderNumber() { return orderNumber; }
+    public int getOrderNumber() {
+        return orderNumber;
+    }
 
     public String getKpi() {
         return kpi;

@@ -1,13 +1,13 @@
 package fourschlag.entities.types;
 
 public enum Currency {
-    EURO("eur","€"),
-    DOLLAR("usd","$");
+    EURO("eur",'€'),
+    DOLLAR("usd",'$');
 
     private final String abbreviation;
-    private final String symbol;
+    private final char symbol;
 
-    Currency(String abbreviation, String symbol){
+    Currency(String abbreviation, char symbol){
         this.abbreviation = abbreviation;
         this.symbol = symbol;
     }
@@ -16,9 +16,11 @@ public enum Currency {
         return abbreviation;
     }
 
-    public String getSymbol() {
+    public char getSymbol() {
         return symbol;
     }
+
+    public String getSymbolAsString() { return symbol + "";}
 
     @Override
     public String toString() {
@@ -34,9 +36,9 @@ public enum Currency {
         return null;
     }
 
-    public static Currency getCurrencyBySymbol(String symbol) {
+    public static Currency getCurrencyBySymbol(char symbol) {
         for (Currency currency: Currency.values()) {
-            if (currency.getSymbol().equals(symbol)) {
+            if (currency.getSymbol() == symbol) {
                 return currency;
             }
         }
