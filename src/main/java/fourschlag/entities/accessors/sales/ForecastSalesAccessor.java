@@ -25,6 +25,11 @@ public interface ForecastSalesAccessor {
             @Param("region") String region,
             @Param("sales_type") String salesType);
 
-    @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales;")
+    @Query("SELECT DISTINCT product_main_group FROM forecast_sales;")
     Result<ForecastSalesEntity> getProductMainGroups();
+
+    @Query("SELECT region FROM forecast_sales WHERE product_main_group = :product_main_group")
+    Result<ForecastSalesEntity> getRegionForSpecificPmg(
+            @Param("product_main_group") String productMainGroup
+    );
 }

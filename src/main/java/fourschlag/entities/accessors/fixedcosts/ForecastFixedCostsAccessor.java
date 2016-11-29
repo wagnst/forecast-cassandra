@@ -17,6 +17,11 @@ public interface ForecastFixedCostsAccessor {
             @Param("entry_type") String entryType
     );
 
-    @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
-    Result<ForecastFixedCostsEntity> getSbuAndSubregions();
+    @Query("SELECT DISTINCT sbu FROM forecast_fixed_costs")
+    Result<ForecastFixedCostsEntity> getSbu();
+
+    @Query("SELECT subregion FROM forecast_fixed_costs WHERE sbu = :sbu")
+    Result<ForecastFixedCostsEntity> getSubregionForSpecificSbu(
+            @Param("sbu") String sbu
+    );
 }
