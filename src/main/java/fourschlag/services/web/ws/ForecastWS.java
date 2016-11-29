@@ -39,7 +39,7 @@ public class ForecastWS {
             @PathParam("planyear") int planYear,
             @PathParam("period") int period,
             @PathParam("currency") String currency) {
-        //TODO: period must be the present or the past, but must not be the future (I guess so --> to be confirmed by SP)
+        //TODO: period must be the present or the past, but must not be the future
 
         /* Get correct currency object from currency enum */
         Currency curr = Currency.getCurrencyByAbbreviation(currency);

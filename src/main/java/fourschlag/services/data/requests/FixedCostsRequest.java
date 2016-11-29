@@ -27,8 +27,6 @@ public class FixedCostsRequest extends KpiRequest {
         super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
-        /* TODO: get Region with orgAndRegionRequest */
-
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }

@@ -1,6 +1,7 @@
 package fourschlag.entities.types;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.LinkedList;
 
@@ -10,38 +11,71 @@ public class OutputDataType {
     @JsonIgnore
     private final static int NUMBER_OF_BJ = 3;
 
-    private int orderNumber;
-    private String kpi;
-    private double m01;
-    private double m02;
-    private double m03;
-    private double m04;
-    private double m05;
-    private double m06;
-    private double m07;
-    private double m08;
-    private double m09;
-    private double m10;
-    private double m11;
-    private double m12;
-    private double m13;
-    private double m14;
-    private double m15;
-    private double m16;
-    private double m17;
-    private double m18;
-    private double bj2;
-    private double bj3;
-    private double bj4;
-    private String region;
-    private String subregion;
-    private String sbu;
+    @JsonProperty("ENTRY_TYPE")
     private String entryType;
+    @JsonProperty("REGION")
+    private String region;
+    @JsonProperty("SUBREGION")
+    private String subregion;
+    @JsonProperty("SBU")
+    private String sbu;
+    @JsonProperty("PRODUCT_MAIN_GROUP")
     private String productMainGroup;
+    @JsonProperty("SALES_TYPE")
     private String salesType;
-    private String currency;
-    private String unit;
+    @JsonProperty("FC_TYPE")
     private String fcType;
+    @JsonProperty("ORDER_NUMBER")
+    private int orderNumber;
+    @JsonProperty("KPI")
+    private String kpi;
+    @JsonProperty("UNIT")
+    private String unit;
+    @JsonProperty("M01")
+    private double m01;
+    @JsonProperty("M02")
+    private double m02;
+    @JsonProperty("M03")
+    private double m03;
+    @JsonProperty("M04")
+    private double m04;
+    @JsonProperty("M05")
+    private double m05;
+    @JsonProperty("M06")
+    private double m06;
+    @JsonProperty("M07")
+    private double m07;
+    @JsonProperty("M08")
+    private double m08;
+    @JsonProperty("M09")
+    private double m09;
+    @JsonProperty("M10")
+    private double m10;
+    @JsonProperty("M11")
+    private double m11;
+    @JsonProperty("M12")
+    private double m12;
+    @JsonProperty("M13")
+    private double m13;
+    @JsonProperty("M14")
+    private double m14;
+    @JsonProperty("M15")
+    private double m15;
+    @JsonProperty("M16")
+    private double m16;
+    @JsonProperty("M17")
+    private double m17;
+    @JsonProperty("M18")
+    private double m18;
+    @JsonProperty("BJ2")
+    private double bj2;
+    @JsonProperty("BJ3")
+    private double bj3;
+    @JsonProperty("BJ4")
+    private double bj4;
+
+    @JsonIgnore
+    private String currency;
 
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
                           String subregion, String salesType, String entryType, Currency currency,
@@ -93,7 +127,6 @@ public class OutputDataType {
      *
      * @return number of months
      */
-    /* TODO: Remove 'magic numbers' and create class for constants */
     public static int getNumberOfMonths() { return NUMBER_OF_MONTHS; }
 
     public static int getNumberOfBj() { return NUMBER_OF_BJ; }
