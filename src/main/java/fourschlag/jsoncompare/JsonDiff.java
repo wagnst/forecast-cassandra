@@ -25,17 +25,29 @@ public class JsonDiff {
         Set<CompareObject> ourSet = getOurJson();
         Set<CompareObject> theirSet = getTheirJson(new File("spJson.json"));
 
-        List<CompareObject> ourList = ourSet.stream()
-                .sorted(new DiffComparator())
-                .collect(Collectors.toList());
-
-        List<CompareObject> theirList = theirSet.stream()
-                .sorted(new DiffComparator())
-                .collect(Collectors.toList());
+        List<CompareObject> ourList = getSortedList(ourSet);
+        List<CompareObject> theirList = getSortedList(theirSet);
 
         for (CompareObject param : theirList) {
             System.out.println(param.toString());
         }
+
+        /*
+        for (CompareObject param : ourList) {
+            System.out.println(param.toString());
+        }
+         */
+
+        /*
+        System.out.println(ourList.size());
+        System.out.println(theirList.size());
+        */
+    }
+
+    static List<CompareObject> getSortedList(Set<CompareObject> set) {
+        return set.stream()
+                .sorted(new DiffComparator())
+                .collect(Collectors.toList());
     }
 
     static Set<CompareObject> getTheirJson(File json) {
@@ -56,6 +68,7 @@ public class JsonDiff {
                 .collect(Collectors.toSet());
     }
 
+    /* Only for Team FourSchlag. If you are not Team FourSchlag, then use getTheirJson two times */
     static Set<CompareObject> getOurJson() {
         int planYear = 2016;
         int period = 201606;
