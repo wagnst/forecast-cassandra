@@ -1,4 +1,4 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
 import fourschlag.entities.accessors.sales.ActualSalesAccessor;
 import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
@@ -7,6 +7,8 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;

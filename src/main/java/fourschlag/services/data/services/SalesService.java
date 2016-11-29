@@ -1,4 +1,4 @@
-package fourschlag.services.data;
+package fourschlag.services.data.services;
 
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
@@ -6,7 +6,7 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.SalesRequest;
+import fourschlag.services.data.requests.kpi.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;

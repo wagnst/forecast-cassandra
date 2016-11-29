@@ -1,4 +1,4 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
 import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
 import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
@@ -7,6 +7,8 @@ import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;

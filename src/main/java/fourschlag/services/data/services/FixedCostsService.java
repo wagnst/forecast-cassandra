@@ -1,10 +1,10 @@
-package fourschlag.services.data;
+package fourschlag.services.data.services;
 
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
-import fourschlag.services.data.requests.FixedCostsRequest;
+import fourschlag.services.data.requests.kpi.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 

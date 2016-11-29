@@ -1,7 +1,9 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
 import fourschlag.entities.tables.kpi.KpiEntity;
 import fourschlag.entities.types.*;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.Request;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;

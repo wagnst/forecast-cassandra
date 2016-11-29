@@ -3,8 +3,8 @@ package fourschlag.services.web.ws;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
-import fourschlag.services.data.FixedCostsService;
-import fourschlag.services.data.SalesService;
+import fourschlag.services.data.services.FixedCostsService;
+import fourschlag.services.data.services.SalesService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.web.Params;
 
