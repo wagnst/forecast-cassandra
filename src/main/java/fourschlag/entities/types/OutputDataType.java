@@ -74,7 +74,8 @@ public class OutputDataType {
     @JsonProperty("BJ4")
     private double bj4;
 
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonProperty("CURRENCY")
     private String currency;
 
     public OutputDataType() {}

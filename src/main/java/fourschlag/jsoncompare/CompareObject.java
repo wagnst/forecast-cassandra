@@ -7,14 +7,16 @@ public class CompareObject {
     private String subregion;
     private String salesType;
     private String entryType;
+    private String kpi;
 
-    public CompareObject(String sbu, String productMainGroup, String region, String subregion, String salesType, String entryType) {
+    public CompareObject(String sbu, String productMainGroup, String region, String subregion, String salesType, String entryType, String kpi) {
         this.sbu = sbu;
         this.productMainGroup = productMainGroup;
         this.region = region;
         this.subregion = subregion;
         this.salesType = salesType;
         this.entryType = entryType;
+        this.kpi = kpi;
     }
 
     @Override
@@ -30,7 +32,8 @@ public class CompareObject {
         if (region != null ? !region.equals(that.region) : that.region != null) return false;
         if (subregion != null ? !subregion.equals(that.subregion) : that.subregion != null) return false;
         if (salesType != null ? !salesType.equals(that.salesType) : that.salesType != null) return false;
-        return entryType != null ? entryType.equals(that.entryType) : that.entryType == null;
+        if (entryType != null ? !entryType.equals(that.entryType) : that.entryType != null) return false;
+        return kpi != null ? kpi.equals(that.kpi) : that.kpi == null;
     }
 
     @Override
@@ -41,6 +44,7 @@ public class CompareObject {
         result = 31 * result + (subregion != null ? subregion.hashCode() : 0);
         result = 31 * result + (salesType != null ? salesType.hashCode() : 0);
         result = 31 * result + (entryType != null ? entryType.hashCode() : 0);
+        result = 31 * result + (kpi != null ? kpi.hashCode() : 0);
         return result;
     }
 
@@ -68,6 +72,10 @@ public class CompareObject {
         return entryType;
     }
 
+    public String getKpi() {
+        return kpi;
+    }
+
     @Override
     public String toString() {
         return "sbu='" + sbu + '\'' +
@@ -75,6 +83,7 @@ public class CompareObject {
                 ", region='" + region + '\'' +
                 ", subregion='" + subregion + '\'' +
                 ", salesType='" + salesType + '\'' +
-                ", entryType='" + entryType;
+                ", entryType='" + entryType + '\'' +
+                ", kpi='" + kpi;
     }
 }

@@ -10,6 +10,7 @@ import fourschlag.services.db.CassandraConnection;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -28,18 +29,29 @@ public class JsonDiff {
         List<CompareObject> ourList = getSortedList(ourSet);
         List<CompareObject> theirList = getSortedList(theirSet);
 
+        List<CompareObject> noDuplicates = new ArrayList<>();
         System.out.println("Checking if ourList contains every object from theirList");
         for (CompareObject param : theirList) {
             if (!ourList.contains(param)) {
-                System.out.println(param);
+                if (!noDuplicates.contains(param)) {
+                    noDuplicates.add(param);
+                }
             }
         }
 
+        /*
         System.out.println("Checking if theirList contains every object from ourList");
         for (CompareObject param : ourList) {
             if (!theirList.contains(param)) {
-                System.out.println(param);
+                if (!noDuplicates.contains(param)) {
+                    noDuplicates.add(param);
+                }
             }
+        }
+        */
+
+        for (CompareObject object : noDuplicates) {
+            System.out.println(object);
         }
 
         System.out.println("Finished");
@@ -50,10 +62,10 @@ public class JsonDiff {
         }
          */
 
-        /*
+
         System.out.println(ourList.size());
         System.out.println(theirList.size());
-        */
+
     }
 
     static List<CompareObject> getSortedList(Set<CompareObject> set) {
@@ -76,14 +88,14 @@ public class JsonDiff {
 
         return Arrays.stream(spEntries)
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                        entry.getSalesType(), entry.getEntryType()))
+                        entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
                 .collect(Collectors.toSet());
     }
 
     /* Only for Team FourSchlag. If you are not Team FourSchlag, then use getTheirJson two times */
     static Set<CompareObject> getOurJson() {
         int planYear = 2016;
-        int period = 201606;
+        int period = 201609;
         Currency curr = Currency.getCurrencyByAbbreviation("usd");
 
         /* Get all Sales KPIs and save them to a stream */
@@ -97,7 +109,7 @@ public class JsonDiff {
                 .sorted(new OutputDataTypeComparator())
                 /* Convert the stream to a List */
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                entry.getSalesType(), entry.getEntryType()))
+                entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
                 .collect(Collectors.toSet());
 
         /* Close both streams */
