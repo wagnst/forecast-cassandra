@@ -39,6 +39,7 @@ public class JsonDiff {
             }
         }
 
+        /*
         System.out.println("Checking if theirList contains every object from ourList");
         for (CompareObject param : ourList) {
             if (!theirList.contains(param)) {
@@ -46,7 +47,7 @@ public class JsonDiff {
                     noDuplicates.add(param);
                 }
             }
-        }
+        } */
 
 
         for (CompareObject object : noDuplicates) {
@@ -87,7 +88,7 @@ public class JsonDiff {
 
         return Arrays.stream(spEntries)
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                        entry.getSalesType(), entry.getEntryType()))
+                        entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
                 .collect(Collectors.toSet());
     }
 
@@ -108,7 +109,7 @@ public class JsonDiff {
                 .sorted(new OutputDataTypeComparator())
                 /* Convert the stream to a List */
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                entry.getSalesType(), entry.getEntryType()))
+                entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
                 .collect(Collectors.toSet());
 
         /* Close both streams */
