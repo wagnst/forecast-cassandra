@@ -77,6 +77,8 @@ public class OutputDataType {
     @JsonIgnore
     private String currency;
 
+    public OutputDataType() {}
+
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
                           String subregion, String salesType, String entryType, Currency currency,
                           LinkedList<Double> months, LinkedList<Double> bjValues) {

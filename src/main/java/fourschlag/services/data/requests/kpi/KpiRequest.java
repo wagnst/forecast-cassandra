@@ -21,10 +21,10 @@ public abstract class KpiRequest extends Request {
     protected final String sbu;
     protected final String region;
     private final Period planPeriod;
-    protected final Period currentPeriod;
-    protected final ExchangeRateRequest exchangeRates;
+    final Period currentPeriod;
+    final ExchangeRateRequest exchangeRates;
 
-    protected final KeyPerformanceIndicators[] kpiArray;
+    final KeyPerformanceIndicators[] kpiArray;
 
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
