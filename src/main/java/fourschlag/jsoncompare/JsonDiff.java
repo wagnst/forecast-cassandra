@@ -28,9 +28,21 @@ public class JsonDiff {
         List<CompareObject> ourList = getSortedList(ourSet);
         List<CompareObject> theirList = getSortedList(theirSet);
 
+        System.out.println("Checking if ourList contains every object from theirList");
         for (CompareObject param : theirList) {
-            System.out.println(param.toString());
+            if (!ourList.contains(param)) {
+                System.out.println(param);
+            }
         }
+
+        System.out.println("Checking if theirList contains every object from ourList");
+        for (CompareObject param : ourList) {
+            if (!theirList.contains(param)) {
+                System.out.println(param);
+            }
+        }
+
+        System.out.println("Finished");
 
         /*
         for (CompareObject param : ourList) {
