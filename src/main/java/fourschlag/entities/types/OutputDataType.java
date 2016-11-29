@@ -1,11 +1,15 @@
 package fourschlag.entities.types;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.LinkedList;
 
-@JsonIgnoreProperties(value = { "orderNumber" })
 public class OutputDataType {
+    @JsonIgnore
+    private final static int NUMBER_OF_MONTHS = 18;
+    @JsonIgnore
+    private final static int NUMBER_OF_BJ = 3;
+
     private int orderNumber;
     private String kpi;
     private double m01;
@@ -90,9 +94,9 @@ public class OutputDataType {
      * @return number of months
      */
     /* TODO: Remove 'magic numbers' and create class for constants */
-    public static int getNumberOfMonths() { return 18; }
+    public static int getNumberOfMonths() { return NUMBER_OF_MONTHS; }
 
-    public static int getNumberOfBj() { return 3; }
+    public static int getNumberOfBj() { return NUMBER_OF_BJ; }
 
     public int getOrderNumber() { return orderNumber; }
 
