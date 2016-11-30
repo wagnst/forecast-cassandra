@@ -6,7 +6,25 @@ public class Period {
     protected int month;
     protected int period;
 
+    private boolean isYearValid(int year) {
+        return (year > 1900 && year < 2100);
+    }
+
+    protected boolean isMonthValid(int month) {
+        return (month > 0 && month < 13);
+    }
+
+    private boolean isPeriodValid(int period) {
+        return (period > 100000 && period < 999999);
+    }
+
     public Period(int year, int month) {
+        if (!isYearValid(year)) {
+            throw new IllegalArgumentException("Year must be between 1900 and 2100...");
+        }
+        if (!isMonthValid(month)) {
+            throw new IllegalArgumentException("Month must a number between 1 and 12...");
+        }
         this.year = year;
         this.month = month;
         this.period = year * 100 + month;
@@ -19,9 +37,21 @@ public class Period {
     }
 
     public Period(int period) {
+        if (!isPeriodValid(period)) {
+            throw new IllegalArgumentException("Period must be a 6 digit number, where the first 4 digits represent the" +
+                    "year and the last 2 digits represent the month");
+        }
+        int tempYear = period / 100;
+        if (!isYearValid(tempYear)) {
+            throw new IllegalArgumentException("Year must be between 1900 and 2100...");
+        }
+        int tempMonth = period - tempYear * 100;
+        if (!isMonthValid(tempMonth)) {
+            throw new IllegalArgumentException("Month must a number between 1 and 12...");
+        }
+        this.year = tempYear;
+        this.month = tempMonth;
         this.period = period;
-        this.year = period / 100;
-        this.month = period - this.year * 100;
     }
 
     public static Period getPeriodByYear(int year) {

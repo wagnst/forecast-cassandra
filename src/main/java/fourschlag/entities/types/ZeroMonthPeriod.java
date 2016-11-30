@@ -1,6 +1,16 @@
 package fourschlag.entities.types;
 
 public class ZeroMonthPeriod extends Period {
+
+    @Override
+    protected boolean isMonthValid(int month) {
+        if (month == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public ZeroMonthPeriod(Period period) {
         super(period.getZeroMonthPeriod());
     }

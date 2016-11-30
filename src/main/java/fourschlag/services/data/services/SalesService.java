@@ -32,17 +32,17 @@ public class SalesService extends Service {
      * Calculates all Sales KPIs for a time span (planYear) and from certain
      * point of view (currentPeriod).
      *
-     * @param planYear         Indicates the time span for which the KPIs are
+     * @param planPeriod       Indicates the time span for which the KPIs are
      *                         supposed to be queried
-     * @param currentPeriodInt The point of view in time from which the data is
+     * @param currentPeriod    The point of view in time from which the data is
      *                         supposed to be looked at
      * @param toCurrency       The desired output currency
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
-    public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, Currency toCurrency) {
+    public Stream<OutputDataType> getSalesKPIs(Period planPeriod, Period currentPeriod, Currency toCurrency) {
         /* Prepare result stream that will be returned later */
-        Stream<OutputDataType> resultStream = null;
+        Stream<OutputDataType> resultStream;
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
 
@@ -51,15 +51,12 @@ public class SalesService extends Service {
 
         Map<String, Set<String>> productAndRegions = orgAndRegionRequest.getPmgAndRegionsFromSales();
 
-        /* Create instance of Period with the given int value */
-        Period currentPeriod = new Period(currentPeriodInt);
-
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
         resultStream = productAndRegions.keySet().stream().parallel()
                 .flatMap(product -> productAndRegions.get(product).stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
-                                        product, planYear, currentPeriod, region, salesType,
+                                        product, planPeriod, currentPeriod, region, salesType,
                                         exchangeRates, orgAndRegionRequest).calculateKpis())));
 
         /* Finally the result stream will be returned */

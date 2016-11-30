@@ -41,10 +41,10 @@ public class SalesRequest extends KpiRequest {
      * @param salesType        Sales Type to filter for
      * @param exchangeRates    Desired output currency
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
+    public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                         OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planYear , currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod , currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
 

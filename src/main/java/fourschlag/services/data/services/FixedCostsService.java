@@ -25,15 +25,15 @@ public class FixedCostsService extends Service {
      * Calculates all Fixed Costs KPIs for a time span (planYear) and from certain
      * point of view (currentPeriod).
      *
-     * @param planYear         Indicates the time span for which the KPIs are
+     * @param planPeriod       Indicates the time span for which the KPIs are
      *                         supposed to be queried
-     * @param currentPeriodInt The point of view in time from which the data is
+     * @param currentPeriod    The point of view in time from which the data is
      *                         supposed to be looked at
      * @param toCurrency       The desired output currency
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
-    public Stream<OutputDataType> getFixedCostsKpis(int planYear, int currentPeriodInt, Currency toCurrency) {
+    public Stream<OutputDataType> getFixedCostsKpis(Period planPeriod, Period currentPeriod, Currency toCurrency) {
         /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
 
@@ -45,13 +45,10 @@ public class FixedCostsService extends Service {
 
         Map<String, Set<String>> sbuAndSubregions = orgAndRegionRequest.getSubregionsAndSbuFromFixedCosts();
 
-        /* Create instance of Period with the given int value */
-        Period currentPeriod = new Period(currentPeriodInt);
-
         /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsRequest is created */
         resultStream = sbuAndSubregions.keySet().stream().parallel()
                 .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
-                        .flatMap(subregion -> new FixedCostsRequest(getConnection(), sbu, planYear, currentPeriod,
+                        .flatMap(subregion -> new FixedCostsRequest(getConnection(), sbu, planPeriod, currentPeriod,
                                 subregion, exchangeRates, orgAndRegionRequest).calculateKpis()));
 
         /* Finally the result stream is returned */

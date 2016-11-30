@@ -23,10 +23,10 @@ public class FixedCostsRequest extends KpiRequest {
 
     private static final String FC_TYPE = "fixed costs";
 
-    public FixedCostsRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod,
+    public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
