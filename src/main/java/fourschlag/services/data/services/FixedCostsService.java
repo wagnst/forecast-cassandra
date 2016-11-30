@@ -8,6 +8,7 @@ import fourschlag.services.data.requests.kpi.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -42,17 +43,14 @@ public class FixedCostsService extends Service {
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
         OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        /* Get all of the subregions from the fixed costs tables --> Fixed Costs are identified by the subregion and sbu */
-        Set<String> subregions = orgAndRegionRequest.getSubregionsAsSetFromFixedCosts();
-        /* Get all of the SBUs from the fixed costs tables */
-        Set<String> sbus = orgAndRegionRequest.getSbuAsSetFromFixedCost();
+        Map<String, Set<String>> sbuAndSubregions = orgAndRegionRequest.getSubregionsAndSbuFromFixedCosts();
 
         /* Create instance of Period with the given int value */
         Period currentPeriod = new Period(currentPeriodInt);
 
         /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsRequest is created */
-        resultStream = sbus.stream().parallel()
-                .flatMap(sbu -> subregions.stream()
+        resultStream = sbuAndSubregions.keySet().stream().parallel()
+                .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
                         .flatMap(subregion -> new FixedCostsRequest(getConnection(), sbu, planYear, currentPeriod,
                                 subregion, exchangeRates, orgAndRegionRequest).calculateKpis()));
 

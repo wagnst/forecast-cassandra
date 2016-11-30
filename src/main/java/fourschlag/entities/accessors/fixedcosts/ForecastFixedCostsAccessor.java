@@ -18,5 +18,5 @@ public interface ForecastFixedCostsAccessor {
     );
 
     @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
-    Result<ForecastFixedCostsEntity> getSbuAndSubregions();
+    Result<ForecastFixedCostsEntity> getDistinctSbuAndSubregions();
 }

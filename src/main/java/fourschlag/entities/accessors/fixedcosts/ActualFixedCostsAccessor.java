@@ -16,5 +16,5 @@ public interface ActualFixedCostsAccessor {
     );
 
     @Query("SELECT DISTINCT sbu, subregion FROM actual_fixed_costs")
-    Result<ActualFixedCostsEntity> getSbuAndSubregions();
+    Result<ActualFixedCostsEntity> getDistinctSbuAndSubregions();
 }

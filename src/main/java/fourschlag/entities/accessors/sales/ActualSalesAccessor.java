@@ -17,5 +17,5 @@ public interface ActualSalesAccessor {
             @Param("data_source") String dataSource);
 
     @Query("SELECT DISTINCT product_main_group, region FROM actual_sales;")
-    Result<ActualSalesEntity> getProductMainGroups();
+    Result<ActualSalesEntity> getDistinctPmgAndRegions();
 }
