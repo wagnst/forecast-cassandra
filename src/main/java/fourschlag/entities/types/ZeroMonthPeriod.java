@@ -4,11 +4,7 @@ public class ZeroMonthPeriod extends Period {
 
     @Override
     protected boolean isMonthValid(int month) {
-        if (month == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return (month == 0);
     }
 
     public ZeroMonthPeriod(Period period) {
