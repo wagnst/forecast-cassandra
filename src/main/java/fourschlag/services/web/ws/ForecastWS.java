@@ -7,6 +7,9 @@ import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.services.FixedCostsService;
 import fourschlag.services.data.services.SalesService;
 import fourschlag.services.db.CassandraConnection;
+import fourschlag.services.db.ClusterEndpoints;
+import fourschlag.services.db.ConnectionPool;
+import fourschlag.services.db.KeyspaceNames;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -25,13 +28,13 @@ import java.util.stream.Stream;
 @Path("/forecast")
 public class ForecastWS {
 
-    private CassandraConnection connection = CassandraConnection.getInstance();
+    private CassandraConnection connection = ConnectionPool.getInstance()
+            .getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
     private SalesService salesService = new SalesService(connection);
     private FixedCostsService fixedCostsService = new FixedCostsService(connection);
 
     /* TODO: Maybe close session each time, but not connection */
     /* TODO: Create Connection pool and remove the connection from this WS */
-
     /**
      * This method collects all to be calculated forecast KPI's in
      * the different service classes
