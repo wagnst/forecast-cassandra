@@ -10,7 +10,6 @@ import com.datastax.driver.mapping.MappingManager;
  */
 public class CassandraConnection {
 
-    private static CassandraConnection instance = null;
     private Cluster cluster;
     private Session session;
     private MappingManager manager;
@@ -49,31 +48,6 @@ public class CassandraConnection {
         /* Create a new Mapping Manager */
         manager = new MappingManager(session);
     }
-
-    /**
-     * Decide if we are in HS network or on localhost and return a connection
-     *
-     * @return Cassandra connection instance
-     */
-    //public static CassandraConnection getInstance() {
-    //    if (instance == null) {
-    //        /* check if NODE cluster is available in current network, else fall back to localhost */
-    //        try {
-    //            InetAddress.getByName(String.valueOf(ClusterEndpoints.NODE1)).isReachable(5);
-    //            //use node1
-    //            instance = new CassandraConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
-    //        } catch (IOException e) {
-    //            try {
-    //                InetAddress.getByName(String.valueOf(ClusterEndpoints.DEV)).isReachable(5);
-    //                //use localhost
-    //                instance = new CassandraConnection(ClusterEndpoints.DEV, KeyspaceNames.DEMO, false);
-    //            } catch (IOException e1) {
-    //                e1.printStackTrace();
-    //            }
-    //        }
-    //    }
-    //    return instance;
-    //}
 
     /**
      * Getter for the session
