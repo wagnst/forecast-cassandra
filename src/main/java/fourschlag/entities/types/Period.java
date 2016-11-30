@@ -111,6 +111,7 @@ public class Period {
      * @return
      */
     public int getZeroMonthPeriod() {
+        /* Multiply year with 100 to get zeroMonthPeriod. Example: 2015 --> 201500 */
         return year * 100;
     }
 
@@ -131,31 +132,14 @@ public class Period {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     public int getMonth() {
         return month;
-    }
-
-    public void setMonth(int month) {
-        this.month = month;
     }
 
     public int getPeriod() {
         return period;
     }
 
-    public void setPeriod(int period) {
-        this.period = period;
-    }
-
-    /**
-     * toString method ....
-     *
-     * @return
-     */
     @Override
     public String toString() {
         return "Periode: " + period;
