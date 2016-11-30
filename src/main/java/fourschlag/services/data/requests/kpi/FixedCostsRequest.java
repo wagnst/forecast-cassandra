@@ -16,6 +16,10 @@ import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
+/**
+ * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a specific
+ * region, period and product main group
+ */
 public class FixedCostsRequest extends KpiRequest {
     private final String subregion;
     private final ActualFixedCostsAccessor actualAccessor;
@@ -34,7 +38,8 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     /**
-     * Queries KPIs from the actual sales table
+     * Queries KPIs from the actual fixed costs table
+     *
      *
      * @return SalesEntity Object with query result
      */
@@ -44,6 +49,15 @@ public class FixedCostsRequest extends KpiRequest {
         return actualAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod());
     }
 
+    /**
+     * Queries KPIs from the forecast fixed costs table
+     *
+     * @param tempPlanPeriod    planPeriod the forecast data is supposed to be taken from
+     *
+     * @param entryType         the type of the data
+     *
+     * @return
+     */
     @Override
     protected FixedCostsEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
@@ -55,6 +69,13 @@ public class FixedCostsRequest extends KpiRequest {
         return queryResult;
     }
 
+    /**
+     * Queries KPIs with the budgetdata
+     *
+     * @param tempPlanPeriod planPeriod ....
+     *
+     * @return
+     */
     @Override
     protected FixedCostsEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
@@ -62,7 +83,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     /**
-     * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     * method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */

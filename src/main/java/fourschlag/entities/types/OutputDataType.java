@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.LinkedList;
 
+/**
+ * Provides the final output structure
+ */
 public class OutputDataType {
     @JsonIgnore
     private final static int NUMBER_OF_MONTHS = 18;
@@ -77,6 +80,20 @@ public class OutputDataType {
     @JsonIgnore
     private String currency;
 
+    /**
+     * Constructor for OutputDataType
+     *
+     * @param kpi
+     * @param sbu
+     * @param productMainGroup
+     * @param region
+     * @param subregion
+     * @param salesType
+     * @param entryType
+     * @param currency
+     * @param months
+     * @param bjValues
+     */
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
                           String subregion, String salesType, String entryType, Currency currency,
                           LinkedList<Double> months, LinkedList<Double> bjValues) {
@@ -95,6 +112,11 @@ public class OutputDataType {
         this.setBj(bjValues);
     }
 
+    /**
+     * Setter for the Months
+     *
+     * @param months List of the months to be set
+     */
     private void setMonths(LinkedList<Double> months) {
         this.m01 = months.poll();
         this.m02 = months.poll();
@@ -116,12 +138,25 @@ public class OutputDataType {
         this.m18 = months.poll();
     }
 
+    /**
+     * Setter for the Bj
+     *
+     * @param bjValues List of the bjValues to be set
+     */
     private void setBj(LinkedList<Double> bjValues) {
         this.bj2 = bjValues.poll();
         this.bj3 = bjValues.poll();
         this.bj4 = bjValues.poll();
     }
 
+    /**
+     * method to convert the unit currency from € to $
+     *
+     * @param unit Unit that is supposed to be converted
+     * @param currency Currency that is supposed to be cconverted
+     *
+     * @return Converted Currency
+     */
     private String convertUnitCurrency(String unit, Currency currency) {
         if (currency == Currency.EURO) {
             return unit;
@@ -275,6 +310,11 @@ public class OutputDataType {
         return fcType;
     }
 
+    /**
+     * toString method to print out all of the OutputData
+     *
+     * @return OutputData that is currently used
+     */
 
     @Override
     public String toString() {

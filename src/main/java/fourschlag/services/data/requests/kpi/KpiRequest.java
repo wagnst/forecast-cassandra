@@ -49,12 +49,21 @@ public abstract class KpiRequest extends Request {
         fillMap(bjValues);
     }
 
+    /**
+     *
+     * @param fcType
+     * @return
+     */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
         return Arrays.stream(KeyPerformanceIndicators.values())
                 .filter(kpi -> kpi.getFcType().equals(fcType))
                 .toArray(KeyPerformanceIndicators[]::new);
     }
 
+    /**
+     *
+     * @param map
+     */
     private void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
         Arrays.stream(kpiArray)
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
@@ -123,6 +132,11 @@ public abstract class KpiRequest extends Request {
         return resultStream;
     }
 
+    /**
+     *
+     * @param entryType
+     * @return
+     */
     private Stream<OutputDataType> calculateKpisWithTopdown(final EntryType entryType) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
@@ -172,6 +186,13 @@ public abstract class KpiRequest extends Request {
         return Stream.concat(resultStream, resultStream2);
     }
 
+    /**
+     * method that calculates the KPIs for specific months
+     *
+     * @param tempPlanPeriod the desired Period
+     * @param entryType      the EntryType of the
+     * @return
+     */
     private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
         KpiEntity queryResult;
 
@@ -215,10 +236,33 @@ public abstract class KpiRequest extends Request {
      */
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
+    /**
+     * method to get the actual data
+     *
+     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
+     *
+     * @return the actual data within the desired period.
+     */
     protected abstract KpiEntity getActualData(Period tempPlanPeriod);
 
+    /**
+     * method to get the forecast data
+     *
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     *
+     * @param entryType the type of the data
+     *
+     * @return the forecast data within the desired period
+     */
     protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
 
+    /**
+     * method to get the budget data
+     *
+     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
+     *
+     * @return the budget data from the desired period
+     */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 
     /**

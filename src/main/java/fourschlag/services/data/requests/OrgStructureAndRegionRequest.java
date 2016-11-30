@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Extends Request. Offers functionality to request product main groups and
- * sbus.
+ * Extends Request. Offers functionality to request product main groups and sbus.
+ *
  */
 public class OrgStructureAndRegionRequest extends Request {
 
@@ -53,7 +53,7 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     /**
-     * Queries the database for all Product Main Groups
+     * Queries the database for all Product Main Groups from OrgStructure
      *
      * @return Result Iterable with multiple OrgStructure entities
      */
@@ -61,6 +61,11 @@ public class OrgStructureAndRegionRequest extends Request {
         return orgStructureAccessor.getProductsAndSbus();
     }
 
+    /**
+     * Adds all products from a Product Main Group to a Set
+     *
+     * @return Result Set with multiple products
+     */
     public Set<OrgStructureEntity> getProductMainGroupsAsSetFromOrgStructure() {
         Result<OrgStructureEntity> productsFromOrgStructure = getProductMainGroupsFromOrgStructure();
 
@@ -70,13 +75,24 @@ public class OrgStructureAndRegionRequest extends Request {
         return productSet;
     }
 
+    /**
+     * Queries the database for all Product Main Groups from Sales
+     *
+     * @return Result Set with multiple products
+     */
     public Set<String> getProductMainGroupsAsSetFromSales() {
+
         if (productSet == null) {
             getPmgAndRegionAsSetFromSales();
         }
         return productSet;
     }
 
+    /**
+     * Queries the database for all Regions from Sales
+     *
+     * @return Result Set with all distinct Regions
+     */
     public Set<String> getRegionsAsSetFromSales() {
         if (regionSet == null) {
             getPmgAndRegionAsSetFromSales();
@@ -84,21 +100,38 @@ public class OrgStructureAndRegionRequest extends Request {
         return regionSet;
     }
 
+    /**
+     * Queries the database for all Product Main Groups and Regions from Sales and adds the result to a set
+     *
+     */
     private void getPmgAndRegionAsSetFromSales() {
+        /* Gets the Product Main Groups from the Actual SalesEntity */
         Result<ActualSalesEntity> entitiesFromActualSales = actualSalesAccessor.getProductMainGroups();
+        /* Gets the Product Main Groups from the Forecast SalesEntity */
         Result<ForecastSalesEntity> entitiesFromForecastSales = forecastSalesAccessor.getProductMainGroups();
         productSet = new HashSet<>();
         regionSet = new HashSet<>();
+        /* iterates over all Product Main Groups from Actual Sales */
         for (ActualSalesEntity entity : entitiesFromActualSales) {
+           /* adds the Product Main Group to a result set*/
             productSet.add(entity.getProductMainGroup());
+           /* adds the regions  to a result set */
             regionSet.add(entity.getRegion());
         }
+        /* iterates over all Product Main Groups from Forecast Sales */
         for (ForecastSalesEntity entity : entitiesFromForecastSales) {
+            /* adds the Product Main Group to a result set*/
             productSet.add(entity.getProductMainGroup());
+            /* adds the regions to a result set */
             regionSet.add(entity.getRegion());
         }
     }
 
+    /**
+     * Queries the database for all sbus from fixed costs
+     *
+     * @return Result Set with all distinct sbus
+     */
     public Set<String> getSbuAsSetFromFixedCost() {
         if (sbuSet == null) {
             getSbuAndSubregionsAsSetFromFixedCosts();
@@ -106,6 +139,11 @@ public class OrgStructureAndRegionRequest extends Request {
         return sbuSet;
     }
 
+    /**
+     * Queries the database for all subregions from fixed costs
+     *
+     * @return Result Set with all distinct subregions
+     */
     public Set<String> getSubregionsAsSetFromFixedCosts() {
         if (subregionSet == null) {
             getSbuAndSubregionsAsSetFromFixedCosts();
@@ -113,22 +151,40 @@ public class OrgStructureAndRegionRequest extends Request {
         return subregionSet;
     }
 
+    /**
+     * Queries the database for all sbus and subregions from fixed costs and adds the result to a set
+     */
     private void getSbuAndSubregionsAsSetFromFixedCosts() {
+       /* Gets the sbus und subregions from the ActualFixedCostsEntity */
         Result<ActualFixedCostsEntity> entitiesFromActualFixedCosts = actualFixedCostsAccessor.getSbuAndSubregions();
+       /* Gets the sbus und subregions from the ForecastFixedCostsEntity */
         Result<ForecastFixedCostsEntity> entitiesFromForecastFixedCosts = forecastFixedCostsAccessor.getSbuAndSubregions();
 
         sbuSet = new HashSet<>();
         subregionSet = new HashSet<>();
+        /* iterates over all sbus and subregions from ActualFixedCosts */
         for (ActualFixedCostsEntity entity : entitiesFromActualFixedCosts) {
+            /* adds the sbus to a result set */
             sbuSet.add(entity.getSbu());
+            /* adds the subregions to a result set */
             subregionSet.add(entity.getSubregion());
         }
+         /* iterates over all sbus and subregions from ForecastFixedCosts */
         for (ForecastFixedCostsEntity entity : entitiesFromForecastFixedCosts) {
+            /* adds the sbus to a result set */
             sbuSet.add(entity.getSbu());
+            /* adds the subregions to a result set */
             subregionSet.add(entity.getSubregion());
         }
     }
 
+    /**
+     * method that applies the sbu belonging to a specific PMG
+     *
+     * @param productMainGroup product main group for which the sbu is supposed to be found
+     *
+     * @return
+     */
     public String getSbu(String productMainGroup) {
         if (sbu == null) {
             Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
@@ -145,6 +201,13 @@ public class OrgStructureAndRegionRequest extends Request {
         return returnValue;
     }
 
+    /**
+     * Getter for the region
+     *
+     * @param subregion
+     *
+     * @return
+     */
     public String getRegion(String subregion) {
         if (region == null) {
             Result<RegionEntity> queryResult = regionAccessor.getSubregions();

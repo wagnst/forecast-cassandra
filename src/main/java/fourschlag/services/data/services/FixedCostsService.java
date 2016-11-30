@@ -11,6 +11,9 @@ import fourschlag.services.db.CassandraConnection;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * Extends Service. Provides functionality to get fixed costs KPIs
+ */
 public class FixedCostsService extends Service {
 
     /**

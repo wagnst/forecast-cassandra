@@ -4,6 +4,10 @@ import fourschlag.entities.types.OutputDataType;
 
 import java.util.Comparator;
 
+/**
+ * Provides functionality to sort the final ResultList
+ */
+
 public class OutputDataTypeComparator implements Comparator<OutputDataType> {
     /* IF return value is negative THEN o1 comes first, IF return value is positive o2 comes first */
     @Override

@@ -10,8 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Extends Request. Offers functionality to request exchange rates.
+ * Extends Request. Offers functionality to request the exchange rates.
  */
+
 public class ExchangeRateRequest extends Request {
 
     private Currency toCurrency;
@@ -32,9 +33,24 @@ public class ExchangeRateRequest extends Request {
         accessor = getManager().createAccessor(ExchangeRateAccessor.class);
     }
 
+    /**
+     * Getter for the currency
+     *
+     * @return the desired currency
+     */
     public Currency getToCurrency() {
         return toCurrency;
     }
+
+
+    /**
+     * method to retrieve a specific exchange rate
+     *
+     * @param period       The period the exchange rate is supposed to be taken from
+     * @param fromCurrency The currency to be converted from
+     *
+     * @return a Map with the needed exchange rates
+     */
 
     public double getExchangeRate(Period period, Currency fromCurrency) {
         Double exchangeRate;

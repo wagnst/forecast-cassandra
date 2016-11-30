@@ -1,5 +1,8 @@
 package fourschlag.entities.types;
 
+/**
+ * Enum that provides the KPIs for Sales and Fixed Costs
+ */
 public enum KeyPerformanceIndicators {
     SALES_VOLUME(1, "sales", "Sales Volumes", "mt"),
     NET_SALES(2, "sales", "Net Sales", "k€"),
@@ -38,6 +41,14 @@ public enum KeyPerformanceIndicators {
     private final String fullName;
     private final String unit;
 
+    /**
+     * Constructor for KeyPerformanceIndicators
+     *
+     * @param orderNumber
+     * @param fcType
+     * @param fullName
+     * @param unit
+     */
     KeyPerformanceIndicators(int orderNumber, String fcType, String fullName, String unit) {
         this.orderNumber = orderNumber;
         this.fcType = fcType;
@@ -45,18 +56,38 @@ public enum KeyPerformanceIndicators {
         this.unit = unit;
     }
 
+    /**
+     * Getter for the OrderNumber
+     *
+     * @return OrderNumber that is currently used
+     */
     public int getOrderNumber() {
         return orderNumber;
     }
 
+    /**
+     * Getter for the FcType
+     *
+     * @return FcType that is currently used
+     */
     public String getFcType() {
         return fcType;
     }
 
+    /**
+     * Getter for the FullName
+     *
+     * @return FullName of the KPI currently used
+     */
     public String getFullName() {
         return fullName;
     }
 
+    /**
+     * Getter for the Unit
+     *
+     * @return Unit that is currently used
+     */
     public String getUnit() {
         return unit;
     }

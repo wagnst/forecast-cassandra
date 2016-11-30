@@ -141,6 +141,13 @@ public class SalesRequest extends KpiRequest {
                 region, salesType.toString(), EntryType.BUDGET.toString());
     }
 
+    /**
+     * Calculates the budgetyear
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
+     * @return SalesEntity that contains the query result
+     */
     @Override
     protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
@@ -149,6 +156,12 @@ public class SalesRequest extends KpiRequest {
         return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
+    /**
+     *
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     * @return
+     */
     @Override
     protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
@@ -157,6 +170,12 @@ public class SalesRequest extends KpiRequest {
         return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
+    /**
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return
+     */
     @Override
     protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
@@ -194,6 +213,12 @@ public class SalesRequest extends KpiRequest {
         return validatedResult;
     }
 
+    /**
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return
+     */
     @Override
     protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
@@ -246,6 +271,14 @@ public class SalesRequest extends KpiRequest {
         }
     }
 
+    /**
+     *
+     * @param kpi KPI that will be set in the OutputDataType
+     * @param entryType Entry Type of that KPI entry
+     * @param monthlyValues All the monthly kpi values
+     * @param bjValues The budget year values
+     * @return
+     */
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                 LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {

@@ -6,6 +6,10 @@ import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
 
+/**
+ * Extends FixedCostsEntity. Provides the forecast data from the fixed costs table.
+ */
+
 @Table(name = "forecast_fixed_costs")
 public class ForecastFixedCostsEntity extends FixedCostsEntity {
 
@@ -36,8 +40,10 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
     @Column(name = "entry_type")
     private String entryType;
 
+
     public ForecastFixedCostsEntity() {
     }
+
 
     public ForecastFixedCostsEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String status, String usercomment, String entryType) {
         super(uuid, period, region, periodYear, periodMonth, currency, userId, entryTs, sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome);
@@ -52,38 +58,83 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
         this.entryType = entryType;
     }
 
+    /**
+     * Getter for the TopdownAdjustFixCosts
+     *
+     * @return TopdownAdjustFixCosts that are currently used
+     */
     public double getTopdownAdjustFixCosts() {
         return topdownAdjustFixCosts;
     }
 
+    /**
+     * Getter for the PlanPeriod
+     *
+     * @return  PlanPeriod that is currently used
+     */
     public int getPlanPeriod() {
         return planPeriod;
     }
 
+    /**
+     * Getter for the PlanYear
+     *
+     * @return PlanYear that is currently used
+     */
     public int getPlanYear() {
         return planYear;
     }
 
+    /**
+     * Getter for the PlanHalfYear
+     *
+     * @return PlanHalfYear that is currently used
+     */
     public int getPlanHalfYear() {
         return planHalfYear;
     }
 
+    /**
+     * Getter for the PlanQuarter
+     *
+     * @return PlanQuarter that is currently used
+     */
     public int getPlanQuarter() {
         return planQuarter;
     }
 
+    /**
+     * Getter for the PlanMonth
+     *
+     * @return PlanMonth that is currently used
+     */
     public int getPlanMonth() {
         return planMonth;
     }
 
+    /**
+     * Getter for the Status
+     *
+     * @return The current Status
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * Getter for the Usercomment
+     *
+     * @return the current Usercomment
+     */
     public String getUsercomment() {
         return usercomment;
     }
 
+    /**
+     * Getter for the EntryType
+     *
+     * @return EntryType that is currently used
+     */
     public String getEntryType() {
         return entryType;
     }
