@@ -10,9 +10,11 @@ import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
 import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.tables.RegionEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
 import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;
@@ -65,23 +67,21 @@ public class OrgStructureAndRegionRequest extends Request {
         productMap = new HashMap<>();
 
         for (ActualSalesEntity entity : entitiesFromActual) {
-            if (productMap.containsKey(entity.getProductMainGroup())) {
-                productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
-            } else {
-                productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
-                    add(entity.getRegion());
-                }});
-            }
+            addToProductMap(entity);
         }
 
         for (ForecastSalesEntity entity : entitiesFromForecast) {
-            if (productMap.containsKey(entity.getProductMainGroup())) {
-                productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
-            } else {
-                productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
-                    add(entity.getRegion());
-                }});
-            }
+            addToProductMap(entity);
+        }
+    }
+
+    private void addToProductMap(SalesEntity entity) {
+        if (productMap.containsKey(entity.getProductMainGroup())) {
+            productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
+        } else {
+            productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
+                add(entity.getRegion());
+            }});
         }
     }
 
@@ -98,23 +98,21 @@ public class OrgStructureAndRegionRequest extends Request {
         sbuMap = new HashMap<>();
 
         for (ActualFixedCostsEntity entity : entitiesFromActual) {
-            if (sbuMap.containsKey(entity.getSbu())) {
-                sbuMap.get(entity.getSbu()).add(entity.getSubregion());
-            } else {
-                sbuMap.put(entity.getSbu(), new HashSet<String>(){{
-                    add(entity.getSubregion());
-                }});
-            }
+            addToSbuMap(entity);
         }
 
         for (ForecastFixedCostsEntity entity : entitiesFromForecast) {
-            if (sbuMap.containsKey(entity.getSbu())) {
-                sbuMap.get(entity.getSbu()).add(entity.getSubregion());
-            } else {
-                sbuMap.put(entity.getSbu(), new HashSet<String>(){{
-                    add(entity.getSubregion());
-                }});
-            }
+            addToSbuMap(entity);
+        }
+    }
+
+    private void addToSbuMap(FixedCostsEntity entity) {
+        if (sbuMap.containsKey(entity.getSbu())) {
+            sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+        } else {
+            sbuMap.put(entity.getSbu(), new HashSet<String>(){{
+                add(entity.getSubregion());
+            }});
         }
     }
 
