@@ -1,4 +1,4 @@
-package fourschlag.services.data;
+package fourschlag.services.data.services;
 
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
@@ -6,10 +6,11 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.SalesRequest;
+import fourschlag.services.data.requests.kpi.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -31,38 +32,31 @@ public class SalesService extends Service {
      * Calculates all Sales KPIs for a time span (planYear) and from certain
      * point of view (currentPeriod).
      *
-     * @param planYear         Indicates the time span for which the KPIs are
+     * @param planPeriod       Indicates the time span for which the KPIs are
      *                         supposed to be queried
-     * @param currentPeriodInt The point of view in time from which the data is
+     * @param currentPeriod    The point of view in time from which the data is
      *                         supposed to be looked at
      * @param toCurrency       The desired output currency
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
-    public Stream<OutputDataType> getSalesKPIs(int planYear, int currentPeriodInt, Currency toCurrency) {
+    public Stream<OutputDataType> getSalesKPIs(Period planPeriod, Period currentPeriod, Currency toCurrency) {
         /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
-
         /* Create instance of ExchangeRateRequest with the desired currency */
         ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
 
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
         OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        /* Get all of the regions from the sales tables --> Sales are identified by the region and PMG*/
-        Set<String> regions = orgAndRegionRequest.getRegionsAsSetFromSales();
-        /* Get all of the Product Main Groups from the sales tables */
-        Set<String> products = orgAndRegionRequest.getProductMainGroupsAsSetFromSales();
-
-        /* Create instance of Period with the given int value */
-        Period currentPeriod = new Period(currentPeriodInt);
+        Map<String, Set<String>> productAndRegions = orgAndRegionRequest.getPmgAndRegionsFromSales();
 
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
-        resultStream = products.stream().parallel()
-                .flatMap(product -> regions.stream()
+        resultStream = productAndRegions.keySet().stream().parallel()
+                .flatMap(product -> productAndRegions.get(product).stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesRequest(getConnection(),
-                                        product, planYear, currentPeriod, region, salesType,
+                                        product, planPeriod, currentPeriod, region, salesType,
                                         exchangeRates, orgAndRegionRequest).calculateKpis())));
 
         /* Finally the result stream will be returned */

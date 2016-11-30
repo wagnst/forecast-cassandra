@@ -1,7 +1,9 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.tables.Entity;
+import fourschlag.entities.tables.kpi.KpiEntity;
 import fourschlag.entities.types.*;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.Request;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
@@ -32,12 +34,12 @@ public abstract class KpiRequest extends Request {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public KpiRequest(CassandraConnection connection, String sbu, String region, int planYear, Period currentPeriod,
+    public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
         super(connection);
         this.sbu = sbu;
         this.region = region;
-        this.planPeriod = Period.getPeriodByYear(planYear);
+        this.planPeriod = planPeriod;
         this.currentPeriod = currentPeriod;
         this.exchangeRates = exchangeRates;
 
@@ -47,12 +49,21 @@ public abstract class KpiRequest extends Request {
         fillMap(bjValues);
     }
 
+    /**
+     *
+     * @param fcType
+     * @return
+     */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
         return Arrays.stream(KeyPerformanceIndicators.values())
                 .filter(kpi -> kpi.getFcType().equals(fcType))
                 .toArray(KeyPerformanceIndicators[]::new);
     }
 
+    /**
+     *
+     * @param map
+     */
     private void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
         Arrays.stream(kpiArray)
                 .forEach(kpi -> map.put(kpi, new LinkedList<>()));
@@ -121,6 +132,11 @@ public abstract class KpiRequest extends Request {
         return resultStream;
     }
 
+    /**
+     *
+     * @param entryType
+     * @return
+     */
     private Stream<OutputDataType> calculateKpisWithTopdown(final EntryType entryType) {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
@@ -170,8 +186,15 @@ public abstract class KpiRequest extends Request {
         return Stream.concat(resultStream, resultStream2);
     }
 
+    /**
+     * method that calculates the KPIs for specific months
+     *
+     * @param tempPlanPeriod the desired Period
+     * @param entryType      the EntryType of the
+     * @return
+     */
     private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
-        Entity queryResult;
+        KpiEntity queryResult;
 
         if (entryType == EntryType.BUDGET) {
             queryResult = getBudgetData(tempPlanPeriod);
@@ -202,7 +225,7 @@ public abstract class KpiRequest extends Request {
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
-    protected abstract ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod);
+    protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
 
     /**
      * method to validate a query result excluding the topdown values
@@ -211,13 +234,36 @@ public abstract class KpiRequest extends Request {
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
-    protected abstract ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod);
+    protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
-    protected abstract Entity getActualData(Period tempPlanPeriod);
+    /**
+     * method to get the actual data
+     *
+     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
+     *
+     * @return the actual data within the desired period.
+     */
+    protected abstract KpiEntity getActualData(Period tempPlanPeriod);
 
-    protected abstract Entity getForecastData(Period tempPlanPeriod, EntryType entryType);
+    /**
+     * method to get the forecast data
+     *
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     *
+     * @param entryType the type of the data
+     *
+     * @return the forecast data within the desired period
+     */
+    protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
 
-    protected abstract Entity getBudgetData(Period tempPlanPeriod);
+    /**
+     * method to get the budget data
+     *
+     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
+     *
+     * @return the budget data from the desired period
+     */
+    protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 
     /**
      * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)

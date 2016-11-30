@@ -1,10 +1,14 @@
-package fourschlag.entities.tables;
+package fourschlag.entities.tables.kpi.sales;
 
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.UUID;
+
+/**
+ * Extends SalesEntity. Provides the data from the ForecastSales table
+ */
 
 @Table(name = "forecast_sales")
 public class ForecastSalesEntity extends SalesEntity {
@@ -42,8 +46,12 @@ public class ForecastSalesEntity extends SalesEntity {
     @Column(name = "usercomment")
     private String usercomment;
 
+    /**
+     * Constructor for ForecastSalesEntity
+     */
     public ForecastSalesEntity() {
     }
+
 
     public ForecastSalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1, int topdownAdjustSalesVolumes, int topdownAdjustNetSales, int topdownAdjustCm1, String productMainGroup, String region, String salesType, String entryType, int period, int periodYear, int periodMonth, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String currency, String status, String usercomment, String userId, String entryTs) {
         super(uuid, salesVolumes, netSales, cm1, productMainGroup, region, salesType,
@@ -61,46 +69,101 @@ public class ForecastSalesEntity extends SalesEntity {
         this.entryType = entryType;
     }
 
+    /**
+     * Getter for the TopdownAdjustSalesVolumes
+     *
+     * @return TopdownAdjustSalesVolumes that are currently used
+     */
     public double getTopdownAdjustSalesVolumes() {
         return topdownAdjustSalesVolumes;
     }
 
+    /**
+     * Getter for the TopdownAdjustNetSales
+     *
+     * @return TopdownAdjustNetSales that are currently used
+     */
     public double getTopdownAdjustNetSales() {
         return topdownAdjustNetSales;
     }
 
+    /**
+     * Getter for the getTopdownAdjustCm1
+     *
+     * @return getTopdownAdjustCm1 that are currently used
+     */
     public double getTopdownAdjustCm1() {
         return topdownAdjustCm1;
     }
 
+    /**
+     * Getter for the PlanPeriod
+     *
+     * @return PlanPeriod that is currently used
+     */
     public int getPlanPeriod() {
         return planPeriod;
     }
 
+    /**
+     * Getter for the PlanYear
+     *
+     * @return PlanYear that is currently used
+     */
     public int getPlanYear() {
         return planYear;
     }
 
+    /**
+     * Getter for the PlanHalfYear
+     *
+     * @return PlanHalfYear that is currently used
+     */
     public int getPlanHalfYear() {
         return planHalfYear;
     }
 
+    /**
+     * Getter for the PlanQuarter
+     *
+     * @return PlanQuarter that is currently used
+     */
     public int getPlanQuarter() {
         return planQuarter;
     }
 
+    /**
+     * Getter for the PlanMonth
+     *
+     * @return PlanMonth that is currently used
+     */
     public int getPlanMonth() {
         return planMonth;
     }
 
+    /**
+     * Getter for the EntryType
+     *
+     * @return EntryType that is currently used
+     */
     public String getEntryType() {
         return entryType;
     }
 
+    /**
+     * Getter for the Status
+     *
+     * @return Current Status
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * Getter for the Usercomment
+     *
+     * @return The current Usercomment
+     */
     public String getUsercomment() {
         return usercomment;
     }

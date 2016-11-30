@@ -1,6 +1,17 @@
 package fourschlag.entities.types;
 
+
+/**
+ *  Extends Period. Sets the initial Month.
+ *
+ */
 public class ZeroMonthPeriod extends Period {
+
+    @Override
+    protected boolean isMonthValid(int month) {
+        return (month == 0);
+    }
+
     public ZeroMonthPeriod(Period period) {
         super(period.getZeroMonthPeriod());
     }
@@ -9,6 +20,11 @@ public class ZeroMonthPeriod extends Period {
         super(year, 0);
     }
 
+    /**
+     * Increments the initial Month
+     *
+     * @return incremented Period
+     */
     @Override
     public Period increment() {
         this.year++;
@@ -16,11 +32,21 @@ public class ZeroMonthPeriod extends Period {
         return this;
     }
 
+    /**
+     *  Getter for the ZeroMonthPeriod
+     *
+     * @return the desired ZeroMonthPeriod
+     */
     @Override
     public int getZeroMonthPeriod() {
         return period;
     }
 
+    /**
+     * Getter for the previous period
+     *
+     * @return the previous month
+     */
     @Override
     public int getPreviousPeriod() {
         return period - 100;

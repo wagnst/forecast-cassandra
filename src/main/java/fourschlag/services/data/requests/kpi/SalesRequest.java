@@ -1,12 +1,14 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.accessors.ActualSalesAccessor;
-import fourschlag.entities.accessors.ForecastSalesAccessor;
-import fourschlag.entities.tables.Entity;
-import fourschlag.entities.tables.ForecastSalesEntity;
-import fourschlag.entities.tables.SalesEntity;
+import fourschlag.entities.accessors.sales.ActualSalesAccessor;
+import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
+import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
@@ -39,10 +41,10 @@ public class SalesRequest extends KpiRequest {
      * @param salesType        Sales Type to filter for
      * @param exchangeRates    Desired output currency
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, int planYear, Period currentPeriod,
+    public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                         OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planYear , currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod , currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
 
@@ -139,6 +141,13 @@ public class SalesRequest extends KpiRequest {
                 region, salesType.toString(), EntryType.BUDGET.toString());
     }
 
+    /**
+     * Calculates the budgetyear
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
+     * @return SalesEntity that contains the query result
+     */
     @Override
     protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
@@ -147,6 +156,12 @@ public class SalesRequest extends KpiRequest {
         return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
+    /**
+     *
+     *
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     * @return
+     */
     @Override
     protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
         SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
@@ -155,8 +170,14 @@ public class SalesRequest extends KpiRequest {
         return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
+    /**
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return
+     */
     @Override
-    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
         SalesEntity queryResult = (SalesEntity) result;
 
@@ -192,8 +213,14 @@ public class SalesRequest extends KpiRequest {
         return validatedResult;
     }
 
+    /**
+     *
+     * @param result    The query result that will be validated
+     * @param tempPlanPeriod planPeriod of that query result
+     * @return
+     */
     @Override
-    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
         SalesEntity queryResult = (SalesEntity) result;
 
@@ -244,6 +271,14 @@ public class SalesRequest extends KpiRequest {
         }
     }
 
+    /**
+     *
+     * @param kpi KPI that will be set in the OutputDataType
+     * @param entryType Entry Type of that KPI entry
+     * @param monthlyValues All the monthly kpi values
+     * @param bjValues The budget year values
+     * @return
+     */
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                 LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {

@@ -4,11 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by thor on 28.11.2016.
+ * Provides functionality to validate the KPI results
  */
+
+
 public class ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> kpiResult;
 
+    /**
+     * Constructor for ValidatedResult
+     *
+     * @param kpiArray The KPIs to be validated
+     */
     public ValidatedResult(KeyPerformanceIndicators[] kpiArray) {
         kpiResult = new HashMap<KeyPerformanceIndicators, Double>(){{
             for (KeyPerformanceIndicators kpi : kpiArray) {
@@ -16,7 +23,11 @@ public class ValidatedResult {
             }
         }};
     }
-
+    /**
+     * Constructor for ValidatedResult
+     *
+     * @param kpiResult The KPIs to be validated
+     */
     public ValidatedResult(Map<KeyPerformanceIndicators, Double> kpiResult) {
         this.kpiResult = kpiResult;
     }

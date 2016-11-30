@@ -1,12 +1,14 @@
-package fourschlag.services.data.requests;
+package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.accessors.ActualFixedCostsAccessor;
-import fourschlag.entities.accessors.ForecastFixedCostsAccessor;
-import fourschlag.entities.tables.Entity;
-import fourschlag.entities.tables.FixedCostsEntity;
-import fourschlag.entities.tables.ForecastFixedCostsEntity;
+import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
+import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
+import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
+import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
@@ -14,6 +16,10 @@ import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
+/**
+ * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a specific
+ * region, period and product main group
+ */
 public class FixedCostsRequest extends KpiRequest {
     private final String subregion;
     private final ActualFixedCostsAccessor actualAccessor;
@@ -21,20 +27,19 @@ public class FixedCostsRequest extends KpiRequest {
 
     private static final String FC_TYPE = "fixed costs";
 
-    public FixedCostsRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod,
+    public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
-
-        /* TODO: get Region with orgAndRegionRequest */
 
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
     /**
-     * Queries KPIs from the actual sales table
+     * Queries KPIs from the actual fixed costs table
+     *
      *
      * @return SalesEntity Object with query result
      */
@@ -44,6 +49,15 @@ public class FixedCostsRequest extends KpiRequest {
         return actualAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod());
     }
 
+    /**
+     * Queries KPIs from the forecast fixed costs table
+     *
+     * @param tempPlanPeriod    planPeriod the forecast data is supposed to be taken from
+     *
+     * @param entryType         the type of the data
+     *
+     * @return
+     */
     @Override
     protected FixedCostsEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
@@ -55,6 +69,13 @@ public class FixedCostsRequest extends KpiRequest {
         return queryResult;
     }
 
+    /**
+     * Queries KPIs with the budgetdata
+     *
+     * @param tempPlanPeriod planPeriod ....
+     *
+     * @return
+     */
     @Override
     protected FixedCostsEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
@@ -62,12 +83,12 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     /**
-     * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     * method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     @Override
-    protected ValidatedResultTopdown calculateBjTopdown(Period zeroMonthPeriod) {
+    protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
@@ -75,7 +96,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResult calculateBj(Period zeroMonthPeriod) {
+    protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
@@ -83,7 +104,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
         /* Prepare the kpi variables */
         ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());
@@ -114,7 +135,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     @Override
-    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
+    protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
 
         ValidatedResult validatedResult = new ValidatedResult(kpiArray);
@@ -155,7 +176,7 @@ public class FixedCostsRequest extends KpiRequest {
 
             kpiMap.put(FIX_COST_BELOW_CM2, fixCostBelowCm2);
             kpiMap.put(TOTAL_FIX_COST, fixCostBetweenCm1Cm2 + fixCostBelowCm2);
-            kpiMap.put(DEPRECATION, queryResult.getDepreciation());
+            kpiMap.put(DEPRECIATION, queryResult.getDepreciation());
             kpiMap.put(CAP_COST, queryResult.getCapCost());
             kpiMap.put(EQUITY_INCOME, queryResult.getEquityIncome());
 
