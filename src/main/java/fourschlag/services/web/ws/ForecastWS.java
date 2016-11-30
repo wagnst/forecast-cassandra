@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 @Path("/forecast")
 public class ForecastWS {
 
-    private CassandraConnection connection = ConnectionPool.getInstance()
+    private CassandraConnection connection = ConnectionPool
             .getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
     private SalesService salesService = new SalesService(connection);
     private FixedCostsService fixedCostsService = new FixedCostsService(connection);

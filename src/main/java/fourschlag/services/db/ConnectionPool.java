@@ -4,21 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ConnectionPool {
-    private Set<CassandraConnection> connections;
+    private static Set<CassandraConnection> connections = new HashSet<>();
     private static ConnectionPool instance = null;
 
-    private ConnectionPool() {
-        this.connections = new HashSet<>();
-    }
-
-    public static ConnectionPool getInstance() {
-        if (instance == null) {
-            instance = new ConnectionPool();
-        }
-        return instance;
-    }
-
-    public CassandraConnection getConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentification) {
+    public static CassandraConnection getConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentification) {
         for (CassandraConnection connection : connections) {
             if (connection.getEndpoint() == endpoint) {
                 if (connection.getKeyspace() == keyspace) {
@@ -31,7 +20,7 @@ public class ConnectionPool {
         return connection;
     }
 
-    public void removeConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
+    public static void removeConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
         for (CassandraConnection connection : connections) {
             if (connection.getEndpoint() == endpoint) {
                 if (connection.getKeyspace() == keyspace) {
