@@ -58,6 +58,7 @@ public class ExchangeRateRequest extends Request {
         if (map != null) {
             exchangeRate = map.get(fromCurrency);
         } else {
+            map = new HashMap<>();
             exchangeRate = null;
         }
 
@@ -75,7 +76,6 @@ public class ExchangeRateRequest extends Request {
             } else {
                 exchangeRate = queryResult.getRate();
             }
-            map = new HashMap<>();
             map.put(fromCurrency, exchangeRate);
             exchangeRates.put(period.getPeriod(), map);
         }

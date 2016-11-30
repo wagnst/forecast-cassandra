@@ -23,5 +23,5 @@ public interface ForecastFixedCostsAccessor {
     );
     /*CQL-Query to get the ForecastFixedCosts sbu and subregion*/
     @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
-    Result<ForecastFixedCostsEntity> getSbuAndSubregions();
+    Result<ForecastFixedCostsEntity> getDistinctSbuAndSubregions();
 }

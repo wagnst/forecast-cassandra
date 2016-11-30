@@ -1,16 +1,20 @@
 package fourschlag.services.data.requests;
 
 import com.datastax.driver.mapping.Result;
-import fourschlag.entities.accessors.*;
+import fourschlag.entities.accessors.OrgStructureAccessor;
+import fourschlag.entities.accessors.RegionAccessor;
 import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
 import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
 import fourschlag.entities.accessors.sales.ActualSalesAccessor;
 import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
-import fourschlag.entities.tables.*;
+import fourschlag.entities.tables.OrgStructureEntity;
+import fourschlag.entities.tables.RegionEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
 import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;
@@ -19,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Extends Request. Offers functionality to request product main groups and sbus.
- *
+ * Extends Request. Offers functionality to request product main groups and
+ * sbus.
  */
 public class OrgStructureAndRegionRequest extends Request {
 
@@ -30,10 +34,8 @@ public class OrgStructureAndRegionRequest extends Request {
     private ActualFixedCostsAccessor actualFixedCostsAccessor;
     private ForecastFixedCostsAccessor forecastFixedCostsAccessor;
     private RegionAccessor regionAccessor;
-    private Set<String> productSet;
-    private Set<String> regionSet;
-    private Set<String> sbuSet;
-    private Set<String> subregionSet;
+    private Map<String, Set<String>> productMap;
+    private Map<String, Set<String>> sbuMap;
     private Map<String, String> sbu;
     private Map<String, String> region;
 
@@ -52,129 +54,65 @@ public class OrgStructureAndRegionRequest extends Request {
         forecastFixedCostsAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
-    /**
-     * Queries the database for all Product Main Groups from OrgStructure
-     *
-     * @return Result Iterable with multiple OrgStructure entities
-     */
-    private Result<OrgStructureEntity> getProductMainGroupsFromOrgStructure() {
-        return orgStructureAccessor.getProductsAndSbus();
-    }
-
-    /**
-     * Adds all products from a Product Main Group to a Set
-     *
-     * @return Result Set with multiple products
-     */
-    public Set<OrgStructureEntity> getProductMainGroupsAsSetFromOrgStructure() {
-        Result<OrgStructureEntity> productsFromOrgStructure = getProductMainGroupsFromOrgStructure();
-
-        Set<OrgStructureEntity> productSet = new HashSet<>();
-        productsFromOrgStructure.forEach(product -> productSet.add(product));
-
-        return productSet;
-    }
-
-    /**
-     * Queries the database for all Product Main Groups from Sales
-     *
-     * @return Result Set with multiple products
-     */
-    public Set<String> getProductMainGroupsAsSetFromSales() {
-
-        if (productSet == null) {
-            getPmgAndRegionAsSetFromSales();
+    public Map<String, Set<String>> getPmgAndRegionsFromSales() {
+        if (productMap == null) {
+            queryPmgAndRegionsFromSales();
         }
-        return productSet;
+        return productMap;
     }
 
-    /**
-     * Queries the database for all Regions from Sales
-     *
-     * @return Result Set with all distinct Regions
-     */
-    public Set<String> getRegionsAsSetFromSales() {
-        if (regionSet == null) {
-            getPmgAndRegionAsSetFromSales();
-        }
-        return regionSet;
-    }
+    private void queryPmgAndRegionsFromSales() {
+        Result<ActualSalesEntity> entitiesFromActual = actualSalesAccessor.getDistinctPmgAndRegions();
+        Result<ForecastSalesEntity> entitiesFromForecast = forecastSalesAccessor.getDistinctPmgAndRegions();
+        productMap = new HashMap<>();
 
-    /**
-     * Queries the database for all Product Main Groups and Regions from Sales and adds the result to a set
-     *
-     */
-    private void getPmgAndRegionAsSetFromSales() {
-        /* Gets the Product Main Groups from the Actual SalesEntity */
-        Result<ActualSalesEntity> entitiesFromActualSales = actualSalesAccessor.getProductMainGroups();
-        /* Gets the Product Main Groups from the Forecast SalesEntity */
-        Result<ForecastSalesEntity> entitiesFromForecastSales = forecastSalesAccessor.getProductMainGroups();
-        productSet = new HashSet<>();
-        regionSet = new HashSet<>();
-        /* iterates over all Product Main Groups from Actual Sales */
-        for (ActualSalesEntity entity : entitiesFromActualSales) {
-           /* adds the Product Main Group to a result set*/
-            productSet.add(entity.getProductMainGroup());
-           /* adds the regions  to a result set */
-            regionSet.add(entity.getRegion());
+        for (ActualSalesEntity entity : entitiesFromActual) {
+            addToProductMap(entity);
         }
-        /* iterates over all Product Main Groups from Forecast Sales */
-        for (ForecastSalesEntity entity : entitiesFromForecastSales) {
-            /* adds the Product Main Group to a result set*/
-            productSet.add(entity.getProductMainGroup());
-            /* adds the regions to a result set */
-            regionSet.add(entity.getRegion());
+
+        for (ForecastSalesEntity entity : entitiesFromForecast) {
+            addToProductMap(entity);
         }
     }
 
-    /**
-     * Queries the database for all sbus from fixed costs
-     *
-     * @return Result Set with all distinct sbus
-     */
-    public Set<String> getSbuAsSetFromFixedCost() {
-        if (sbuSet == null) {
-            getSbuAndSubregionsAsSetFromFixedCosts();
+    private void addToProductMap(SalesEntity entity) {
+        if (productMap.containsKey(entity.getProductMainGroup())) {
+            productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
+        } else {
+            productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
+                add(entity.getRegion());
+            }});
         }
-        return sbuSet;
     }
 
-    /**
-     * Queries the database for all subregions from fixed costs
-     *
-     * @return Result Set with all distinct subregions
-     */
-    public Set<String> getSubregionsAsSetFromFixedCosts() {
-        if (subregionSet == null) {
-            getSbuAndSubregionsAsSetFromFixedCosts();
+    public Map<String, Set<String>> getSubregionsAndSbuFromFixedCosts() {
+        if (sbuMap == null) {
+            querySubregionsAndSbuFromFixedCosts();
         }
-        return subregionSet;
+        return sbuMap;
     }
 
-    /**
-     * Queries the database for all sbus and subregions from fixed costs and adds the result to a set
-     */
-    private void getSbuAndSubregionsAsSetFromFixedCosts() {
-       /* Gets the sbus und subregions from the ActualFixedCostsEntity */
-        Result<ActualFixedCostsEntity> entitiesFromActualFixedCosts = actualFixedCostsAccessor.getSbuAndSubregions();
-       /* Gets the sbus und subregions from the ForecastFixedCostsEntity */
-        Result<ForecastFixedCostsEntity> entitiesFromForecastFixedCosts = forecastFixedCostsAccessor.getSbuAndSubregions();
+    private void querySubregionsAndSbuFromFixedCosts() {
+        Result<ActualFixedCostsEntity> entitiesFromActual = actualFixedCostsAccessor.getDistinctSbuAndSubregions();
+        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastFixedCostsAccessor.getDistinctSbuAndSubregions();
+        sbuMap = new HashMap<>();
 
-        sbuSet = new HashSet<>();
-        subregionSet = new HashSet<>();
-        /* iterates over all sbus and subregions from ActualFixedCosts */
-        for (ActualFixedCostsEntity entity : entitiesFromActualFixedCosts) {
-            /* adds the sbus to a result set */
-            sbuSet.add(entity.getSbu());
-            /* adds the subregions to a result set */
-            subregionSet.add(entity.getSubregion());
+        for (ActualFixedCostsEntity entity : entitiesFromActual) {
+            addToSbuMap(entity);
         }
-         /* iterates over all sbus and subregions from ForecastFixedCosts */
-        for (ForecastFixedCostsEntity entity : entitiesFromForecastFixedCosts) {
-            /* adds the sbus to a result set */
-            sbuSet.add(entity.getSbu());
-            /* adds the subregions to a result set */
-            subregionSet.add(entity.getSubregion());
+
+        for (ForecastFixedCostsEntity entity : entitiesFromForecast) {
+            addToSbuMap(entity);
+        }
+    }
+
+    private void addToSbuMap(FixedCostsEntity entity) {
+        if (sbuMap.containsKey(entity.getSbu())) {
+            sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+        } else {
+            sbuMap.put(entity.getSbu(), new HashSet<String>(){{
+                add(entity.getSubregion());
+            }});
         }
     }
 

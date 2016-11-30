@@ -33,7 +33,7 @@ public enum KeyPerformanceIndicators {
     FIX_COST_BELOW_CM2(20, "fixed costs", "Fixed Cost below CM2", "k€"),
     TOPDOWN_ADJUST_FIX_COSTS(21, "fixed costs", "Top Down Adjustment Fixed Cost", "k€"),
     TOTAL_FIX_COST(22, "fixed costs", "Total Fixed Cost", "k€"),
-    DEPRECATION(23, "fixed costs", "Deprecation", "k€"),
+    DEPRECIATION(23, "fixed costs", "Depreciation", "k€"),
     CAP_COST(24, "fixed costs", "Cost of Capital", "k€");
 
     private final int orderNumber;

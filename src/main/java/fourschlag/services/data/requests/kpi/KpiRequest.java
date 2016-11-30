@@ -34,12 +34,12 @@ public abstract class KpiRequest extends Request {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public KpiRequest(CassandraConnection connection, String sbu, String region, int planYear, Period currentPeriod,
+    public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
         super(connection);
         this.sbu = sbu;
         this.region = region;
-        this.planPeriod = Period.getPeriodByYear(planYear);
+        this.planPeriod = planPeriod;
         this.currentPeriod = currentPeriod;
         this.exchangeRates = exchangeRates;
 

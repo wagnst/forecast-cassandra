@@ -31,5 +31,5 @@ public interface ForecastSalesAccessor {
             @Param("sales_type") String salesType);
     /*CQL-Query to get the ForecastSales Product Main Group and Region */
     @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales;")
-    Result<ForecastSalesEntity> getProductMainGroups();
+    Result<ForecastSalesEntity> getDistinctPmgAndRegions();
 }

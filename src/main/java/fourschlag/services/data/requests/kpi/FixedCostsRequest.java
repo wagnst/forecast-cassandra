@@ -27,10 +27,10 @@ public class FixedCostsRequest extends KpiRequest {
 
     private static final String FC_TYPE = "fixed costs";
 
-    public FixedCostsRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod,
+    public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
@@ -176,7 +176,7 @@ public class FixedCostsRequest extends KpiRequest {
 
             kpiMap.put(FIX_COST_BELOW_CM2, fixCostBelowCm2);
             kpiMap.put(TOTAL_FIX_COST, fixCostBetweenCm1Cm2 + fixCostBelowCm2);
-            kpiMap.put(DEPRECATION, queryResult.getDepreciation());
+            kpiMap.put(DEPRECIATION, queryResult.getDepreciation());
             kpiMap.put(CAP_COST, queryResult.getCapCost());
             kpiMap.put(EQUITY_INCOME, queryResult.getEquityIncome());
 

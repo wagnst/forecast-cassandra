@@ -23,5 +23,5 @@ public interface ActualFixedCostsAccessor {
     );
     /*CQL-Query to get the ActualFixedCosts sbu and subregion*/
     @Query("SELECT DISTINCT sbu, subregion FROM actual_fixed_costs")
-    Result<ActualFixedCostsEntity> getSbuAndSubregions();
+    Result<ActualFixedCostsEntity> getDistinctSbuAndSubregions();
 }
