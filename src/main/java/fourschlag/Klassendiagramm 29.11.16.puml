@@ -1,0 +1,301 @@
+@startuml
+/' For available options see
+http://plantuml.com/component-diagram
+http://plantuml.com/class-diagram '/
+
+title
+ <b>Class diagram of <u>FourSchlag</u> project</b>
+ <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
+ <i>Version:</i> <b>DRAFT</b>, 29th Nov 2016
+ <i>Author:</i> Mei Yuan
+end title
+
+left to right direction
+
+package fourschlag {
+    package entities {
+        package accessors {
+            package fixedcosts {
+                Interface ActualFixedCostsAccessor
+
+                Interface ForecastFixedCostsAccessor
+            }
+
+            package sales {
+                Interface ActualSalesAccessor
+
+                Interface ForecastSalesAccessor
+            }
+
+            Interface ExchangeRateAccessor
+
+            Interface OrgStructureAccessor
+
+            Interface RegionAccessor
+        }
+
+
+        package tables{
+            package kpis {
+                package fixedcost {
+                    Class ActualFixedCostsEntity
+
+                    Class FixedCostsEntity
+
+                    Class ForecastFixedCostsEntity
+
+                    ' inheritances from FixedCostsEntity
+                    FixedCostsEntity <|-- ActualFixedCostsEntity
+                    FixedCostsEntity <|-- ForecastFixedCostsEntity
+                }
+
+
+            package sale{
+                Class ActualSalesEntity
+                Class ForecastSalesEntity
+                Class SalesEntity
+
+                ' inheritances from SalesEntity
+                SalesEntity <|-- ActualSalesEntity
+                SalesEntity <|-- ForecastSalesEntity
+
+                }
+
+                Class KpiEntity
+
+                ' inheritances from KpiEntity
+                KpiEntity <|-- FixedCostsEntity
+                KpiEntity <|-- SalesEntity
+            }
+
+
+            Class ExchangeRateEntity
+
+            Class OrgStructureEntity
+
+            Class RegionEntity
+
+        }
+
+
+        package types {
+            package comparators {
+                Class OutputDataTypeComparator {
+                    + int: compare()
+                }
+            }
+
+            Enum Currency {
+                EURO
+				DOLLAR
+            }
+
+            Enum DataSource {
+				BW_A
+				BW_B
+			}
+
+            Enum EntryType{
+				ACTUAL
+				FORECAST
+				ACTUAL_FORECAST
+				BUDGET
+				TOPDOWN
+			}
+
+            Enum KeyPerformanceIndicators
+
+            Class OutputDataType
+
+            Class Period {
+                + {static} Period : getPeriodByYear()
+                + Period : increment()
+                + Period : getFirstPeriodOfYear()
+                + int : getZeroMonthPeriod()
+                + int : getPreviousPeriod()
+            }
+
+            Enum SalesType {
+				THIRD_PARTY
+				TRANSFER
+			}
+
+            Class ValidatedResult
+
+            Class ValidatedResultTopdown
+
+            Class ZeroMonthPeriod
+
+            ' inheritances from ValidatedResult
+            ValidatedResult <|-- ValidatedResultTopdown
+
+            ' inheritances from Period
+            Period <|-- ZeroMonthPeriod
+
+        }
+
+    }
+ package services {
+
+        package data {
+
+            package requests {
+                package kpi {
+                    Class FixedCostsRequest
+
+                    Abstract Class KpiRequest {
+                        +Stream<OutputDataType> : calculateKpis()
+                    }
+
+                    Class SalesRequest {
+                        +List<OutputDataType>: getSalesKpis()
+                    }
+
+
+                    KpiRequest <|-- FixedCostsRequest
+                    KpiRequest <|-- SalesRequest
+                    KpiRequest *-- entities.types : use
+                    KpiRequest *-- services.data.requests.ExchangeRateRequest : use
+                    KpiRequest *-- services.data.requests.Request : use
+                    KpiRequest *-- services.db.CassandraConnection : use
+                    KpiRequest *-- entities.tables.kpi.KpiEntity : use
+
+                    FixedCostsRequest *-- entities.types : use
+                    FixedCostsRequest *-- entities.accessors.fixedcosts : use
+                    FixedCostsRequest *-- entities.tables.kpi.KpiEntity : use
+                    FixedCostsRequest *-- entities.tables.kpi.fixedcosts : use
+                    FixedCostsRequest *-- services.data.requests : use
+                    FixedCostsRequest *-- services.db.CassandraConnection : use
+
+                    SalesRequest *-- entities.types : use
+                    SalesRequest *-- entities.accessors.sales.ActualSalesAccessor : use
+                    SalesRequest *-- entities.accessors.sales.ForecastSalesAccessor : use
+                    SalesRequest *-- entities.tables.kpi.KpiEntity : use
+                    SalesRequest *-- entities.tables.kpi.sales.ForecastSalesEntity : use
+                    SalesRequest *-- entities.tables.kpi.sales.SalesEntity : use
+                    SalesRequest *-- services.db.CassandraConnection : use
+                    SalesRequest *-- services.data.requests.ExchangeRateRequest : use
+                    SalesRequest *-- services.data.requests.OrgStructureAndRegionRequest : use
+
+
+                }
+
+                Class ExchangeRateRequest {
+                    +double : getExchangeRate()
+                    +String : getToCurrency()
+                }
+
+                Class OrgStructureAndRegionRequest {
+                    +Set<String> : getRegionsAsSetFromSales()
+                    +Set<String> : getProductMainGroupsAsSetFromSales()
+                }
+
+                Abstract Class Request {
+                    +Session : getSession()
+                    +MappingManager : getManager()
+                }
+
+                    ' inherits for Request
+                    Request <|-- KpiRequest
+                    Request <|-- ExchangeRateRequest
+                    Request <|-- OrgStructureAndRegionRequest
+
+                    ExchangeRateRequest *-- entities.accessors.ExchangeRateAccessor : use
+                    ExchangeRateRequest *-- entities.tables.ExchangeRateEntity : use
+                    ExchangeRateRequest *-- entities.types.Currency : use
+                    ExchangeRateRequest *-- entities.types.Period : use
+                    ExchangeRateRequest *-- services.db.CassandraConnection : use
+
+                    OrgStructureAndRegionRequest *-- entities.tables : use
+                    OrgStructureAndRegionRequest *-- services.db.CassandraConnection : use
+                    OrgStructureAndRegionRequest *-- entities.accessors : use
+
+                    Request *-- services.db.CassandraConnection : use
+            }
+
+            package service {
+                Class FixedCostsService {
+                    +Stream<OutputDataType> : getFixedCostsKpis()
+                }
+
+                Class SalesService {
+                    +List<OutputDataType> : getSalesKPIs()
+                }
+
+                Abstract Class Service {
+                    +CassandraConnection : getConnection()
+                    +{static}int : getNumberOfMonths()
+                }
+
+
+                  Service <|-- SalesService
+                  Service <|-- FixedCostsService
+                  Service *-- services.db.CassandraConnection : use
+
+                  FixedCostsService *-- entities.types.Currency : use
+                  FixedCostsService *-- entities.types.OutputDataType : use
+                  FixedCostsService *-- entities.types.Period : use
+                  FixedCostsService *-- services.data.requests.ExchangeRateRequest : use
+                  FixedCostsService *-- services.data.requests.kpi.FixedCostsRequest : use
+                  FixedCostsService *-- services.data.requests.OrgStructureAndRegionRequest : use
+                  FixedCostsService *-- services.db.CassandraConnection : use
+
+                  SalesService *-- entities.types.Currency : use
+                  SalesService *-- entities.types.OutputDataType : use
+                  SalesService *-- entities.types.Period : use
+                  SalesService *-- entities.types.SalesType : use
+                  SalesService *-- services.data.requests.ExchangeRateRequest : use
+                  SalesService *-- services.data.requests.OrgStructureAndRegionRequest : use
+                  SalesService *-- services.data.requests.kpi.SalesRequest : use
+                  SalesService *-- services.db.CassandraConnection : use
+            }
+        }
+
+        package db {
+            Enum KeyspaceNames {
+                +String : getKeyspace()
+            }
+
+            Enum ClusterEndpoints {
+                +String : getAddress()
+            }
+
+            Class CassandraConnection {
+                +{static}CassandraConnection : getInstance()
+                +Session : getSession()
+                +MappingManager : getManager()
+                +void : closeConnection()
+                +void : closeSession()
+            }
+
+            ' internal uses of CassandaConnection
+            CassandraConnection *-- KeyspaceNames : use
+            CassandraConnection *-- ClusterEndpoints : use
+
+            ' open database connection
+            Service *-- CassandraConnection : use
+        }
+
+        package web {
+            package ws {
+                Class ForecastWS {
+                    +Response : getSalesKPIs()
+                }
+            }
+
+            Class ApplicationService<? extends Application>
+
+            ApplicationService -- ForecastWS
+
+            ' WS uses SalesService to get the KPI data
+            ForecastWS *-- entities.types.Currency : use
+            ForecastWS *-- entities.types.OutputDataType: use
+            ForecastWS *-- entities.types.Period :use
+            ForecastWS *-- entities.types.comparators.OutputDataTypeComparator : use
+            ForecastWS *-- services.data.services : use
+            ForecastWS *-- services.db.CassandraConnection : use
+        }
+    }
+}
+
+@enduml
