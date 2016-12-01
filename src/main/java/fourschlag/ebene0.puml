@@ -1,0 +1,14 @@
+@startuml
+
+node "Systemkontext" {
+ CQL - [Admin]
+HTTP - [Fourschlag System]
+[Fourschlag System] - CQL
+[SP-Anwendung] - HTTP
+
+}
+
+
+
+
+@enduml
