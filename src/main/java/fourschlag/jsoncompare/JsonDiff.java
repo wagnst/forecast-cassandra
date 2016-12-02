@@ -30,7 +30,7 @@ public class JsonDiff {
         List<CompareObject> theirList = getSortedList(theirSet);
 
         List<CompareObject> noDuplicates = new ArrayList<>();
-        System.out.println("Checking if ourList contains every object from theirList");
+        System.out.println("Checking if our list contains every object from their list");
         for (CompareObject param : theirList) {
             if (!ourList.contains(param)) {
                 if (!noDuplicates.contains(param)) {
@@ -40,7 +40,7 @@ public class JsonDiff {
         }
 
         /*
-        System.out.println("Checking if theirList contains every object from ourList");
+        System.out.println("Checking if their list contains every object from our list");
         for (CompareObject param : ourList) {
             if (!theirList.contains(param)) {
                 if (!noDuplicates.contains(param)) {
@@ -63,8 +63,8 @@ public class JsonDiff {
          */
 
 
-        System.out.println(ourList.size());
-        System.out.println(theirList.size());
+        System.out.println("Size of our list: "  + ourList.size());
+        System.out.println("Size of their list: "  + theirList.size());
 
     }
 
