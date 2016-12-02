@@ -14,7 +14,7 @@ import json
 """
 Opens the Json config file
 """
-with open(os.path.dirname(__file__) + '/config.json') as json_data_file:
+with open(os.path.dirname(os.path.abspath(__file__)) + '/config.json') as json_data_file:
     config = json.load(json_data_file)
 
 """
@@ -410,6 +410,11 @@ def convertion_and_validation():
     p = multiprocessing.Pool()
     p.map(xls_to_csv, firstlistelement_of_inputfiles)
 
+    # for val in firstlistelement_of_inputfiles:
+    # first_value_from_tuple = val[0]
+    # second_value_from_tuple = val[1]
+    # xls_to_csv(first_value_from_tuple, second_value_from_tuple)
+
     """
     validate the csv
     """
@@ -472,7 +477,10 @@ def create_csv_folder():
     """
     This function creates a folder named csv_output where the converted csv files would be stored.
     """
-    os.makedirs(os.path.dirname(__file__) + '/csv_output')
+    try:
+        os.makedirs(os.path.dirname(__file__) + '/csv_output')
+    except OSError:
+        exit('Folder csv_output already exists. Please start the script again.')
 
 
 def delete_csv_folder():
