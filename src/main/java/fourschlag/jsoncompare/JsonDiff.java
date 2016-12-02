@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class JsonDiff {
     public static void main(String[] args) {
-        Set<CompareObject> ourSet = getJsonFromFile(new File("resultGorilla.json"));
+        Set<CompareObject> ourSet = getJsonFromFile(new File("fourschlagJson.json"));
         Set<CompareObject> theirSet = getJsonFromFile(new File("spJson.json"));
 
         List<CompareObject> ourList = getSortedList(ourSet);
