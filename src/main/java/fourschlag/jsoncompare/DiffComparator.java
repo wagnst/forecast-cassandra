@@ -2,9 +2,6 @@ package fourschlag.jsoncompare;
 
 import java.util.Comparator;
 
-/**
- * Created by thor on 29.11.2016.
- */
 public class DiffComparator implements Comparator<CompareObject> {
     @Override
     public int compare(CompareObject o1, CompareObject o2) {
