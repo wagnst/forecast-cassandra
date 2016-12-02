@@ -23,8 +23,8 @@ public class JsonDiff {
     private static FixedCostsService fixedCostsService = new FixedCostsService(connection);
 
     public static void main(String[] args) {
-        Set<CompareObject> ourSet = getTheirJson(new File("ourJson.json"));
-        Set<CompareObject> theirSet = getTheirJson(new File("spJson.json"));
+        Set<CompareObject> ourSet = getJsonFromFile(new File("resultGorilla.json"));
+        Set<CompareObject> theirSet = getJsonFromFile(new File("spJson.json"));
 
         List<CompareObject> ourList = getSortedList(ourSet);
         List<CompareObject> theirList = getSortedList(theirSet);
@@ -74,7 +74,7 @@ public class JsonDiff {
                 .collect(Collectors.toList());
     }
 
-    static Set<CompareObject> getTheirJson(File json) {
+    static Set<CompareObject> getJsonFromFile(File json) {
         ObjectMapper om = new ObjectMapper();
 
         File spJsonFile = json;
@@ -88,11 +88,11 @@ public class JsonDiff {
 
         return Arrays.stream(spEntries)
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                        entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
+                        entry.getSalesType(), entry.getEntryType()))
                 .collect(Collectors.toSet());
     }
 
-    /* Only for Team FourSchlag. If you are not Team FourSchlag, then use getTheirJson two times */
+    /* Only for Team FourSchlag. If you are not Team FourSchlag, then use getJsonFromFile two times */
     static Set<CompareObject> getOurJson() {
         int planYear = 2016;
         int period = 201609;
@@ -109,7 +109,7 @@ public class JsonDiff {
                 .sorted(new OutputDataTypeComparator())
                 /* Convert the stream to a List */
                 .map(entry -> new CompareObject(entry.getSbu(), entry.getProductMainGroup(), entry.getRegion(),entry.getSubregion(),
-                entry.getSalesType(), entry.getEntryType(), entry.getKpi()))
+                entry.getSalesType(), entry.getEntryType()))
                 .collect(Collectors.toSet());
 
         /* Close both streams */
