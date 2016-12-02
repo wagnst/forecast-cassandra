@@ -76,6 +76,6 @@ public class CompareObject {
                 ", region='" + region + '\'' +
                 ", subregion='" + subregion + '\'' +
                 ", salesType='" + salesType + '\'' +
-                ", entryType='" + entryType;
+                ", entryType='" + entryType + '\'';
     }
 }
