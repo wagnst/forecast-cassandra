@@ -1,4 +1,4 @@
-package fourschlag.services.data.services;
+package fourschlag.services.data.service;
 
 import fourschlag.services.db.CassandraConnection;
 

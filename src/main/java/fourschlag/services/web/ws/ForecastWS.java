@@ -4,8 +4,8 @@ import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
-import fourschlag.services.data.services.FixedCostsService;
-import fourschlag.services.data.services.SalesService;
+import fourschlag.services.data.service.FixedCostsService;
+import fourschlag.services.data.service.SalesService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.db.ClusterEndpoints;
 import fourschlag.services.db.ConnectionPool;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * ForecastWS offers web services to get KPIs from a database
+ * ForecastWS offers web service to get KPIs from a database
  */
 @Path("/forecast")
 public class ForecastWS {

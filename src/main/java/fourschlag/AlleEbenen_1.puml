@@ -1,0 +1,28 @@
+@startuml
+
+node "Systemkontext" {
+ CQL - [Admin]
+
+[SP-Anwendung] - HTTP
+
+}
+
+package "Fourschlag System" {
+
+node "Datenbank Cassandra" {
+
+CQL - [CQL-Shell]: cqlsh
+[CQL-Shell] - Java:DatastaxJavaClientDriver
+
+}
+
+node "Laufzeitumgebung" {
+
+HTTP - [services]:JAX_RS
+[services] -- [entities]
+[services] - [DatastaxJavaClientDriver]
+[entities]
+Java - [DatastaxJavaClientDriver]
+}
+}
+@enduml
