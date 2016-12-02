@@ -64,8 +64,8 @@ public class OrgStructureEntity {
      *
      * @param o generic Object to compare with
      *
-     * @return true, if input object equals currently used object
-     *         false, if  input object does not equal currently used object
+     * @return true, if input object equals currently used object false, if
+     * input object does not equal currently used object
      */
     @Override
     public boolean equals(Object o) {
@@ -76,7 +76,8 @@ public class OrgStructureEntity {
 
         if (productMainGroup != null ? !productMainGroup.equals(that.productMainGroup) : that.productMainGroup != null)
             return false;
-        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null) return false;
+        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null)
+            return false;
         return bu != null ? bu.equals(that.bu) : that.bu == null;
 
     }

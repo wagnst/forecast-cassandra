@@ -17,7 +17,8 @@ public enum EntryType {
     /**
      * Constructor for EntryType
      *
-     * @param type The type of the Entry (actual, forecast, actual/forecast, budget, topdown)
+     * @param type The type of the Entry (actual, forecast, actual/forecast,
+     *             budget, topdown)
      */
     EntryType(String type) {
         this.type = type;

@@ -18,16 +18,23 @@ import java.util.stream.Stream;
  */
 public abstract class KpiRequest extends Request {
 
-    protected final String sbu;
-    protected final String region;
-    private final Period planPeriod;
-    protected final Period currentPeriod;
-    protected final ExchangeRateRequest exchangeRates;
-
-    protected final KeyPerformanceIndicators[] kpiArray;
-
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+    protected String sbu;
+    protected String region;
+    protected Period currentPeriod;
+    protected ExchangeRateRequest exchangeRates;
+    protected KeyPerformanceIndicators[] kpiArray;
+    private Period planPeriod;
+
+    /**
+     * Default constructor to only open a database connection
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
+    public KpiRequest(CassandraConnection connection) {
+        super(connection);
+    }
 
     /**
      * Constructor for KpiRequest
@@ -50,8 +57,8 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param fcType
+     *
      * @return
      */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
@@ -61,7 +68,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param map
      */
     private void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
@@ -70,7 +76,9 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * Initiates the calculation for all KPIs with the attributes of this instance
+     * Initiates the calculation for all KPIs with the attributes of this
+     * instance
+     *
      * @return Stream of OutputDataTypes
      */
     public Stream<OutputDataType> calculateKpis() {
@@ -133,8 +141,8 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param entryType
+     *
      * @return
      */
     private Stream<OutputDataType> calculateKpisWithTopdown(final EntryType entryType) {
@@ -191,6 +199,7 @@ public abstract class KpiRequest extends Request {
      *
      * @param tempPlanPeriod the desired Period
      * @param entryType      the EntryType of the
+     *
      * @return
      */
     private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
@@ -221,8 +230,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to validate a query result including the topdown values
      *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all the values for the sales KPIs
      */
     protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
@@ -230,8 +240,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to validate a query result excluding the topdown values
      *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all the values for the sales KPIs
      */
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
@@ -239,7 +250,8 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the actual data
      *
-     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken
+     *                       from
      *
      * @return the actual data within the desired period.
      */
@@ -248,9 +260,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the forecast data
      *
-     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
-     *
-     * @param entryType the type of the data
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     *                       taken from
+     * @param entryType      the type of the data
      *
      * @return the forecast data within the desired period
      */
@@ -259,22 +271,24 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the budget data
      *
-     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken
+     *                       from
      *
      * @return the budget data from the desired period
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 
     /**
-     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
+     * Method that calculates the BJ values for all KPIs but for one specific
+     * period (--> zero month period)
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     protected abstract ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod);
 
     /**
-     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
-     * including the topdown values
+     * Method that calculates the BJ values for all KPIs but for one specific
+     * period (--> zero month period) including the topdown values
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
@@ -283,10 +297,11 @@ public abstract class KpiRequest extends Request {
     /**
      * Creates a OutputDataType Object with all given attributes
      *
-     * @param kpi KPI that will be set in the OutputDataType
-     * @param entryType Entry Type of that KPI entry
+     * @param kpi           KPI that will be set in the OutputDataType
+     * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
-     * @param bjValues The budget year values
+     * @param bjValues      The budget year values
+     *
      * @return Instance of OutputDataType
      */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,

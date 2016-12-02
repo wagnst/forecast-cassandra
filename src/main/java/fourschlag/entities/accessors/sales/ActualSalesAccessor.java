@@ -20,6 +20,7 @@ public interface ActualSalesAccessor {
             @Param("region") String region,
             @Param("sales_type") String salesType,
             @Param("data_source") String dataSource);
+
     /*CQL-Query to get the ActualSales Product Main Group and region*/
     @Query("SELECT DISTINCT product_main_group, region FROM actual_sales;")
     Result<ActualSalesEntity> getDistinctPmgAndRegions();

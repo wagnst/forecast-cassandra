@@ -22,11 +22,11 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  */
 public class SalesRequest extends KpiRequest {
 
+    private static final String FC_TYPE = "sales";
     private final String productMainGroup;
     private final SalesType salesType;
     private final ActualSalesAccessor actualAccessor;
     private final ForecastSalesAccessor forecastAccessor;
-    private static final String FC_TYPE = "sales";
 
     /**
      * Constructor for SalesRequest
@@ -44,7 +44,7 @@ public class SalesRequest extends KpiRequest {
     public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                         OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod , currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
 
@@ -101,7 +101,8 @@ public class SalesRequest extends KpiRequest {
      * Gets the cm1 value from the forecast sales table
      *
      * @param tempPlanPeriod period of the desired cm1 value
-     * @param toCurrency desired return currency
+     * @param toCurrency     desired return currency
+     *
      * @return cm1 value as double
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
@@ -130,9 +131,11 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     * Gets Budget KPIs from the database where the plan period is equal to the period
+     * Gets Budget KPIs from the database where the plan period is equal to the
+     * period
      *
      * @param tempPlanPeriod Desired period for the budget KPIs
+     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -157,9 +160,8 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     *
-     *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
      * @return
      */
     @Override
@@ -171,9 +173,9 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return
      */
     @Override
@@ -190,7 +192,7 @@ public class SalesRequest extends KpiRequest {
         /* IF the result of the query is NOT empty THEN get the topdown values from the query result */
         if (queryResult != null) {
             /* IF the result is an instance of ForecastSalesEntity THEN get the topdown values (actual doesnt have topdown) */
-            if(queryResult.getClass().isInstance(ForecastSalesEntity.class)) {
+            if (queryResult.getClass().isInstance(ForecastSalesEntity.class)) {
                 ForecastSalesEntity fcEntity = (ForecastSalesEntity) queryResult;
                 topdownMap.put(SALES_VOLUME, fcEntity.getTopdownAdjustSalesVolumes());
                 topdownMap.put(NET_SALES, fcEntity.getTopdownAdjustNetSales());
@@ -214,9 +216,9 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return
      */
     @Override
@@ -272,16 +274,16 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     *
-     * @param kpi KPI that will be set in the OutputDataType
-     * @param entryType Entry Type of that KPI entry
+     * @param kpi           KPI that will be set in the OutputDataType
+     * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
-     * @param bjValues The budget year values
+     * @param bjValues      The budget year values
+     *
      * @return
      */
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
-                                                LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
+                                                  LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);

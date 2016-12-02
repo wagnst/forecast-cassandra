@@ -21,6 +21,7 @@ public interface ActualFixedCostsAccessor {
             @Param("subregion") String subregion,
             @Param("period") int period
     );
+
     /*CQL-Query to get the ActualFixedCosts sbu and subregion*/
     @Query("SELECT DISTINCT sbu, subregion FROM actual_fixed_costs")
     Result<ActualFixedCostsEntity> getDistinctSbuAndSubregions();

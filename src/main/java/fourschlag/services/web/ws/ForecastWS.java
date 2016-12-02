@@ -28,13 +28,13 @@ import java.util.stream.Stream;
 @Path("/forecast")
 public class ForecastWS {
 
-    private CassandraConnection connection = ConnectionPool
-            .getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
+    private CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
     private SalesService salesService = new SalesService(connection);
     private FixedCostsService fixedCostsService = new FixedCostsService(connection);
 
     /* TODO: Maybe close session each time, but not connection */
     /* TODO: Create Connection pool and remove the connection from this WS */
+
     /**
      * This method collects all to be calculated forecast KPI's in
      * the different service classes
@@ -42,6 +42,7 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
+     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -105,6 +106,7 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
+     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -160,6 +162,7 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
+     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -207,4 +210,6 @@ public class ForecastWS {
         /* Return the result list with a code 200 */
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
+
+
 }

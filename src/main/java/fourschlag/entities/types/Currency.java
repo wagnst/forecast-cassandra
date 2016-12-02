@@ -6,8 +6,8 @@ package fourschlag.entities.types;
 
 
 public enum Currency {
-    EURO("eur",'€'),
-    DOLLAR("usd",'$');
+    EURO("eur", '€'),
+    DOLLAR("usd", '$');
 
     private final String abbreviation;
     private final char symbol;
@@ -18,44 +18,9 @@ public enum Currency {
      * @param abbreviation
      * @param symbol
      */
-    Currency(String abbreviation, char symbol){
+    Currency(String abbreviation, char symbol) {
         this.abbreviation = abbreviation;
         this.symbol = symbol;
-    }
-
-    /**
-     * Getter for the Abbreviation
-     *
-     * @return Abbreviation that is currently used
-     */
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    /**
-     * Getter for the Symbol
-     *
-     * @return Symbol of the currently used Currensy
-     */
-    public char getSymbol() {
-        return symbol;
-    }
-
-    /**
-     * Getter for the SymbolAsString
-     *
-     * @return SymbolAsString that is currently used
-     */
-    public String getSymbolAsString() { return symbol + "";}
-
-    /**
-     * toString-method to print out the Abbreviation
-     *
-     * @return Abbreviation that is currently used
-     */
-    @Override
-    public String toString() {
-        return getAbbreviation();
     }
 
     /**
@@ -82,11 +47,48 @@ public enum Currency {
      * @return Currency object
      */
     public static Currency getCurrencyBySymbol(char symbol) {
-        for (Currency currency: Currency.values()) {
+        for (Currency currency : Currency.values()) {
             if (currency.getSymbol() == symbol) {
                 return currency;
             }
         }
         return null;
+    }
+
+    /**
+     * Getter for the Abbreviation
+     *
+     * @return Abbreviation that is currently used
+     */
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    /**
+     * Getter for the Symbol
+     *
+     * @return Symbol of the currently used Currensy
+     */
+    public char getSymbol() {
+        return symbol;
+    }
+
+    /**
+     * Getter for the SymbolAsString
+     *
+     * @return SymbolAsString that is currently used
+     */
+    public String getSymbolAsString() {
+        return symbol + "";
+    }
+
+    /**
+     * toString-method to print out the Abbreviation
+     *
+     * @return Abbreviation that is currently used
+     */
+    @Override
+    public String toString() {
+        return getAbbreviation();
     }
 }

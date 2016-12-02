@@ -7,7 +7,8 @@ import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
 
 /**
- * Extends FixedCostsEntity. Provides the forecast data from the fixed costs table.
+ * Extends FixedCostsEntity. Provides the forecast data from the fixed costs
+ * table.
  */
 
 @Table(name = "forecast_fixed_costs")
@@ -70,7 +71,7 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
     /**
      * Getter for the PlanPeriod
      *
-     * @return  PlanPeriod that is currently used
+     * @return PlanPeriod that is currently used
      */
     public int getPlanPeriod() {
         return planPeriod;

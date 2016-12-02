@@ -15,6 +15,7 @@ public interface ExchangeRateAccessor {
     /*CQL-Query to get the ExchangeRate data */
     @Query("SELECT period, from_currency, to_currency, rate FROM exchange_rate WHERE period = :period AND to_currency = :to_currency ALLOW FILTERING")
     Result<ExchangeRateEntity> getExchangeRate(@Param("period") int period, @Param("to_currency") String toCurrency);
+
     /*CQL-Query to get a specific ExchangeRate */
     @Query("SELECT rate FROM exchange_rate WHERE period = :period AND from_currency = :from_currency AND to_currency = :to_currency ALLOW FILTERING")
     ExchangeRateEntity getSpecificExchangeRate(@Param("period") int period,

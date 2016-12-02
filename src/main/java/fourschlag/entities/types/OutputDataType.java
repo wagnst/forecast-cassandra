@@ -113,6 +113,19 @@ public class OutputDataType {
     }
 
     /**
+     * Getter for the number of months the OutputDataType is built for
+     *
+     * @return number of months
+     */
+    public static int getNumberOfMonths() {
+        return NUMBER_OF_MONTHS;
+    }
+
+    public static int getNumberOfBj() {
+        return NUMBER_OF_BJ;
+    }
+
+    /**
      * Setter for the Months
      *
      * @param months List of the months to be set
@@ -152,7 +165,7 @@ public class OutputDataType {
     /**
      * method to convert the unit currency from € to $
      *
-     * @param unit Unit that is supposed to be converted
+     * @param unit     Unit that is supposed to be converted
      * @param currency Currency that is supposed to be cconverted
      *
      * @return Converted Currency
@@ -167,19 +180,6 @@ public class OutputDataType {
         } else {
             return unit.replace(Currency.EURO.getSymbolAsString(), currency.getAbbreviation());
         }
-    }
-
-    /**
-     * Getter for the number of months the OutputDataType is built for
-     *
-     * @return number of months
-     */
-    public static int getNumberOfMonths() {
-        return NUMBER_OF_MONTHS;
-    }
-
-    public static int getNumberOfBj() {
-        return NUMBER_OF_BJ;
     }
 
     public int getOrderNumber() {

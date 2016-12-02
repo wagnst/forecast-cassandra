@@ -79,7 +79,7 @@ public class OrgStructureAndRegionRequest extends Request {
         if (productMap.containsKey(entity.getProductMainGroup())) {
             productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
         } else {
-            productMap.put(entity.getProductMainGroup(), new HashSet<String>(){{
+            productMap.put(entity.getProductMainGroup(), new HashSet<String>() {{
                 add(entity.getRegion());
             }});
         }
@@ -110,7 +110,7 @@ public class OrgStructureAndRegionRequest extends Request {
         if (sbuMap.containsKey(entity.getSbu())) {
             sbuMap.get(entity.getSbu()).add(entity.getSubregion());
         } else {
-            sbuMap.put(entity.getSbu(), new HashSet<String>(){{
+            sbuMap.put(entity.getSbu(), new HashSet<String>() {{
                 add(entity.getSubregion());
             }});
         }
@@ -119,7 +119,8 @@ public class OrgStructureAndRegionRequest extends Request {
     /**
      * method that applies the sbu belonging to a specific PMG
      *
-     * @param productMainGroup product main group for which the sbu is supposed to be found
+     * @param productMainGroup product main group for which the sbu is supposed
+     *                         to be found
      *
      * @return
      */

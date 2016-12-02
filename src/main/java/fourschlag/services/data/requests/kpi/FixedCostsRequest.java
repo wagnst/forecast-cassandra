@@ -12,21 +12,37 @@ import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
 /**
- * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a specific
- * region, period and product main group
+ * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a
+ * specific region, period and product main group
  */
 public class FixedCostsRequest extends KpiRequest {
-    private final String subregion;
-    private final ActualFixedCostsAccessor actualAccessor;
-    private final ForecastFixedCostsAccessor forecastAccessor;
-
     private static final String FC_TYPE = "fixed costs";
+    private String subregion;
+    private ActualFixedCostsAccessor actualAccessor;
+    private ForecastFixedCostsAccessor forecastAccessor;
 
+    /**
+     * Default constructor to only open a database connection
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
+    public FixedCostsRequest(CassandraConnection connection) {
+        super(connection);
+
+        forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
+    }
+
+    /**
+     * Constructor for FixedCostsRequest with additional parameters
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
     public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {
@@ -40,7 +56,6 @@ public class FixedCostsRequest extends KpiRequest {
     /**
      * Queries KPIs from the actual fixed costs table
      *
-     *
      * @return SalesEntity Object with query result
      */
     @Override
@@ -52,9 +67,9 @@ public class FixedCostsRequest extends KpiRequest {
     /**
      * Queries KPIs from the forecast fixed costs table
      *
-     * @param tempPlanPeriod    planPeriod the forecast data is supposed to be taken from
-     *
-     * @param entryType         the type of the data
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     *                       taken from
+     * @param entryType      the type of the data
      *
      * @return
      */
@@ -83,7 +98,8 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     /**
-     * method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     * method that calculates the BJ values for all KPIs but one specific period
+     * (--> zero month period)
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
@@ -112,7 +128,7 @@ public class FixedCostsRequest extends KpiRequest {
         Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
         Map<KeyPerformanceIndicators, Double> topdownMap = validatedResult.getTopdownResult();
 
-        if(queryResult != null) {
+        if (queryResult != null) {
             if (queryResult.getClass().isInstance(ForecastFixedCostsEntity.class)) {
                 ForecastFixedCostsEntity fcEntity = (ForecastFixedCostsEntity) queryResult;
                 double topdownFixCosts = fcEntity.getTopdownAdjustFixCosts();
@@ -197,7 +213,26 @@ public class FixedCostsRequest extends KpiRequest {
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                   LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
         /* TODO: why do we need the sales type in fixed costs */
-        return new OutputDataType(kpi, sbu, sbu, region , subregion, SalesType.THIRD_PARTY.toString(),
+        return new OutputDataType(kpi, sbu, sbu, region, subregion, SalesType.THIRD_PARTY.toString(),
                 entryType.toString(), exchangeRates.getToCurrency(), monthlyValues, bjValues);
     }
+
+    /**
+     * Gets all ForecastFixedCostsEntities with no filter applied
+     *
+     * @return all entities which are present inside forecast_fixed_costs
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts() {
+        return forecastAccessor.getAllForecastFixedCosts().all();
+    }
+
+    /**
+     * Gets a specific ForecastFixedCostsEntity filtered by joined primary key
+     *
+     * @return single entity of ForeCastFixedCostsEntity
+     */
+    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
+        return forecastAccessor.getForecastFixedCost(sbu, subregion, period, planPeriod, entryType).one();
+    }
+
 }

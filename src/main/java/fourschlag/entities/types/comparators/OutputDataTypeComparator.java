@@ -23,16 +23,16 @@ public class OutputDataTypeComparator implements Comparator<OutputDataType> {
                 if (returnValue == 0) {
                     returnValue = o1.getSbu().compareTo(o2.getSbu());
 
-                    if(returnValue == 0){
+                    if (returnValue == 0) {
                         returnValue = o2.getFcType().compareTo(o1.getFcType());
 
-                        if(returnValue == 0){
+                        if (returnValue == 0) {
                             returnValue = o1.getProductMainGroup().compareTo(o2.getProductMainGroup());
 
-                            if(returnValue == 0){
+                            if (returnValue == 0) {
                                 returnValue = o1.getSalesType().compareTo(o2.getSalesType());
 
-                                if(returnValue == 0){
+                                if (returnValue == 0) {
                                     return o1.getOrderNumber() - o2.getOrderNumber();
                                 }
                             }

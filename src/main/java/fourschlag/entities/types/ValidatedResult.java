@@ -17,12 +17,13 @@ public class ValidatedResult {
      * @param kpiArray The KPIs to be validated
      */
     public ValidatedResult(KeyPerformanceIndicators[] kpiArray) {
-        kpiResult = new HashMap<KeyPerformanceIndicators, Double>(){{
+        kpiResult = new HashMap<KeyPerformanceIndicators, Double>() {{
             for (KeyPerformanceIndicators kpi : kpiArray) {
                 put(kpi, 0.0);
             }
         }};
     }
+
     /**
      * Constructor for ValidatedResult
      *

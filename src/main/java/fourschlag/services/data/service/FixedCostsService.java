@@ -1,13 +1,16 @@
 package fourschlag.services.data.service;
 
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
-import fourschlag.services.data.requests.kpi.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
+import fourschlag.services.data.requests.kpi.FixedCostsRequest;
+import fourschlag.services.data.requests.kpi.manipulation.FixedCostsManipulationRequest;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -22,17 +25,20 @@ public class FixedCostsService extends Service {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public FixedCostsService(CassandraConnection connection) {super(connection);}
+    public FixedCostsService(CassandraConnection connection) {
+        super(connection);
+    }
 
     /**
-     * Calculates all Fixed Costs KPIs for a time span (planYear) and from certain
-     * point of view (currentPeriod).
+     * Calculates all Fixed Costs KPIs for a time span (planYear) and from
+     * certain point of view (currentPeriod).
      *
-     * @param planPeriod       Indicates the time span for which the KPIs are
-     *                         supposed to be queried
-     * @param currentPeriod    The point of view in time from which the data is
-     *                         supposed to be looked at
-     * @param toCurrency       The desired output currency
+     * @param planPeriod    Indicates the time span for which the KPIs are
+     *                      supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is
+     *                      supposed to be looked at
+     * @param toCurrency    The desired output currency
+     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -56,5 +62,37 @@ public class FixedCostsService extends Service {
 
         /* Finally the result stream is returned */
         return resultStream;
+    }
+
+    /**
+     * @return a list of all ForecastFixedCostsEntities
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts() {
+        return new FixedCostsRequest(getConnection()).getForecastFixedCosts();
+    }
+
+    /**
+     * @return a specific ForecastFixedCostsEntity
+     */
+    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
+        return new FixedCostsRequest(getConnection()).getForecastFixedCosts(sbu, subregion, period, entryType, planPeriod);
+    }
+
+    /**
+     * Method sets new values or records to forecast_fixed_costs table
+     *
+     * @return boolean value if action was successfull or not
+     */
+    public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
+                                         double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
+                                         double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
+                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
+                                         int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
+                                         String userId, String entryTs) {
+        return new FixedCostsManipulationRequest(getConnection()).setForecastFixedCosts(
+                sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
+                otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
+                planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs
+        );
     }
 }

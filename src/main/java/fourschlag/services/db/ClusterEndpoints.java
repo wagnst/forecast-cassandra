@@ -22,7 +22,7 @@ public enum ClusterEndpoints {
     /**
      * Constructor
      *
-     * @param address IP address of the endpoint
+     * @param address  IP address of the endpoint
      * @param username username to login with
      * @param password password to login with
      */

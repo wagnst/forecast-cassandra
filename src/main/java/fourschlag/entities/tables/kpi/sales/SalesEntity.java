@@ -8,7 +8,8 @@ import fourschlag.entities.tables.kpi.KpiEntity;
 import java.util.UUID;
 
 /**
- * Super class SalesEntity. Extends KpiEntity. Provides the data from the Sales table
+ * Super class SalesEntity. Extends KpiEntity. Provides the data from the Sales
+ * table
  */
 public class SalesEntity extends KpiEntity {
 
@@ -28,7 +29,6 @@ public class SalesEntity extends KpiEntity {
 
     @Column(name = "cm1")
     private double cm1;
-
 
 
     public SalesEntity() {
