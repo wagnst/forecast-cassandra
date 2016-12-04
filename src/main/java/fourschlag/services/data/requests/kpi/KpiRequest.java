@@ -74,9 +74,9 @@ public abstract class KpiRequest extends Request {
      */
     public Stream<OutputDataType> calculateKpis() {
         /* Calculate Actual/Forecast KPIs */
-        Stream<OutputDataType> entryTypeNull = calculateKpisWithTopdown(EntryType.ACTUAL_FORECAST);
+        Stream<OutputDataType> entryTypeNull = calculateActualForecastKpis();
         /* Calculate Budget KPIs */
-        Stream<OutputDataType> entryTypeBudget = calculateKpisWithoutTopdown(EntryType.BUDGET);
+        Stream<OutputDataType> entryTypeBudget = calculateBudgetKpis();
 
         /* Concat and return both streams */
         return Stream.concat(entryTypeNull, entryTypeBudget);
@@ -87,7 +87,7 @@ public abstract class KpiRequest extends Request {
      *
      * @return Stream of OutputDataTypes
      */
-    private Stream<OutputDataType> calculateKpisWithoutTopdown(final EntryType entryType) {
+    private Stream<OutputDataType> calculateBudgetKpis() {
         /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
 
@@ -101,7 +101,7 @@ public abstract class KpiRequest extends Request {
         ValidatedResult kpisForSpecificMonth;
         /* calculateKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
-            kpisForSpecificMonth = calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
+            kpisForSpecificMonth = validateQueryResult(getBudgetData(tempPlanPeriod), tempPlanPeriod);
             /* Add all KPI values to the monthly KPI value map */
 
             /* The values from the validated result are written into their corresponding location in the monthly map */
@@ -126,19 +126,19 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
         resultStream = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, entryType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, EntryType.BUDGET, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 
         return resultStream;
     }
 
     /**
-     * @param entryType
+     *
      * @return
      */
-    private Stream<OutputDataType> calculateKpisWithTopdown(final EntryType entryType) {
+    private Stream<OutputDataType> calculateActualForecastKpis() {
         /* Prepare result list that will be returned later */
         Stream<OutputDataType> resultStream;
-        Stream<OutputDataType> resultStream2;
+        Stream<OutputDataType> resultStreamTopdown;
 
         Period tempPlanPeriod = new Period(planPeriod);
 
@@ -150,7 +150,7 @@ public abstract class KpiRequest extends Request {
         ValidatedResultTopdown kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
-            kpisForSpecificMonth = (ValidatedResultTopdown) calculateKpisForSpecificMonths(tempPlanPeriod, entryType);
+            kpisForSpecificMonth = calculateActualForecastKpisForSpecificMonths(tempPlanPeriod);
 
             /* Add all KPI values to the monthly KPI value map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
@@ -176,41 +176,34 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result list */
         resultStream = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, entryType, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, EntryType.ACTUAL_FORECAST, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 
-        resultStream2 = Arrays.stream(kpiArray)
+        resultStreamTopdown = Arrays.stream(kpiArray)
                 .map(kpi -> createOutputDataType(kpi, EntryType.TOPDOWN, tempMonthlyTopdownValues.get(kpi), tempTopdownBjValues.get(kpi)));
 
-        return Stream.concat(resultStream, resultStream2);
+        return Stream.concat(resultStream, resultStreamTopdown);
     }
 
     /**
      * method that calculates the KPIs for specific months
      *
      * @param tempPlanPeriod the desired Period
-     * @param entryType      the EntryType of the
      * @return
      */
-    private ValidatedResult calculateKpisForSpecificMonths(Period tempPlanPeriod, EntryType entryType) {
+    private ValidatedResultTopdown calculateActualForecastKpisForSpecificMonths(Period tempPlanPeriod) {
         KpiEntity queryResult;
-
-        if (entryType == EntryType.BUDGET) {
-            queryResult = getBudgetData(tempPlanPeriod);
-            return validateQueryResult(queryResult, tempPlanPeriod);
-        } else {
-            /* IF plan period is in the past compared to current period THEN get data from the actual sales table
-             * ELSE get data from the forecast table
-             */
-            if (tempPlanPeriod.getPeriod() < currentPeriod.getPreviousPeriod()) {
-                queryResult = getActualData(tempPlanPeriod);
-            } else if (tempPlanPeriod.getPeriod() == currentPeriod.getPreviousPeriod()) {
-                queryResult = getActualData(tempPlanPeriod);
-                if (queryResult == null) {
-                    queryResult = getForecastData(tempPlanPeriod, EntryType.FORECAST);
-                }
-            } else {
+        /* IF plan period is in the past compared to current period THEN get data from the actual sales table
+         * ELSE get data from the forecast table
+         */
+        if (tempPlanPeriod.getPeriod() < currentPeriod.getPreviousPeriod()) {
+            queryResult = getActualData(tempPlanPeriod);
+        } else if (tempPlanPeriod.getPeriod() == currentPeriod.getPreviousPeriod()) {
+            queryResult = getActualData(tempPlanPeriod);
+            if (queryResult == null) {
                 queryResult = getForecastData(tempPlanPeriod, EntryType.FORECAST);
             }
+        } else {
+            queryResult = getForecastData(tempPlanPeriod, EntryType.FORECAST);
         }
 
         return validateTopdownQueryResult(queryResult, tempPlanPeriod);
