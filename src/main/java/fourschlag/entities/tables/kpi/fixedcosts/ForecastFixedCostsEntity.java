@@ -70,7 +70,7 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
     /**
      * Getter for the PlanPeriod
      *
-     * @return  PlanPeriod that is currently used
+     * @return PlanPeriod that is currently used
      */
     public int getPlanPeriod() {
         return planPeriod;

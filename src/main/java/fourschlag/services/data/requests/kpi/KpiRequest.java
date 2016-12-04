@@ -50,7 +50,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param fcType
      * @return
      */
@@ -61,7 +60,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param map
      */
     private void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
@@ -71,6 +69,7 @@ public abstract class KpiRequest extends Request {
 
     /**
      * Initiates the calculation for all KPIs with the attributes of this instance
+     *
      * @return Stream of OutputDataTypes
      */
     public Stream<OutputDataType> calculateKpis() {
@@ -133,7 +132,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @param entryType
      * @return
      */
@@ -221,7 +219,7 @@ public abstract class KpiRequest extends Request {
     /**
      * method to validate a query result including the topdown values
      *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
@@ -230,7 +228,7 @@ public abstract class KpiRequest extends Request {
     /**
      * method to validate a query result excluding the topdown values
      *
-     * @param result    The query result that will be validated
+     * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
      * @return ValidatedResult with all the values for the sales KPIs
      */
@@ -240,7 +238,6 @@ public abstract class KpiRequest extends Request {
      * method to get the actual data
      *
      * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
-     *
      * @return the actual data within the desired period.
      */
     protected abstract KpiEntity getActualData(Period tempPlanPeriod);
@@ -249,9 +246,7 @@ public abstract class KpiRequest extends Request {
      * method to get the forecast data
      *
      * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
-     *
-     * @param entryType the type of the data
-     *
+     * @param entryType      the type of the data
      * @return the forecast data within the desired period
      */
     protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
@@ -260,7 +255,6 @@ public abstract class KpiRequest extends Request {
      * method to get the budget data
      *
      * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
-     *
      * @return the budget data from the desired period
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
@@ -283,10 +277,10 @@ public abstract class KpiRequest extends Request {
     /**
      * Creates a OutputDataType Object with all given attributes
      *
-     * @param kpi KPI that will be set in the OutputDataType
-     * @param entryType Entry Type of that KPI entry
+     * @param kpi           KPI that will be set in the OutputDataType
+     * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
-     * @param bjValues The budget year values
+     * @param bjValues      The budget year values
      * @return Instance of OutputDataType
      */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,

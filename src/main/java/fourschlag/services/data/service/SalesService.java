@@ -32,11 +32,11 @@ public class SalesService extends Service {
      * Calculates all Sales KPIs for a time span (planYear) and from certain
      * point of view (currentPeriod).
      *
-     * @param planPeriod       Indicates the time span for which the KPIs are
-     *                         supposed to be queried
-     * @param currentPeriod    The point of view in time from which the data is
-     *                         supposed to be looked at
-     * @param toCurrency       The desired output currency
+     * @param planPeriod    Indicates the time span for which the KPIs are
+     *                      supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is
+     *                      supposed to be looked at
+     * @param toCurrency    The desired output currency
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */

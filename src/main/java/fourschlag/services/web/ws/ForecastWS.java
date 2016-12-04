@@ -35,6 +35,7 @@ public class ForecastWS {
 
     /* TODO: Maybe close session each time, but not connection */
     /* TODO: Create Connection pool and remove the connection from this WS */
+
     /**
      * This method collects all to be calculated forecast KPI's in
      * the different service classes

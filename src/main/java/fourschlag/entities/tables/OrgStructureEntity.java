@@ -63,9 +63,8 @@ public class OrgStructureEntity {
      * equals-method to compare OrgStructureEntities
      *
      * @param o generic Object to compare with
-     *
      * @return true, if input object equals currently used object
-     *         false, if  input object does not equal currently used object
+     * false, if  input object does not equal currently used object
      */
     @Override
     public boolean equals(Object o) {

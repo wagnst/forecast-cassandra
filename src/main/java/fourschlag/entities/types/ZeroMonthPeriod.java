@@ -2,8 +2,7 @@ package fourschlag.entities.types;
 
 
 /**
- *  Extends Period. Sets the initial Month.
- *
+ * Extends Period. Sets the initial Month.
  */
 public class ZeroMonthPeriod extends Period {
 
@@ -33,7 +32,7 @@ public class ZeroMonthPeriod extends Period {
     }
 
     /**
-     *  Getter for the ZeroMonthPeriod
+     * Getter for the ZeroMonthPeriod
      *
      * @return the desired ZeroMonthPeriod
      */

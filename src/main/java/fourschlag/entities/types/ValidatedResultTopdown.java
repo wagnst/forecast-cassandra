@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Extends ValidatedResult. Provides functionality to validate the results.
  */
-public class ValidatedResultTopdown extends ValidatedResult{
+public class ValidatedResultTopdown extends ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> topdownResult;
 
     /**
@@ -23,7 +23,6 @@ public class ValidatedResultTopdown extends ValidatedResult{
      * Constructor for ValidatedResultTopdown
      *
      * @param kpiResult The KPIs to be validated
-     *
      */
     public ValidatedResultTopdown(Map<KeyPerformanceIndicators, Double> kpiResult) {
         super(kpiResult);

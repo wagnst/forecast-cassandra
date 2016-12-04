@@ -21,6 +21,7 @@ public interface ForecastFixedCostsAccessor {
             @Param("plan_period") int planPeriod,
             @Param("entry_type") String entryType
     );
+
     /*CQL-Query to get the ForecastFixedCosts sbu and subregion*/
     @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
     Result<ForecastFixedCostsEntity> getDistinctSbuAndSubregions();

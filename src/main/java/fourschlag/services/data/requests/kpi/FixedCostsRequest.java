@@ -40,7 +40,6 @@ public class FixedCostsRequest extends KpiRequest {
     /**
      * Queries KPIs from the actual fixed costs table
      *
-     *
      * @return SalesEntity Object with query result
      */
     @Override
@@ -52,10 +51,8 @@ public class FixedCostsRequest extends KpiRequest {
     /**
      * Queries KPIs from the forecast fixed costs table
      *
-     * @param tempPlanPeriod    planPeriod the forecast data is supposed to be taken from
-     *
-     * @param entryType         the type of the data
-     *
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     * @param entryType      the type of the data
      * @return
      */
     @Override
@@ -73,7 +70,6 @@ public class FixedCostsRequest extends KpiRequest {
      * Queries KPIs with the budgetdata
      *
      * @param tempPlanPeriod planPeriod ....
-     *
      * @return
      */
     @Override
@@ -112,7 +108,7 @@ public class FixedCostsRequest extends KpiRequest {
         Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
         Map<KeyPerformanceIndicators, Double> topdownMap = validatedResult.getTopdownResult();
 
-        if(queryResult != null) {
+        if (queryResult != null) {
             if (queryResult.getClass().isInstance(ForecastFixedCostsEntity.class)) {
                 ForecastFixedCostsEntity fcEntity = (ForecastFixedCostsEntity) queryResult;
                 double topdownFixCosts = fcEntity.getTopdownAdjustFixCosts();
@@ -197,7 +193,7 @@ public class FixedCostsRequest extends KpiRequest {
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                   LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
         /* TODO: why do we need the sales type in fixed costs */
-        return new OutputDataType(kpi, sbu, sbu, region , subregion, SalesType.THIRD_PARTY.toString(),
+        return new OutputDataType(kpi, sbu, sbu, region, subregion, SalesType.THIRD_PARTY.toString(),
                 entryType.toString(), exchangeRates.getToCurrency(), monthlyValues, bjValues);
     }
 }

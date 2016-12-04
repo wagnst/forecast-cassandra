@@ -33,49 +33,49 @@ public class FixedCostsEntity extends KpiEntity {
     @Column(name = "idle_equip_cost")
     private double idleEquipCost;
 
-    @Column (name = "rd_cost")
+    @Column(name = "rd_cost")
     private double rdCost;
 
-    @Column (name = "admin_cost_bu")
+    @Column(name = "admin_cost_bu")
     private double adminCostBu;
 
-    @Column (name = "admin_cost_od")
+    @Column(name = "admin_cost_od")
     private double adminCostOd;
 
-    @Column (name = "admin_cost_company")
+    @Column(name = "admin_cost_company")
     private double adminCostCompany;
 
-    @Column (name = "other_op_cost_bu")
+    @Column(name = "other_op_cost_bu")
     private double otherOpCostBu;
 
-    @Column (name = "other_op_cost_od")
+    @Column(name = "other_op_cost_od")
     private double otherOpCostOd;
 
-    @Column (name = "other_op_cost_company")
+    @Column(name = "other_op_cost_company")
     private double otherOpCostCompany;
 
-    @Column (name = "spec_items")
+    @Column(name = "spec_items")
     private double specItems;
 
-    @Column (name = "provisions")
+    @Column(name = "provisions")
     private double provisions;
 
-    @Column (name = "currency_gains")
+    @Column(name = "currency_gains")
     private double currencyGains;
 
-    @Column (name = "val_adjust_inventories")
+    @Column(name = "val_adjust_inventories")
     private double valAdjustInventories;
 
-    @Column (name = "other_fix_cost")
+    @Column(name = "other_fix_cost")
     private double otherFixCost;
 
-    @Column (name = "depreciation")
+    @Column(name = "depreciation")
     private double depreciation;
 
-    @Column (name = "cap_cost")
+    @Column(name = "cap_cost")
     private double capCost;
 
-    @Column (name = "equity_income")
+    @Column(name = "equity_income")
     private double equityIncome;
 
 

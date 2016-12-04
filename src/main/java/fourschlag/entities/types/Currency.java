@@ -6,8 +6,8 @@ package fourschlag.entities.types;
 
 
 public enum Currency {
-    EURO("eur",'€'),
-    DOLLAR("usd",'$');
+    EURO("eur", '€'),
+    DOLLAR("usd", '$');
 
     private final String abbreviation;
     private final char symbol;
@@ -18,7 +18,7 @@ public enum Currency {
      * @param abbreviation
      * @param symbol
      */
-    Currency(String abbreviation, char symbol){
+    Currency(String abbreviation, char symbol) {
         this.abbreviation = abbreviation;
         this.symbol = symbol;
     }
@@ -46,7 +46,9 @@ public enum Currency {
      *
      * @return SymbolAsString that is currently used
      */
-    public String getSymbolAsString() { return symbol + "";}
+    public String getSymbolAsString() {
+        return symbol + "";
+    }
 
     /**
      * toString-method to print out the Abbreviation
@@ -62,7 +64,6 @@ public enum Currency {
      * method to get the Currency by the current Abbreviation
      *
      * @param abbreviation Actual Abbreviation
-     *
      * @return Currency object
      */
     public static Currency getCurrencyByAbbreviation(String abbreviation) {
@@ -78,11 +79,10 @@ public enum Currency {
      * method ..
      *
      * @param symbol Currencysymbol (€ or $)
-     *
      * @return Currency object
      */
     public static Currency getCurrencyBySymbol(char symbol) {
-        for (Currency currency: Currency.values()) {
+        for (Currency currency : Currency.values()) {
             if (currency.getSymbol() == symbol) {
                 return currency;
             }

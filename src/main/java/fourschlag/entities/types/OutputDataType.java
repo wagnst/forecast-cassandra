@@ -152,9 +152,8 @@ public class OutputDataType {
     /**
      * method to convert the unit currency from € to $
      *
-     * @param unit Unit that is supposed to be converted
+     * @param unit     Unit that is supposed to be converted
      * @param currency Currency that is supposed to be cconverted
-     *
      * @return Converted Currency
      */
     private String convertUnitCurrency(String unit, Currency currency) {

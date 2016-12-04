@@ -4,8 +4,8 @@ import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
-import fourschlag.services.data.requests.kpi.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
+import fourschlag.services.data.requests.kpi.FixedCostsRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Map;
@@ -22,17 +22,19 @@ public class FixedCostsService extends Service {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public FixedCostsService(CassandraConnection connection) {super(connection);}
+    public FixedCostsService(CassandraConnection connection) {
+        super(connection);
+    }
 
     /**
      * Calculates all Fixed Costs KPIs for a time span (planYear) and from certain
      * point of view (currentPeriod).
      *
-     * @param planPeriod       Indicates the time span for which the KPIs are
-     *                         supposed to be queried
-     * @param currentPeriod    The point of view in time from which the data is
-     *                         supposed to be looked at
-     * @param toCurrency       The desired output currency
+     * @param planPeriod    Indicates the time span for which the KPIs are
+     *                      supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is
+     *                      supposed to be looked at
+     * @param toCurrency    The desired output currency
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */

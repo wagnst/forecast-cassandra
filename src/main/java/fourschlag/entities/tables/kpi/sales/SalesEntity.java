@@ -30,7 +30,6 @@ public class SalesEntity extends KpiEntity {
     private double cm1;
 
 
-
     public SalesEntity() {
     }
 
