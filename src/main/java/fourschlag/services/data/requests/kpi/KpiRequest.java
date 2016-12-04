@@ -30,9 +30,17 @@ public abstract class KpiRequest extends Request {
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
 
     /**
-     * Constructor for KpiRequest
+     * Constructor
      *
-     * @param connection Cassandra connection that is supposed to be used
+     * @param connection        Cassandra connection that is supposed to be used
+     * @param sbu               SBU to filter for
+     * @param region            Region to filter for
+     * @param planPeriod        Indicates the time span for which the KPIs are
+     *                          supposed to be queried
+     * @param currentPeriod     The point of view in time from which the data is
+     *                          supposed to be looked at
+     * @param exchangeRates     ExchangeRateRequest with the desired output currency
+     * @param fcType            The type of KPI (example: "sales" or "fixed costs")
      */
     public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
@@ -124,7 +132,7 @@ public abstract class KpiRequest extends Request {
             bjPeriod.increment();
         }
 
-        /* All the values are put together in OutputDataType objects and are added to the result list */
+        /* All the values are put together in OutputDataType objects and are added to the result stream */
         resultStream = Arrays.stream(kpiArray)
                 .map(kpi -> createOutputDataType(kpi, EntryType.BUDGET, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 
@@ -174,7 +182,7 @@ public abstract class KpiRequest extends Request {
             bjPeriod.increment();
         }
 
-        /* All the values are put together in OutputDataType objects and are added to the result list */
+        /* All the values are put together in OutputDataType objects and are added to the result stream */
         resultStream = Arrays.stream(kpiArray)
                 .map(kpi -> createOutputDataType(kpi, EntryType.ACTUAL_FORECAST, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
 

@@ -27,6 +27,19 @@ public class FixedCostsRequest extends KpiRequest {
 
     private static final String FC_TYPE = "fixed costs";
 
+    /**
+     * Constructor
+     *
+     * @param connection        Cassandra connection that is supposed to be used
+     * @param sbu               SBU to filter for
+     * @param planPeriod        Indicates the time span for which the KPIs are
+     *                          supposed to be queried
+     * @param currentPeriod     The point of view in time from which the data is
+     *                          supposed to be looked at
+     * @param subregion         Subregion to filter for
+     * @param exchangeRates     ExchangeRateRequest with the desired output currency
+     * @param orgAndRegionRequest   OrgStructureAndRegionRequest instance
+     */
     public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                              String subregion, ExchangeRateRequest exchangeRates,
                              OrgStructureAndRegionRequest orgAndRegionRequest) {

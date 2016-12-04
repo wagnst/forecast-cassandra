@@ -33,13 +33,14 @@ public class SalesRequest extends KpiRequest {
      *
      * @param connection       Cassandra connection that is supposed to be used
      * @param productMainGroup Product Main Group to filter for
-     * @param planYear         Indicates the time span for which the KPIs are
+     * @param planPeriod       Indicates the time span for which the KPIs are
      *                         supposed to be queried
      * @param currentPeriod    The point of view in time from which the data is
      *                         supposed to be looked at
      * @param region           Region to filter for
      * @param salesType        Sales Type to filter for
-     * @param exchangeRates    Desired output currency
+     * @param exchangeRates    ExchangeRateRequest with the desired output currency
+     * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
     public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
