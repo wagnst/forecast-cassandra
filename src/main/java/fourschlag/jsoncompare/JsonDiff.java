@@ -23,7 +23,7 @@ public class JsonDiff {
             spJson = getJsonFromFile(new File("spJson.json"));
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.out.println("\nFehler beim Mapping!");
+            System.out.println("\nError when trying to map the JSON");
             return;
         }
 
@@ -49,7 +49,6 @@ public class JsonDiff {
         List<CompareObject> spList = getSortedList(spSet);
 
         List<CompareObject> noDuplicates = new ArrayList<>();
-        System.out.println("The following entries are part of the SP Json, but are missing in your Json:\n");
         /* For each object in their List check
          * IF our List does not contain it
          * THEN add it to our result list
@@ -60,11 +59,15 @@ public class JsonDiff {
             }
         }
 
-        /* Print out the result list */
-        for (CompareObject object : noDuplicates) {
-            System.out.println(object);
+        if (noDuplicates.isEmpty()) {
+            System.out.println("Your JSON contains all the combinations that are part of the SP JSON!");
+        } else {
+            /* Print out the result list */
+            System.out.println("The following entries are part of the SP Json, but are missing in your Json:\n");
+            for (CompareObject object : noDuplicates) {
+                System.out.println(object);
+            }
         }
-
         /* --SIMPLE OUTPUT--
         if (noDuplicates.isEmpty()) {
             System.out.println("true");
