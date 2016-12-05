@@ -21,10 +21,10 @@ public class JsonDiff {
 
         Set<CompareObject> ourSet;
         Set<CompareObject> spSet;
-        boolean withKpi = false;
+        boolean withKpi = true;
         if (args.length == 1) {
-            if (args[0].equals("true")) {
-                withKpi = true;
+            if (args[0].equals("false")) {
+                withKpi = false;
             }
         }
 

@@ -39,4 +39,10 @@ public class CompareObjectWithKpi extends CompareObject {
         result = 31 * result + (kpi != null ? kpi.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", kpi='" + kpi + '\'';
+    }
 }
