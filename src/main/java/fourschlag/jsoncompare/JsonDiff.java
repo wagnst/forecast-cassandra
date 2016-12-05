@@ -57,6 +57,14 @@ public class JsonDiff {
             System.out.println(object);
         }
 
+        /* --SIMPLE OUTPUT--
+        if (noDuplicates.isEmpty()) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
+        */
+
         System.out.println("\n\nFinished\n");
 
 
