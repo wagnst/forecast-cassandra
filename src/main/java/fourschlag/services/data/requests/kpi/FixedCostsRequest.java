@@ -227,7 +227,7 @@ public class FixedCostsRequest extends KpiRequest {
     }
 
     /**
-     * Gets a specific ForecastFixedCostsEntity filtered by joined primary key
+     * Gets a specific ForecastFixedCostsEntity filtered by joined primary keys
      *
      * @return single entity of ForeCastFixedCostsEntity
      */

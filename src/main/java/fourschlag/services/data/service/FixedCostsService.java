@@ -81,7 +81,7 @@ public class FixedCostsService extends Service {
     /**
      * Method sets new values or records to forecast_fixed_costs table
      *
-     * @return boolean value if action was successfull or not
+     * @return boolean value if action was successful or not
      */
     public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
                                          double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,

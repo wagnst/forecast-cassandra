@@ -11,7 +11,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * ForecastWS offers web service to get KPIs from a database
+ * ForecastFixedCostsWS offers web service to get plain fixed costs data from a
+ * database
  */
 @Path("/fixedcosts")
 public class ForecastFixedCostsWS {
@@ -44,7 +45,7 @@ public class ForecastFixedCostsWS {
      * @return a specific entry of forecast_fixed_costs
      */
     @GET
-    @Path("/{sbu}/{subregion}/{period}/{entryType}/{planPeriod}")
+    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period/{planPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastFixedCost(
             @PathParam("sbu") String sbu,
@@ -62,7 +63,7 @@ public class ForecastFixedCostsWS {
      * @return HTTP Response OK or BAD_REQUEST
      */
     @POST
-    @Path("/")
+    @Path("")
     public Response createForecastFixedCosts(
             @FormParam("sbu") String sbu,
             @FormParam("subregion") String subregion,

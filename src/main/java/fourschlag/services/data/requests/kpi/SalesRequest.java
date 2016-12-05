@@ -12,6 +12,7 @@ import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
@@ -23,17 +24,28 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 public class SalesRequest extends KpiRequest {
 
     private static final String FC_TYPE = "sales";
-    private final String productMainGroup;
-    private final SalesType salesType;
-    private final ActualSalesAccessor actualAccessor;
-    private final ForecastSalesAccessor forecastAccessor;
+    private String productMainGroup;
+    private SalesType salesType;
+    private ActualSalesAccessor actualAccessor;
+    private ForecastSalesAccessor forecastAccessor;
+
+    /**
+     * Default constructor to only open a database connection
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
+    public SalesRequest(CassandraConnection connection) {
+        super(connection);
+
+        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+    }
 
     /**
      * Constructor for SalesRequest
      *
      * @param connection       Cassandra connection that is supposed to be used
      * @param productMainGroup Product Main Group to filter for
-     * @param planYear         Indicates the time span for which the KPIs are
+     * @param planPeriod       Indicates the time span for which the KPIs are
      *                         supposed to be queried
      * @param currentPeriod    The point of view in time from which the data is
      *                         supposed to be looked at
@@ -287,6 +299,24 @@ public class SalesRequest extends KpiRequest {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);
+    }
+
+    /**
+     * Gets all ForecastSales with no filter applied
+     *
+     * @return all entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales() {
+        return forecastAccessor.getAllForecastSales().all();
+    }
+
+    /**
+     * Gets a specific ForecastSalesEntity filtered by joined primary keys
+     *
+     * @return single entity of ForecastSalesEntity
+     */
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
     }
 
 }
