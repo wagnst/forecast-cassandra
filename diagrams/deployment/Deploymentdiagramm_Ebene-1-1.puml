@@ -4,9 +4,9 @@ node "<<executionEnvironment>>\n :__Laufzeitumgebung__" as LZ{
 
     folder "fourschlag.war"{
 
-        folder "jmeter"{
-           artifact "<<artifact>>\n FourschlagTest.jmx"
-        }
+        'folder "jmeter"{
+        '   artifact "<<artifact>>\n FourschlagTest.jmx"
+        '}
 
         folder "libs"{
 
