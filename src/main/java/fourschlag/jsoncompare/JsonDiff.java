@@ -16,8 +16,16 @@ public class JsonDiff {
     public static void main(String[] args) {
         /* Get both JSON Files and put all entries into a Set to remove all duplicates */
 
-        Stream<OutputDataType> ourJson = getJsonFromFile(new File("resultJson.json"));
-        Stream<OutputDataType> spJson = getJsonFromFile(new File("spJson.json"));
+        Stream<OutputDataType> ourJson;
+        Stream<OutputDataType> spJson;
+        try {
+            ourJson = getJsonFromFile(new File("resultJson.json"));
+            spJson = getJsonFromFile(new File("spJson.json"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.out.println("\nFehler beim Mapping!");
+            return;
+        }
 
         Set<CompareObject> ourSet;
         Set<CompareObject> spSet;
@@ -79,15 +87,10 @@ public class JsonDiff {
                 .collect(Collectors.toList());
     }
 
-    private static Stream<OutputDataType> getJsonFromFile(File json) {
+    private static Stream<OutputDataType> getJsonFromFile(File json) throws IOException{
         ObjectMapper om = new ObjectMapper();
+        OutputDataType[] spEntries = om.readValue(json, OutputDataType[].class);
 
-        OutputDataType[] spEntries = new OutputDataType[]{};
-        try {
-            spEntries = om.readValue(json, OutputDataType[].class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return Arrays.stream(spEntries);
     }
