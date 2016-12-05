@@ -10,24 +10,6 @@ public class Period {
     protected int month;
     protected int period;
 
-    /**
-     * Constructor for Period
-     *
-     * @param year  Year that will be used
-     * @param month Month that will be used
-     */
-    private boolean isYearValid(int year) {
-        return (year > 1900 && year < 2100);
-    }
-
-    protected boolean isMonthValid(int month) {
-        return (month > 0 && month < 13);
-    }
-
-    private boolean isPeriodValid(int period) {
-        return (period > 100000 && period < 999999);
-    }
-
     public Period(int year, int month) {
         if (!isYearValid(year)) {
             throw new IllegalArgumentException("Year must be between 1900 and 2100...");
@@ -78,10 +60,29 @@ public class Period {
      * method to get the period by year
      *
      * @param year Year that is currently used
+     *
      * @return Period Object whith the ....
      */
     public static Period getPeriodByYear(int year) {
         return new Period(year, 1);
+    }
+
+    /**
+     * Constructor for Period
+     *
+     * @param year  Year that will be used
+     * @param month Month that will be used
+     */
+    private boolean isYearValid(int year) {
+        return (year > 1900 && year < 2100);
+    }
+
+    protected boolean isMonthValid(int month) {
+        return (month > 0 && month < 13);
+    }
+
+    private boolean isPeriodValid(int period) {
+        return (period > 100000 && period < 999999);
     }
 
     public Period increment() {

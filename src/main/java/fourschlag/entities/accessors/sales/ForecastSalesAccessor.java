@@ -14,7 +14,7 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 @Accessor
 public interface ForecastSalesAccessor {
     /*CQL-Query to get the ForecastSales data */
-    @Query("SELECT sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = :entry_type ALLOW FILTERING;")
+    @Query("SELECT sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = :entry_type")
     ForecastSalesEntity getSalesKpis(
             @Param("product_main_group") String productMainGroup,
             @Param("period") int period,
@@ -24,7 +24,7 @@ public interface ForecastSalesAccessor {
             @Param("entry_type") String entryType);
 
     /*CQL-Query to get the ForecastSales data */
-    @Query("SELECT cm1, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = 'forecast' ALLOW FILTERING;")
+    @Query("SELECT cm1, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = 'forecast'")
     ForecastSalesEntity getCm1(
             @Param("product_main_group") String productMainGroup,
             @Param("period") int period,
@@ -33,7 +33,7 @@ public interface ForecastSalesAccessor {
             @Param("sales_type") String salesType);
 
     /*CQL-Query to get the ForecastSales Product Main Group and Region */
-    @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales;")
+    @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales")
     Result<ForecastSalesEntity> getDistinctPmgAndRegions();
 
     /*CQL-Query to get all data from forecast_sales table*/
@@ -54,7 +54,7 @@ public interface ForecastSalesAccessor {
 
     /*CQL-Query to update a record via primary keys
         product_main_group,region,period,sales_type,plan_period,entry_type */
-    @Query("UPDATE forecast_sales SET topdown_adjust_sales_volumes=:topdown_adjust_sales_volumes, topdown_adjust_net_sales=:topdown_adjust_net_sales, topdown_adjust_cm1=:topdown_adjust_cm1, plan_period=:plan_period, plan_year=:plan_year, plan_half_year=:plan_half_year, plan_quarter=:plan_quarter, plan_month=:plan_month, entry_type=:entry_type, status=:status, usercomment=:usercomment, product_main_group=:product_main_group, sales_type=:sales_type, sales_volumes=:sales_volumes, net_sales=:net_sales, cm1=:cm1, period=:period, region=:region, period_year=:period_year, period_month=:period_month, currency=:currency, userid=:userid, entry_ts=:entry_ts")
+    @Query("UPDATE forecast_sales SET topdown_adjust_sales_volumes=:topdown_adjust_sales_volumes, topdown_adjust_net_sales=:topdown_adjust_net_sales, topdown_adjust_cm1=:topdown_adjust_cm1, plan_year=:plan_year, plan_half_year=:plan_half_year, plan_quarter=:plan_quarter, plan_month=:plan_month, status=:status, usercomment=:usercomment, sales_volumes=:sales_volumes, net_sales=:net_sales, cm1=:cm1, period_year=:period_year, period_month=:period_month, currency=:currency, userid=:userid, entry_ts=:entry_ts WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND plan_period = :plan_period AND entry_type = :entry_type")
     ResultSet updateForecastSales(
             /* ForecastSalesEntity */
             @Param("topdown_adjust_sales_volumes") double topdownAdjustSalesVolumes,

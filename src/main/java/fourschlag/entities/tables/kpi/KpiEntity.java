@@ -2,6 +2,7 @@ package fourschlag.entities.tables.kpi;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Transient;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
@@ -18,30 +19,35 @@ public class KpiEntity {
     private UUID uuid;
 
     @Column(name = "period")
+    @JsonProperty("PERIOD")
     private int period;
 
     @Column(name = "region")
+    @JsonProperty("REGION")
     private String region;
 
     @Column(name = "period_year")
+    @JsonProperty("PERIOD_YEAR")
     private int periodYear;
 
     @Column(name = "period_month")
+    @JsonProperty("PERIOD_MONTH")
     private int periodMonth;
 
     @Column(name = "currency")
+    @JsonProperty("CURRENCY")
     private String currency;
 
     @Column(name = "userid")
+    @JsonProperty("USERID")
     private String userId;
 
     @Column(name = "entry_ts")
+    @JsonProperty("ENTRY_TS")
     private String entryTs;
-
 
     public KpiEntity() {
     }
-
 
     public KpiEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs) {
         this.uuid = uuid;

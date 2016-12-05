@@ -22,7 +22,8 @@ public class CassandraConnection {
      *
      * @param endpoint       Endpoint of the database cluster to connect to
      * @param keyspace       Keyspace in the database to connect to
-     * @param authentication True: authentication is required ; False: authentication is not required
+     * @param authentication True: authentication is required ; False:
+     *                       authentication is not required
      */
     public CassandraConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentication) {
         this.endpoint = endpoint;

@@ -67,8 +67,10 @@ public class FixedCostsRequest extends KpiRequest {
     /**
      * Queries KPIs from the forecast fixed costs table
      *
-     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     *                       taken from
      * @param entryType      the type of the data
+     *
      * @return
      */
     @Override
@@ -86,6 +88,7 @@ public class FixedCostsRequest extends KpiRequest {
      * Queries KPIs with the budgetdata
      *
      * @param tempPlanPeriod planPeriod ....
+     *
      * @return
      */
     @Override

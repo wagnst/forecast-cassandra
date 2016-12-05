@@ -49,6 +49,7 @@ public class ExchangeRateRequest extends Request {
      * @param period       The period the exchange rate is supposed to be taken
      *                     from
      * @param fromCurrency The currency to be converted from
+     *
      * @return a Map with the needed exchange rates
      */
 

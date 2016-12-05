@@ -39,15 +39,16 @@ public abstract class KpiRequest extends Request {
     /**
      * Constructor
      *
-     * @param connection        Cassandra connection that is supposed to be used
-     * @param sbu               SBU to filter for
-     * @param region            Region to filter for
-     * @param planPeriod        Indicates the time span for which the KPIs are
-     *                          supposed to be queried
-     * @param currentPeriod     The point of view in time from which the data is
-     *                          supposed to be looked at
-     * @param exchangeRates     ExchangeRateRequest with the desired output currency
-     * @param fcType            The type of KPI (example: "sales" or "fixed costs")
+     * @param connection    Cassandra connection that is supposed to be used
+     * @param sbu           SBU to filter for
+     * @param region        Region to filter for
+     * @param planPeriod    Indicates the time span for which the KPIs are
+     *                      supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is
+     *                      supposed to be looked at
+     * @param exchangeRates ExchangeRateRequest with the desired output
+     *                      currency
+     * @param fcType        The type of KPI (example: "sales" or "fixed costs")
      */
     public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
@@ -84,7 +85,8 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * Initiates the calculation for all KPIs with the attributes of this instance
+     * Initiates the calculation for all KPIs with the attributes of this
+     * instance
      *
      * @return Stream of OutputDataTypes
      */
@@ -148,7 +150,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @return
      */
     private Stream<OutputDataType> calculateActualForecastKpis() {
@@ -204,6 +205,7 @@ public abstract class KpiRequest extends Request {
      * method that calculates the KPIs for specific months
      *
      * @param tempPlanPeriod the desired Period
+     *
      * @return
      */
     private ValidatedResultTopdown calculateActualForecastKpisForSpecificMonths(Period tempPlanPeriod) {
@@ -248,7 +250,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the actual data
      *
-     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken
+     *                       from
+     *
      * @return the actual data within the desired period.
      */
     protected abstract KpiEntity getActualData(Period tempPlanPeriod);
@@ -256,8 +260,10 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the forecast data
      *
-     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     *                       taken from
      * @param entryType      the type of the data
+     *
      * @return the forecast data within the desired period
      */
     protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
@@ -265,7 +271,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the budget data
      *
-     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken
+     *                       from
+     *
      * @return the budget data from the desired period
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
@@ -293,6 +301,7 @@ public abstract class KpiRequest extends Request {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
+     *
      * @return Instance of OutputDataType
      */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
