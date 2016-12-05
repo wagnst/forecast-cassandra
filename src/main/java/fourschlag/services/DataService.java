@@ -12,7 +12,7 @@ import java.util.Map;
 public interface DataService {
     SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-    static <T> List<T> selectQuery(QueryStructure hql, Map<String, Object> parameter) {
+    default <T> List<T> selectQuery(QueryStructure hql, Map<String, Object> parameter) {
         Session session = sessionFactory.openSession();
         try {
             Query query = session.createQuery(hql.getQuery());
