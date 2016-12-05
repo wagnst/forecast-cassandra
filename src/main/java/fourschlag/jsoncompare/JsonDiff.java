@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class JsonDiff {
     public static void main(String[] args) {
         /* Get both JSON Files and put all entries into a Set to remove all duplicates */
-        Set<CompareObject> ourSet = getJsonFromFile(new File("gorillaJSON.json"));
+        Set<CompareObject> ourSet = getJsonFromFile(new File("resultJson.json"));
         Set<CompareObject> theirSet = getJsonFromFile(new File("spJson.json"));
 
         /* Sort the collection to make it easier to read later */
