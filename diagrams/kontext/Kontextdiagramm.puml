@@ -6,18 +6,21 @@
 
  rectangle (Systemgrenze) {
  	node "DB System" as DBSystem
- 	node "Test Anwendung" as TestAnwendung
+ 	node "Test-Anwendung" as TestAnwendung
  }
 
- node "SP Anwendung" as SPAnwendung
+ node "SP-Anwendung" as SPAnwendung
 
  actor Controller
  actor "Sales Manager" as SalesManager
  actor Admin
 
- note left of Admin : Superrechte bedeutet das der Admin alle Use Cases kann.
+ note left of Admin : kann alle Funktionen im System
 
- Admin -up-> DBSystem : Superrechte
+ Admin -up-> DBSystem : Daten importieren
+ Admin -up-> DBSystem : Daten manipulieren
+ Admin -up-> DBSystem : Daten abfragen
+ Admin -up-> DBSystem : Daten manipulieren
 
 
 

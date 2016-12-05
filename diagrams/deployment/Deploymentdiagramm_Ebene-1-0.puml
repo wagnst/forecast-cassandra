@@ -1,0 +1,22 @@
+@startuml
+
+node "<<executionEnvironment>>\n :__Laufzeitumgebung__" as LZ{
+
+    node "Webservice Drivers"
+    node "Cassandra Drivers"
+}
+
+node "<<device>>\n __:Rechner, Service Nutzer__" as N2{
+
+    artifact "<<artifact>>\n WS-fähige Bibliothek"
+ }
+
+node "<<device>>\n :__Datenbankserver 1...n, Linux__" as N1{
+
+    database "<<database>>\n :Apache Cassandra" as Cassandra
+}
+
+LZ == N1: <<Cassandra´s Binary Protocol>>
+LZ =up= N2: <<HTTP>>
+
+@enduml

@@ -14,7 +14,7 @@ import json
 """
 Opens the Json config file
 """
-with open(os.path.dirname(__file__) + '/config.json') as json_data_file:
+with open(os.path.dirname(os.path.abspath(__file__)) + '/config.json') as json_data_file:
     config = json.load(json_data_file)
 
 """
@@ -59,17 +59,17 @@ def return_parser():
     parser.add_argument('--keyspace', '-k', required=True, help='keyspace name for creation or keyspace to add data')
     parser.add_argument('--dtable', '-t', action='append', help='table which should be deleted')
     parser.add_argument('--dkeyspace', '-d', action="store_true", help='Keyspace should be deleted')
-    parser.add_argument('--inputfile', '-i', action='append', type=filepath_and_tablename, nargs='*',
-                        help='Input files for tables. Format: filepath,tablename. Following tablenames are valid: %s'
+    parser.add_argument('--inputfile', '-i', action='append', type=file_path_and_table_name, nargs='*',
+                        help='Input files for tables. Format: file path,table name. Following table names are valid: %s'
                              % config['available_params'])
     return parser
 
 
-def filepath_and_tablename(inputargs):
+def file_path_and_table_name(inputargs):
     """
-    This funktion creat a new datatype. The tuple for the argument inputfile.
+    This function creates a new data type. The tuple for the argument input file.
 
-    :rtype: <filepath,tablename>
+    :rtype: <file path,table name>
     :parameter inputargs: comes from the parser
     :raise: ArgumentTypeError
     """
@@ -77,12 +77,12 @@ def filepath_and_tablename(inputargs):
         x, y = map(str, inputargs.split(','))
         return x, y
     except:
-        raise argparse.ArgumentTypeError("Error: format must be filepath,tablename")
+        raise argparse.ArgumentTypeError("Error: format must be file path,table name")
 
 
 def check_verbose():
     """
-    This function return the verbose level as int.
+    This function returns the verbose level as int.
 
     :rtype: int
     """
@@ -96,10 +96,10 @@ def check_verbose():
 
 def run_query(query):
     """
-    This funktion run the query on the database server.
+    This function runs the query on the database server.
     The parameter query is the sql statement.
 
-    :parameter query: this is the query in the SQL language
+    :parameter query: this is the query as SQL statement
     """
     if args.user is None and args.password is None:
         return subprocess.call([CQLSH, args.ip, query])
@@ -109,9 +109,9 @@ def run_query(query):
 
 def validate_path(file_path):
     """
-    This funktion validate the file path of the given input files. It checks that it exists and that the file has the
+    This function validates the file path of the given input files. It checks its existence and that the file has the
     right ending as .xls or .xlsx . Throws an exception when the path doesn't
-    exist and end the script when the path or the file isn't vaild.
+    exist and ends when the path or the file isn't valid.
 
     :param file_path: path to the file which should be validated
 
@@ -131,24 +131,24 @@ def validate_path(file_path):
         exit('Wrong datatype. Please import .xls or .xlsx .')
 
 
-def validate_tablenames(tablename):
+def validate_table_names(table_name):
     """
-    This function validates the tablename of the inputfile argument. It checks that it exists in the config json.
-    End the script when the tablename isn't in the config file.
+    This function validates the table name of the input file argument. It checks its existence in the config json.
+    The script ends when the table name isn't in the config file.
 
-    :parameter tablename: tablename argument which should be validated
+    :parameter table_name: table name argument which should be validated
     """
     try:
-        config['table_params'][tablename]
+        config['table_params'][table_name]
     except KeyError:
-        print('The tablename %s is not valid.' % tablename)
-        exit('Canceled: please use the following tablenames: %s' % config['available_params'])
+        print('The table name %s is not valid.' % table_name)
+        exit('Canceled: please use the following table names: %s' % config['available_params'])
 
 
 def validate_csv(name, reference_file):
     """
     This function validates the generated csv. It checks that the header of the csv file has the same order of columns
-    as the order of arguments of SQL statements which are defined in the section table_params in the json config file.
+    as the order of arguments of SQL statements, which are defined in the section table_params in the json config file.
     This is necessary to guarantee a successful import. It ends the script when the csv header isn't valid.
 
     :parameter name: name of the table to get the csv file
@@ -164,21 +164,21 @@ def validate_csv(name, reference_file):
         return True
 
     else:
-        exit("Canceled: CSV Header from %s.csv isn't valide!" % name)
+        exit("Canceled: CSV Header from %s.csv isn't valid!" % name)
 
 
-def xls_to_csv((file_path, tablename)):
+def xls_to_csv((file_path, table_name)):
     """
-    This function takes an excel file and converts it to a utf8 coded csv file. It get's the file_path and the tablename
-    as a map because of the usage of this function with multiprocessing.
+    This function takes an excel file and converts it to a utf8 coded csv file. It gets the file_path and the
+    table name as a map, because of the usage of this function with multiprocessing.
 
-    :parameter: map of file path and tablename (file_path, tablename)
+    :parameter: map of file path and table name (file_path, table_name)
 
     Used function:  :func:`importMain.check_verbose`
     """
     workbook = xlrd.open_workbook(file_path)
     all_worksheets = workbook.sheet_names()
-    csv_file = open(PATH_CSV_OUTPUT + tablename + '.csv', 'wb')
+    csv_file = open(PATH_CSV_OUTPUT + table_name + '.csv', 'wb')
     wr = csv.writer(csv_file, quoting=csv.QUOTE_NONE)
     for worksheet_name in all_worksheets:
         worksheet = workbook.sheet_by_name(worksheet_name)
@@ -189,26 +189,26 @@ def xls_to_csv((file_path, tablename)):
         print ('File %s was successfully converted to .csv' % file_path)
 
 
-def test_databaseconnection():
+def test_database_connection():
     """
-    This function tests if a cassandra database connection with the given ip address and user credentials is possible.
-    It returns a success message when verbose is on.
-    Ends the script if it's not possible to connect to the server.
+    This function tests, if a cassandra database connection with the given ip address and user credentials is possible.
+    It returns a success message, when verbose is on.
+    The script ends if it's not possible to connect to the server.
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
     """
     if args.user is None and args.password is None:
         connection_test_param = INTERACTIVE_MODE + 'EXIT'
-        databaseconnection_exit_code = run_query(connection_test_param)
-        if databaseconnection_exit_code == 0:
+        database_connection_exit_code = run_query(connection_test_param)
+        if database_connection_exit_code == 0:
             if check_verbose() >= 1:
                 print('Database connection to %s is running.' % args.ip)
         else:
             exit('Database connection to %s is not possible!' % args.ip)
     else:
         connection_test_param = USER + args.user + ' ' + PASSWORD + args.password + ' ' + INTERACTIVE_MODE + 'EXIT'
-        databaseconnection_exit_code = run_query(connection_test_param)
-        if databaseconnection_exit_code == 0:
+        database_connection_exit_code = run_query(connection_test_param)
+        if database_connection_exit_code == 0:
             if check_verbose() >= 1:
                 print('Database connection to %s is running.' % args.ip)
         else:
@@ -217,7 +217,7 @@ def test_databaseconnection():
 
 def create_keyspace():
     """
-    This function create a keyspace if it doesn't exist. It returns a success message when verbose is on and returns
+    This function creates a keyspace if it doesn't exist. It returns a success message, when verbose is on and returns
     a message if the return code of the query isn't 0.
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
@@ -244,8 +244,8 @@ def create_keyspace():
 
 def delete_keyspace():
     """
-    This function delete a keyspace if it exist. It returns a success message when verbose is on and returns
-    a message if the return code of the query isn't 0.
+    This function deletes a keyspace if it exist. It returns a success message, when verbose is on and returns
+    a message, if the return code of the query isn't 0.
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
     """
@@ -268,85 +268,85 @@ def delete_keyspace():
             print SOMETING_WENT_WRONG_MESSAGE
 
 
-def create_table(tablename, table_parameter):
+def create_table(table_name, table_parameter):
     """
-    This function create a table with the parameters if it doesn't exists. It returns a success message when verbose
-    is on and returns a message if the return code of the query isn't 0.
+    This function creates a table with the parameters, if it doesn't exists. It returns a success message, when verbose
+    is on and returns a message, if the return code of the query isn't 0.
 
-    :parameter tablename: name of the table
+    :parameter table_name: name of the table
     :parameter table_parameter: variable to get the right entry in table_creation_params from the json config file
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
     """
     if args.user is None and args.password is None:
         temp_parameters = INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
-                          tablename + table_parameter
+                          table_name + table_parameter
         returncode = run_query(temp_parameters)
         if returncode == 0:
             if check_verbose() >= 1:
-                print('Table %s was created or already exists.' % tablename)
+                print('Table %s was created or already exists.' % table_name)
         else:
             print SOMETING_WENT_WRONG_MESSAGE
     else:
         temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + '"' \
                           + INTERACTIVE_MODE + ' ' + CREATE_TABLE + ' ' + args.keyspace + '.' + \
-                          tablename + table_parameter + '"'
+                          table_name + table_parameter + '"'
         returncode = run_query(temp_parameters)
         if returncode == 0:
             if check_verbose() >= 1:
-                print('Table %s was created or already exists.' % tablename)
+                print('Table %s was created or already exists.' % table_name)
         else:
             print SOMETING_WENT_WRONG_MESSAGE
 
 
-def delete_table(tablename):
+def delete_table(table_name):
     """
-    This function delete the table if it exists. It returns a success message when verbose is on and returns
-    a message if the returncode of the query isn't 0.
+    This function delete the table if it exists. It returns a success message, when verbose is on and returns
+    a message, if the returncode of the query isn't 0.
 
-    :parameter tablename: name of the table which should be deleted
+    :parameter table_name: name of the table, which should be deleted
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
     """
     if args.user is None and args.password is None:
-        temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename
+        temp_parameters = INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + table_name
         returncode = run_query(temp_parameters)
         if returncode == 0:
             if check_verbose() >= 1:
-                print('Table %s was deleted.' % tablename)
+                print('Table %s was deleted.' % table_name)
         else:
             print SOMETING_WENT_WRONG_MESSAGE
     else:
         temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + '"' +\
-                          INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + tablename + '"'
+                          INTERACTIVE_MODE + ' ' + DELETE_TABLE + ' ' + args.keyspace + '.' + table_name + '"'
         returncode = run_query(temp_parameters)
         if returncode == 0:
             if check_verbose() >= 1:
-                print('Table %s was deleted.' % tablename)
+                print('Table %s was deleted.' % table_name)
         else:
             print SOMETING_WENT_WRONG_MESSAGE
 
 
-def import_file(tablename, import_params, import_file_path):
+def import_file(table_name, import_params, import_file_path):
     """
-    This function imports a file to the keyspace. It returns a success message when verbose is on and returns
+    This function imports a file to the keyspace. It returns a success message, when verbose is on and returns
     a message if the returncode of the query isn't 0.
 
-    :parameter tablename: name of the table in which data should be imported
+    :parameter table_name: name of the table in which data should be imported
     :parameter import_params: variable to get the right entry in table_params from the json config file
-    :parameter import_file_path: path of the csv file wich should be imported
+    :parameter import_file_path: path of the csv file which should be imported
 
     Used functions:     :func:`importMain.run_query` , :func:`importMain.check_verbose`
     """
     if args.user is None and args.password is None:
-        temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
+        temp_parameters = INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + table_name + \
                           '(' + import_params + ') ' + IMPORT_FILE_SUB + \
                           "'" + import_file_path + "'" + ' ' + IMPORT_FILE_SUB_SUB
         if check_verbose() == 1:
             with open(os.devnull, "w") as f:
                 returncode = subprocess.call([CQLSH, args.ip, temp_parameters], stdout=f)
                 if returncode == 0:
-                    print('File %s was successfully imported' % tablename)
+                    print('File %s was successfully imported' % table_name)
                 else:
                     print SOMETING_WENT_WRONG_MESSAGE
         if check_verbose() == 2:
@@ -357,14 +357,14 @@ def import_file(tablename, import_params, import_file_path):
                 print SOMETING_WENT_WRONG_MESSAGE
     else:
         temp_parameters = USER + '"' + args.user + '"' + ' ' + PASSWORD + '"' + args.password + '"' + ' ' + '"' +\
-                          INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + tablename + \
+                          INTERACTIVE_MODE + ' ' + IMPORT_FILE + ' ' + args.keyspace + '.' + table_name + \
                           '(' + import_params + ') ' + IMPORT_FILE_SUB + \
                           "'" + import_file_path + "'" + ' ' + IMPORT_FILE_SUB_SUB + '"'
         if check_verbose() == 1:
             with open(os.devnull, "w") as f:
                 returncode = subprocess.call(CQLSH + ' ' + args.ip + ' ' + temp_parameters, shell=True, stdout=f)
                 if returncode == 0:
-                    print('File %s was successfully imported' % tablename)
+                    print('File %s was successfully imported' % table_name)
                 else:
                     print SOMETING_WENT_WRONG_MESSAGE
         if check_verbose() == 2:
@@ -379,11 +379,11 @@ def convertion_and_validation():
     """
     This function has 4 steps: \n
     1. Validates the paths from the inputfile arguments \n
-    2. Validates the tablenames from the inputfile arguments  \n
+    2. Validates the table names from the inputfile arguments  \n
     3. Converts the xlsx or xls input files with multiprocessing into csv files with  \n
     4. Validates the csv files with
 
-    Used functions: :func:`importMain.validate_path` , :func:`importMain.validate_tablenames` ,
+    Used functions: :func:`importMain.validate_path` , :func:`importMain.validate_table_names` ,
     :func:`importMain.xls_to_csv` , :func:`importMain.validate_csv`
     """
     firstlistelement_of_inputfiles = args.inputfile[0]
@@ -402,13 +402,18 @@ def convertion_and_validation():
     for val in firstlistelement_of_inputfiles:
         second_value_from_tuple = val[1]
 
-        validate_tablenames(second_value_from_tuple)
+        validate_table_names(second_value_from_tuple)
 
     """
     convert input files with multiprocessing
     """
     p = multiprocessing.Pool()
     p.map(xls_to_csv, firstlistelement_of_inputfiles)
+
+    # for val in firstlistelement_of_inputfiles:
+    # first_value_from_tuple = val[0]
+    # second_value_from_tuple = val[1]
+    # xls_to_csv(first_value_from_tuple, second_value_from_tuple)
 
     """
     validate the csv
@@ -421,13 +426,14 @@ def convertion_and_validation():
 def delete():
     """
     This function defines when what should be deleted. \n
-    Functions which are used: :func:`delete_keyspace` , :func:`validate_tablenames` , :func:`delete_table`
+    Functions which are used: :func:`importMain.delete_keyspace` , :func:`importMain.validate_table_names` ,
+    :func:`importMain.delete_table`
     """
     if args.dtable is None and args.dkeyspace is True:
         delete_keyspace()
     elif args.dtable is not None and args.dkeyspace is False:
         for val in args.dtable:
-            validate_tablenames(val)
+            validate_table_names(val)
             delete_table(val)
     elif args.dtable is not None and args.dkeyspace is True:
         delete_keyspace()
@@ -438,9 +444,9 @@ def delete():
 def file_import():
     """
     This function has 3 steps: \n
-    1. Creates the keyspace if it doesn't already exist  \n
-    2. Creates the tables from the inputfiles argument if they don't already exist  \n
-    3. Import the files which are converted to csv
+    1. Creates the keyspace ,if it doesn't already exist  \n
+    2. Creates the tables from the inputfiles argument ,if they don't already exist  \n
+    3. Import the files, which are converted to csv
 
     Used functions: :func:`importMain.create_keyspace` , :func:`importMain.create_table` ,
     :func:`importMain.import_file`
@@ -470,14 +476,17 @@ def file_import():
 
 def create_csv_folder():
     """
-    This function creates a folder named csv_output where the converted csv files would be stored.
+    This function creates a folder named csv_output, where the converted csv files would be stored.
     """
-    os.makedirs(os.path.dirname(__file__) + '/csv_output')
+    try:
+        os.makedirs(os.path.dirname(__file__) + '/csv_output')
+    except OSError:
+        exit('Folder csv_output already exists. Please start the script again.')
 
 
 def delete_csv_folder():
     """
-    This function deletes the csv_output where the converted csv files were stored.
+    This function deletes the csv_output, where the converted csv files were stored.
     """
     try:
         for the_file in os.listdir(PATH_CSV_OUTPUT):
@@ -496,24 +505,24 @@ def main():
     """
     This function does the program sequence. There are two different cases: \n
     * The argument inputfile isn't used:
-        1. Tests whether a connection to the cassandra database is possible  \n
+        1. Tests if a connection to the cassandra database is possible  \n
         2. Creates a folder csv_output \n
-        3. Deletes the keyspace and/or the table/s which are specified with the arguments.
+        3. Deletes the keyspace and/or the table/s which, are specified with the arguments.
     * The argument inputfile is used:
-        1. Tests whether a connection to the cassandra database is possible  \n
+        1. Tests if a connection to the cassandra database is possible  \n
         2. Creates a folder csv_output \n
-        3. Deletes the keyspace and/or the table/s which are specified with the arguments.
+        3. Deletes the keyspace and/or the table/s, which are specified with the arguments.
         4. Validates and converts the inputfile/s
         5. Create the keyspace, create the tables and import the files
 
-    Finally it deletes the csv_output folder even if an error occurs.
+    Finally it deletes the csv_output folder, even if an error occurs.
 
-    Used functions: :func:`importMain.test_databaseconnection` , :func:`importMain.delete` ,
+    Used functions: :func:`importMain.test_database_connection` , :func:`importMain.delete` ,
     :func:`importMain.create_csv_folder` , :func:`importMain.delete_csv_folder` , :func:`importMain.check_verbose` ,
     :func:`importMain.tranformation_and_validation` , :func:`importMain.file_import`
     """
     try:
-        test_databaseconnection()
+        test_database_connection()
         create_csv_folder()
         if args.inputfile is None:
             delete()

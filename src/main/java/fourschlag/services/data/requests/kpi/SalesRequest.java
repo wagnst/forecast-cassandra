@@ -51,7 +51,8 @@ public class SalesRequest extends KpiRequest {
      *                         supposed to be looked at
      * @param region           Region to filter for
      * @param salesType        Sales Type to filter for
-     * @param exchangeRates    Desired output currency
+     * @param exchangeRates    ExchangeRateRequest with the desired output currency
+     * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
     public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                         String region, SalesType salesType, ExchangeRateRequest exchangeRates,
@@ -114,7 +115,6 @@ public class SalesRequest extends KpiRequest {
      *
      * @param tempPlanPeriod period of the desired cm1 value
      * @param toCurrency     desired return currency
-     *
      * @return cm1 value as double
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
@@ -160,7 +160,6 @@ public class SalesRequest extends KpiRequest {
      * Calculates the budgetyear
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
-     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -290,7 +289,6 @@ public class SalesRequest extends KpiRequest {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
-     *
      * @return
      */
     @Override

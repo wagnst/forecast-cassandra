@@ -119,9 +119,7 @@ public class OrgStructureAndRegionRequest extends Request {
     /**
      * method that applies the sbu belonging to a specific PMG
      *
-     * @param productMainGroup product main group for which the sbu is supposed
-     *                         to be found
-     *
+     * @param productMainGroup product main group for which the sbu is supposed to be found
      * @return
      */
     public String getSbu(String productMainGroup) {
@@ -144,7 +142,6 @@ public class OrgStructureAndRegionRequest extends Request {
      * Getter for the region
      *
      * @param subregion
-     *
      * @return
      */
     public String getRegion(String subregion) {
