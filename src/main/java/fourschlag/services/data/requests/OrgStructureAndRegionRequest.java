@@ -1,6 +1,5 @@
 package fourschlag.services.data.requests;
 
-import com.datastax.driver.mapping.Result;
 import fourschlag.entities.accessors.OrgStructureAccessor;
 import fourschlag.entities.accessors.RegionAccessor;
 import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
@@ -62,8 +61,8 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     private void queryPmgAndRegionsFromSales() {
-        Result<ActualSalesEntity> entitiesFromActual = actualSalesAccessor.getDistinctPmgAndRegions();
-        Result<ForecastSalesEntity> entitiesFromForecast = forecastSalesAccessor.getDistinctPmgAndRegions();
+        Iterable<ActualSalesEntity> entitiesFromActual = actualSalesAccessor.getDistinctPmgAndRegions();
+        Iterable<ForecastSalesEntity> entitiesFromForecast = forecastSalesAccessor.getDistinctPmgAndRegions();
         productMap = new HashMap<>();
 
         for (ActualSalesEntity entity : entitiesFromActual) {
@@ -93,8 +92,8 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     private void querySubregionsAndSbuFromFixedCosts() {
-        Result<ActualFixedCostsEntity> entitiesFromActual = actualFixedCostsAccessor.getDistinctSbuAndSubregions();
-        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastFixedCostsAccessor.getDistinctSbuAndSubregions();
+        Iterable<ActualFixedCostsEntity> entitiesFromActual = actualFixedCostsAccessor.getDistinctSbuAndSubregions();
+        Iterable<ForecastFixedCostsEntity> entitiesFromForecast = forecastFixedCostsAccessor.getDistinctSbuAndSubregions();
         sbuMap = new HashMap<>();
 
         for (ActualFixedCostsEntity entity : entitiesFromActual) {
@@ -124,7 +123,7 @@ public class OrgStructureAndRegionRequest extends Request {
      */
     public String getSbu(String productMainGroup) {
         if (sbu == null) {
-            Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
+            Iterable<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
             sbu = new HashMap<String, String>() {{
                 for (OrgStructureEntity entity : queryResult) {
                     put(entity.getProductMainGroup(), entity.getSbu());
@@ -146,7 +145,7 @@ public class OrgStructureAndRegionRequest extends Request {
      */
     public String getRegion(String subregion) {
         if (region == null) {
-            Result<RegionEntity> queryResult = regionAccessor.getSubregions();
+            Iterable<RegionEntity> queryResult = regionAccessor.getSubregions();
             region = new HashMap<String, String>() {{
                 for (RegionEntity entity : queryResult) {
                     put(entity.getSubregion(), entity.getRegion());
