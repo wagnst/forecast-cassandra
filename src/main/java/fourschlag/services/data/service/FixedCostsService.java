@@ -72,6 +72,26 @@ public class FixedCostsService extends Service {
     }
 
     /**
+     * Method selects FixedCosts depending on parameters. In Request will be
+     * decided if we have some special cases of entryType and depending on that
+     * selecting everything required through the accessors
+     *
+     * @param subregion      desired subregion
+     * @param sbu            desired sbu
+     * @param period         desired period
+     * @param entryType      desired entryType
+     * @param planPeriodFrom in case we have entry_type eq budget leave ot
+     *                       planPeriodTo
+     * @param planPeriodTo   in case we have entry_type eq budget leave ot
+     *                       planPeriodTo
+     *
+     * @return
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, int period, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return new FixedCostsRequest(getConnection()).getForecastFixedCosts(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo);
+    }
+
+    /**
      * @return a specific ForecastFixedCostsEntity
      */
     public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
