@@ -76,6 +76,13 @@ public class SalesService extends Service {
     }
 
     /**
+     * @return a list of specific ForecastSalesEntities
+     */
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
+    }
+
+    /**
      * @return a specific ForecastSalesEntity
      */
     public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {

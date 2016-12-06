@@ -314,6 +314,15 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
+     * Gets a specific list of ForecastSalesEnteties with filter applied
+     *
+     * @return specific entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo).all();
+    }
+
+    /**
      * Gets a specific ForecastSalesEntity filtered by joined primary keys
      *
      * @return single entity of ForecastSalesEntity

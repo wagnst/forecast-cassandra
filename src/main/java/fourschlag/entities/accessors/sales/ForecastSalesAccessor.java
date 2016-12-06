@@ -52,6 +52,17 @@ public interface ForecastSalesAccessor {
             @Param("entry_type") String entryType
     );
 
+    @Query("SELECT * FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
+    Result<ForecastSalesEntity> getForecastSales(
+            @Param("product_main_group") String productMainGroup,
+            @Param("region") String region,
+            @Param("period") int period,
+            @Param("sales_type") String salesType,
+            @Param("entry_type") String entryType,
+            @Param("plan_period_from") int planPeriodFrom,
+            @Param("plan_period_to") int planPeriodTo
+    );
+
     /*CQL-Query to update a record via primary keys
         product_main_group,region,period,sales_type,plan_period,entry_type */
     @Query("UPDATE forecast_sales SET topdown_adjust_sales_volumes=:topdown_adjust_sales_volumes, topdown_adjust_net_sales=:topdown_adjust_net_sales, topdown_adjust_cm1=:topdown_adjust_cm1, plan_year=:plan_year, plan_half_year=:plan_half_year, plan_quarter=:plan_quarter, plan_month=:plan_month, status=:status, usercomment=:usercomment, sales_volumes=:sales_volumes, net_sales=:net_sales, cm1=:cm1, period_year=:period_year, period_month=:period_month, currency=:currency, userid=:userid, entry_ts=:entry_ts WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND plan_period = :plan_period AND entry_type = :entry_type")
