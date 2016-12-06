@@ -54,3 +54,4 @@ fabric.properties
 importer/documentation
 *.csv
 *.xlsx
+importer/daten

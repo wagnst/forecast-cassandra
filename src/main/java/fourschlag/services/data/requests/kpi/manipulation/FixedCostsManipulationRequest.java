@@ -21,7 +21,7 @@ public class FixedCostsManipulationRequest extends Request {
                                          String userId, String entryTs) {
         try {
             if (forecastAccessor.getForecastFixedCost(sbu, subregion, period, planPeriod, entryType) != null) {
-                // update and existing record
+                // update an existing record
                 forecastAccessor.updateForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                         otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
                         planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
@@ -31,9 +31,12 @@ public class FixedCostsManipulationRequest extends Request {
                         planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
             }
         } catch (Exception e) {
+            //TODO: implement better exception to be catched
             return false;
         }
 
         return true;
     }
+
+    //TODO: implement method for non-forecast related tables
 }

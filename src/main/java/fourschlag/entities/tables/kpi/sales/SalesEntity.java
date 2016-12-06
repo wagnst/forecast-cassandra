@@ -3,6 +3,7 @@ package fourschlag.entities.tables.kpi.sales;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fourschlag.entities.tables.kpi.KpiEntity;
 
 import java.util.UUID;
@@ -16,24 +17,27 @@ public class SalesEntity extends KpiEntity {
 
     @PartitionKey
     @Column(name = "product_main_group")
+    @JsonProperty("PRODUCT_MAIN_GROUP")
     private String productMainGroup;
 
     @Column(name = "sales_type")
+    @JsonProperty("SALES_TYPE")
     private String salesType;
 
     @Column(name = "sales_volumes")
+    @JsonProperty("SALES_VOLUMES")
     private double salesVolumes;
 
     @Column(name = "net_sales")
+    @JsonProperty("NET_SALES")
     private double netSales;
 
     @Column(name = "cm1")
+    @JsonProperty("CM1")
     private double cm1;
-
 
     public SalesEntity() {
     }
-
 
     public SalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1,
                        String productMainGroup, String region, String salesType,

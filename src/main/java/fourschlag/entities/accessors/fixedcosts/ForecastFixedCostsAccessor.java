@@ -8,7 +8,7 @@ import com.datastax.driver.mapping.annotations.Query;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 
 /**
- * Provides functionality to query the database for the ForecastFixedCosts
+ * Provides functionality to query the database for ForecastFixedCosts
  */
 
 @Accessor

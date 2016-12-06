@@ -1,0 +1,60 @@
+@startuml
+
+node "<<executionEnvironment>>\n :__Laufzeitumgebung__" as LZ{
+
+    folder "fourschlag.war"{
+
+        'folder "jmeter"{
+        '   artifact "<<artifact>>\n FourschlagTest.jmx"
+        '}
+
+        folder "libs"{
+
+            folder "Webservice Drivers"{
+                artifact "<<artifact>>\n jackson-jaxrs-base"
+                artifact "<<artifact>>\n jackson-jaxrs-json-provider"
+                artifact "<<artifact>>\n jackson-jaxrs-providers"
+                artifact "<<artifact>>\n jersey-container-servlet"
+            }
+
+            folder "Cassandra Drivers"{
+                artifact "<<artifact>>\n cassandra-driver-core"
+                artifact "<<artifact>>\n cassandra-driver-extras"
+                artifact "<<artifact>>\n cassandra-driver-mapping"
+            }
+
+        }
+
+        folder "src"{
+            folder "services"
+            folder "entities"
+        }
+
+        folder "web"{
+            folder "frontend"
+            folder "WEB-INF"
+            artifact "<<artifact>>\n index.jsp"
+        }
+    }
+}
+
+node "<<device>>\n __:Rechner, Service Nutzer__" as N2{
+
+        artifact "<<artifact>>\n WS-fähige Bibliothek"
+ }
+
+node "<<device>>\n :__Datenbankserver 1...n, Linux__" as N1{
+
+    folder "importer"{
+        artifact "<<artifact>>\n config.json"
+        artifact "<<artifact>>\n importMain.py"
+    }
+
+    database "<<database>>\n :Apache Cassandra" as Cassandra
+
+}
+
+LZ == N1: <<Cassandra´s Binary Protocol>>
+LZ =up= N2: <<HTTP>>
+
+@enduml

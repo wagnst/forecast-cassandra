@@ -2,6 +2,7 @@ package fourschlag.entities.tables;
 
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Provides the data from the Region table
@@ -11,9 +12,10 @@ import com.datastax.driver.mapping.annotations.Table;
 public class RegionEntity {
 
     @PartitionKey
+    @JsonProperty("SUBREGION")
     private String subregion;
+    @JsonProperty("REGION")
     private String region;
-
 
     public RegionEntity() {
     }
