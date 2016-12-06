@@ -3,6 +3,7 @@ package fourschlag.entities.tables.kpi.sales;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.UUID;
 
@@ -14,36 +15,47 @@ import java.util.UUID;
 public class ForecastSalesEntity extends SalesEntity {
 
     @Column(name = "topdown_adjust_sales_volumes")
+    @JsonProperty("TOPDOWN_ADJUST_SALES_VOLUMES")
     private double topdownAdjustSalesVolumes;
 
     @Column(name = "topdown_adjust_net_sales")
+    @JsonProperty("TOPDOWN_ADJUST_NET_SALES")
     private double topdownAdjustNetSales;
 
     @Column(name = "topdown_adjust_cm1")
+    @JsonProperty("TOPDOWN_ADJUST_CM1")
     private double topdownAdjustCm1;
 
     @Column(name = "plan_period")
+    @JsonProperty("PLAN_PERIOD")
     private int planPeriod;
 
     @Column(name = "plan_year")
+    @JsonProperty("PLAN_YEAR")
     private int planYear;
 
     @Column(name = "plan_half_year")
+    @JsonProperty("PLAN_HALF_YEAR")
     private int planHalfYear;
 
     @Column(name = "plan_quarter")
+    @JsonProperty("PLAN_QUARTER")
     private int planQuarter;
 
     @Column(name = "plan_month")
+    @JsonProperty("PLAN_MONTH")
     private int planMonth;
 
     @Column(name = "entry_type")
+    @JsonProperty("ENTRY_TYPE")
     private String entryType;
 
     @Column(name = "status")
+    @JsonProperty("STATUS")
     private String status;
 
     @Column(name = "usercomment")
+    @JsonProperty("USERCOMMENT")
     private String usercomment;
 
     /**

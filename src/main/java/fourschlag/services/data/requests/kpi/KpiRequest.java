@@ -18,29 +18,37 @@ import java.util.stream.Stream;
  */
 public abstract class KpiRequest extends Request {
 
-    protected final String sbu;
-    protected final String region;
-    private final Period planPeriod;
-    protected final Period currentPeriod;
-    protected final ExchangeRateRequest exchangeRates;
-
-    protected final KeyPerformanceIndicators[] kpiArray;
-
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
     private final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+    protected String sbu;
+    protected String region;
+    protected Period currentPeriod;
+    protected ExchangeRateRequest exchangeRates;
+    protected KeyPerformanceIndicators[] kpiArray;
+    private Period planPeriod;
+
+    /**
+     * Default constructor to only open a database connection
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
+    public KpiRequest(CassandraConnection connection) {
+        super(connection);
+    }
 
     /**
      * Constructor
      *
-     * @param connection        Cassandra connection that is supposed to be used
-     * @param sbu               SBU to filter for
-     * @param region            Region to filter for
-     * @param planPeriod        Indicates the time span for which the KPIs are
-     *                          supposed to be queried
-     * @param currentPeriod     The point of view in time from which the data is
-     *                          supposed to be looked at
-     * @param exchangeRates     ExchangeRateRequest with the desired output currency
-     * @param fcType            The type of KPI (example: "sales" or "fixed costs")
+     * @param connection    Cassandra connection that is supposed to be used
+     * @param sbu           SBU to filter for
+     * @param region        Region to filter for
+     * @param planPeriod    Indicates the time span for which the KPIs are
+     *                      supposed to be queried
+     * @param currentPeriod The point of view in time from which the data is
+     *                      supposed to be looked at
+     * @param exchangeRates ExchangeRateRequest with the desired output
+     *                      currency
+     * @param fcType        The type of KPI (example: "sales" or "fixed costs")
      */
     public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
@@ -59,6 +67,7 @@ public abstract class KpiRequest extends Request {
 
     /**
      * @param fcType
+     *
      * @return
      */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
@@ -76,7 +85,8 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * Initiates the calculation for all KPIs with the attributes of this instance
+     * Initiates the calculation for all KPIs with the attributes of this
+     * instance
      *
      * @return Stream of OutputDataTypes
      */
@@ -140,7 +150,6 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     *
      * @return
      */
     private Stream<OutputDataType> calculateActualForecastKpis() {
@@ -196,6 +205,7 @@ public abstract class KpiRequest extends Request {
      * method that calculates the KPIs for specific months
      *
      * @param tempPlanPeriod the desired Period
+     *
      * @return
      */
     private ValidatedResultTopdown calculateActualForecastKpisForSpecificMonths(Period tempPlanPeriod) {
@@ -222,6 +232,7 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all the values for the sales KPIs
      */
     protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
@@ -231,6 +242,7 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all the values for the sales KPIs
      */
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
@@ -238,7 +250,9 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the actual data
      *
-     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the actual data is supposed to be taken
+     *                       from
+     *
      * @return the actual data within the desired period.
      */
     protected abstract KpiEntity getActualData(Period tempPlanPeriod);
@@ -246,8 +260,10 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the forecast data
      *
-     * @param tempPlanPeriod planPeriod the forecast data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     *                       taken from
      * @param entryType      the type of the data
+     *
      * @return the forecast data within the desired period
      */
     protected abstract KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType);
@@ -255,21 +271,24 @@ public abstract class KpiRequest extends Request {
     /**
      * method to get the budget data
      *
-     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken from
+     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken
+     *                       from
+     *
      * @return the budget data from the desired period
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 
     /**
-     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
+     * Method that calculates the BJ values for all KPIs but for one specific
+     * period (--> zero month period)
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
     protected abstract ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod);
 
     /**
-     * Method that calculates the BJ values for all KPIs but for one specific period (--> zero month period)
-     * including the topdown values
+     * Method that calculates the BJ values for all KPIs but for one specific
+     * period (--> zero month period) including the topdown values
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
      */
@@ -282,6 +301,7 @@ public abstract class KpiRequest extends Request {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
+     *
      * @return Instance of OutputDataType
      */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,

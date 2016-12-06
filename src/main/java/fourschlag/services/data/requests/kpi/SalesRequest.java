@@ -12,6 +12,7 @@ import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
@@ -22,24 +23,37 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  */
 public class SalesRequest extends KpiRequest {
 
-    private final String productMainGroup;
-    private final SalesType salesType;
-    private final ActualSalesAccessor actualAccessor;
-    private final ForecastSalesAccessor forecastAccessor;
     private static final String FC_TYPE = "sales";
+    private String productMainGroup;
+    private SalesType salesType;
+    private ActualSalesAccessor actualAccessor;
+    private ForecastSalesAccessor forecastAccessor;
+
+    /**
+     * Default constructor to only open a database connection
+     *
+     * @param connection Cassandra connection that is supposed to be used
+     */
+    public SalesRequest(CassandraConnection connection) {
+        super(connection);
+
+        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+    }
 
     /**
      * Constructor for SalesRequest
      *
-     * @param connection       Cassandra connection that is supposed to be used
-     * @param productMainGroup Product Main Group to filter for
-     * @param planPeriod       Indicates the time span for which the KPIs are
-     *                         supposed to be queried
-     * @param currentPeriod    The point of view in time from which the data is
-     *                         supposed to be looked at
-     * @param region           Region to filter for
-     * @param salesType        Sales Type to filter for
-     * @param exchangeRates    ExchangeRateRequest with the desired output currency
+     * @param connection          Cassandra connection that is supposed to be
+     *                            used
+     * @param productMainGroup    Product Main Group to filter for
+     * @param planPeriod          Indicates the time span for which the KPIs are
+     *                            supposed to be queried
+     * @param currentPeriod       The point of view in time from which the data
+     *                            is supposed to be looked at
+     * @param region              Region to filter for
+     * @param salesType           Sales Type to filter for
+     * @param exchangeRates       ExchangeRateRequest with the desired output
+     *                            currency
      * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
     public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
@@ -103,6 +117,7 @@ public class SalesRequest extends KpiRequest {
      *
      * @param tempPlanPeriod period of the desired cm1 value
      * @param toCurrency     desired return currency
+     *
      * @return cm1 value as double
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
@@ -131,9 +146,11 @@ public class SalesRequest extends KpiRequest {
     }
 
     /**
-     * Gets Budget KPIs from the database where the plan period is equal to the period
+     * Gets Budget KPIs from the database where the plan period is equal to the
+     * period
      *
      * @param tempPlanPeriod Desired period for the budget KPIs
+     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -146,6 +163,7 @@ public class SalesRequest extends KpiRequest {
      * Calculates the budgetyear
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -158,6 +176,7 @@ public class SalesRequest extends KpiRequest {
 
     /**
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
      * @return
      */
     @Override
@@ -171,6 +190,7 @@ public class SalesRequest extends KpiRequest {
     /**
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return
      */
     @Override
@@ -213,6 +233,7 @@ public class SalesRequest extends KpiRequest {
     /**
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return
      */
     @Override
@@ -272,6 +293,7 @@ public class SalesRequest extends KpiRequest {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
+     *
      * @return
      */
     @Override
@@ -280,6 +302,33 @@ public class SalesRequest extends KpiRequest {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);
+    }
+
+    /**
+     * Gets all ForecastSales with no filter applied
+     *
+     * @return all entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales() {
+        return forecastAccessor.getAllForecastSales().all();
+    }
+
+    /**
+     * Gets a specific list of ForecastSalesEnteties with filter applied
+     *
+     * @return specific entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo).all();
+    }
+
+    /**
+     * Gets a specific ForecastSalesEntity filtered by joined primary keys
+     *
+     * @return single entity of ForecastSalesEntity
+     */
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
     }
 
 }

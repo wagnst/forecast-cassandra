@@ -6,7 +6,8 @@ import com.datastax.driver.mapping.annotations.Query;
 import fourschlag.entities.tables.OrgStructureEntity;
 
 /**
- * Provides functionality to query the database for the Product Main Groups and SBUs
+ * Provides functionality to query the database for the Product Main Groups and
+ * SBUs
  */
 
 @Accessor

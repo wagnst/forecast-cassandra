@@ -3,6 +3,7 @@ package fourschlag.entities.tables;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Provides the data from the OrgStructure table
@@ -13,18 +14,19 @@ public class OrgStructureEntity {
 
     @PartitionKey
     @Column(name = "product_main_group")
+    @JsonProperty("PRODUCT_MAIN_GROUP")
     private String productMainGroup;
 
     @Column(name = "sbu")
+    @JsonProperty("SBU")
     private String sbu;
 
     @Column(name = "bu")
+    @JsonProperty("BU")
     private String bu;
-
 
     public OrgStructureEntity() {
     }
-
 
     public OrgStructureEntity(String productMainGroup, String sbu, String bu) {
         this.productMainGroup = productMainGroup;
@@ -63,8 +65,9 @@ public class OrgStructureEntity {
      * equals-method to compare OrgStructureEntities
      *
      * @param o generic Object to compare with
-     * @return true, if input object equals currently used object
-     * false, if  input object does not equal currently used object
+     *
+     * @return true, if input object equals currently used object false, if
+     * input object does not equal currently used object
      */
     @Override
     public boolean equals(Object o) {
@@ -75,7 +78,8 @@ public class OrgStructureEntity {
 
         if (productMainGroup != null ? !productMainGroup.equals(that.productMainGroup) : that.productMainGroup != null)
             return false;
-        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null) return false;
+        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null)
+            return false;
         return bu != null ? bu.equals(that.bu) : that.bu == null;
 
     }

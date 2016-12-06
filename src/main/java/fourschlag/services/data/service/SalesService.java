@@ -1,5 +1,6 @@
 package fourschlag.services.data.service;
 
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
@@ -7,9 +8,11 @@ import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.kpi.SalesRequest;
+import fourschlag.services.data.requests.kpi.manipulation.SalesManipulationRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -37,6 +40,7 @@ public class SalesService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
+     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -61,5 +65,40 @@ public class SalesService extends Service {
 
         /* Finally the result stream will be returned */
         return resultStream;
+    }
+
+
+    /**
+     * @return a list of all ForecastSalesEntities
+     */
+    public List<ForecastSalesEntity> getForecastSales() {
+        return new SalesRequest(getConnection()).getForecastSales();
+    }
+
+    /**
+     * @return a list of specific ForecastSalesEntities
+     */
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
+    }
+
+    /**
+     * @return a specific ForecastSalesEntity
+     */
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
+        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
+    }
+
+    /**
+     * Method sets new values or records to forecast_sales table
+     *
+     * @return boolean value if action was successful or not
+     */
+    public boolean setForecastSales(double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1, int planPeriod, int planYear, int planHalfYear,
+                                    int planQuarter, int planMonth, String entryType, String status, String usercomment, String productMainGroup, String salesType,
+                                    double salesVolumes, double netSales, double cm1, int period, String region,
+                                    int periodYear, int periodMonth, String currency, String userId, String entryTs) {
+        return new SalesManipulationRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
+                planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
     }
 }

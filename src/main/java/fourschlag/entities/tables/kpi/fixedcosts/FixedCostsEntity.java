@@ -2,86 +2,108 @@ package fourschlag.entities.tables.kpi.fixedcosts;
 
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fourschlag.entities.tables.kpi.KpiEntity;
 
 import java.util.UUID;
 
 /**
- * Super class FixedCostsEntity. Extends KpiEntity. Provides the data from the FixedCosts table
+ * Super class FixedCostsEntity. Extends KpiEntity. Provides the data from the
+ * FixedCosts table
  */
 
 public class FixedCostsEntity extends KpiEntity {
     @Column(name = "sbu")
+    @JsonProperty("SBU")
     private String sbu;
 
     @PartitionKey
     @Column(name = "subregion")
+    @JsonProperty("SUBREGION")
     private String subregion;
 
     @Column(name = "fix_pre_man_cost")
+    @JsonProperty("FIX_PRE_MAN_COST")
     private double fixPreManCost;
 
     @Column(name = "ship_cost")
+    @JsonProperty("SHIP_COST")
     private double shipCost;
 
     @Column(name = "sell_cost")
+    @JsonProperty("SELL_COST")
     private double sellCost;
 
     @Column(name = "diff_act_pre_man_cost")
+    @JsonProperty("DIFF_ACT_PRE_MAN_COST")
     private double diffActPreManCost;
 
     @Column(name = "idle_equip_cost")
+    @JsonProperty("IDLE_EQUIP_COST")
     private double idleEquipCost;
 
     @Column(name = "rd_cost")
+    @JsonProperty("RD_COST")
     private double rdCost;
 
     @Column(name = "admin_cost_bu")
+    @JsonProperty("ADMIN_COST_BU")
     private double adminCostBu;
 
     @Column(name = "admin_cost_od")
+    @JsonProperty("ADMIN_COST_OD")
     private double adminCostOd;
 
     @Column(name = "admin_cost_company")
+    @JsonProperty("ADMIN_COST_COMPANY")
     private double adminCostCompany;
 
     @Column(name = "other_op_cost_bu")
+    @JsonProperty("OTHER_OP_COST_BU")
     private double otherOpCostBu;
 
     @Column(name = "other_op_cost_od")
+    @JsonProperty("OTHER_OP_COST_OD")
     private double otherOpCostOd;
 
     @Column(name = "other_op_cost_company")
+    @JsonProperty("OTHER_OP_COST_COMPANY")
     private double otherOpCostCompany;
 
     @Column(name = "spec_items")
+    @JsonProperty("SPEC_ITEMS")
     private double specItems;
 
     @Column(name = "provisions")
+    @JsonProperty("PROVISIONS")
     private double provisions;
 
     @Column(name = "currency_gains")
+    @JsonProperty("CURRENCY_GAINS")
     private double currencyGains;
 
     @Column(name = "val_adjust_inventories")
+    @JsonProperty("VAL_ADJUST_INVENTORIES")
     private double valAdjustInventories;
 
     @Column(name = "other_fix_cost")
+    @JsonProperty("OTHER_FIX_COST")
     private double otherFixCost;
 
     @Column(name = "depreciation")
+    @JsonProperty("DEPRECIATION")
     private double depreciation;
 
     @Column(name = "cap_cost")
+    @JsonProperty("CAP_COST")
     private double capCost;
 
     @Column(name = "equity_income")
+    @JsonProperty("EQUITY_INCOME")
     private double equityIncome;
-
 
     public FixedCostsEntity() {
     }
-
 
     public FixedCostsEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome) {
         super(uuid, period, region, periodYear, periodMonth, currency, userId, entryTs);
