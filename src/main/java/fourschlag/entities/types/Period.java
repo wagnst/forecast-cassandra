@@ -10,6 +10,12 @@ public class Period {
     protected int month;
     protected int period;
 
+    /**
+     * Constructor for Period
+     *
+     * @param year  Year that will be used
+     * @param month Month that will be used
+     */
     public Period(int year, int month) {
         if (!isYearValid(year)) {
             throw new IllegalArgumentException("Year must be between 1900 and 2100...");
@@ -67,12 +73,6 @@ public class Period {
         return new Period(year, 1);
     }
 
-    /**
-     * Constructor for Period
-     *
-     * @param year  Year that will be used
-     * @param month Month that will be used
-     */
     private boolean isYearValid(int year) {
         return (year > 1900 && year < 2100);
     }
@@ -93,6 +93,13 @@ public class Period {
             this.year++;
             this.month = 1;
             this.period = year * 100 + month;
+        }
+        return this;
+    }
+
+    public Period incrementMultipleTimes(int multiplier) {
+        for (int i = 0; i < multiplier; i++) {
+            increment();
         }
         return this;
     }

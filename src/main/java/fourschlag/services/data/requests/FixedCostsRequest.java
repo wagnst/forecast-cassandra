@@ -77,7 +77,7 @@ public class FixedCostsRequest extends Request {
     public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
 
-        if (entryType.equals(EntryType.BUDGET.getType())) {
+        if (entryType == EntryType.BUDGET) {
             /* in case we have budget as entry type we need to query all months seperately and append to list */
             for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
                 //simply use planPeriodFrom as planPeriod instead of writing a new method
@@ -87,7 +87,8 @@ public class FixedCostsRequest extends Request {
             }
         } else {
             /* all other entry types */
-            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period.getPeriod(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all());
+            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period.getPeriod(),
+                    entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all());
         }
 
         return resultList;

@@ -1,6 +1,7 @@
 package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.db.CassandraConnection;
@@ -85,26 +86,24 @@ public class ForecastFixedCostsWS {
      * @param subregion      parameter for subregion
      * @param period         parameter for period
      * @param entryType      parameter for entryType
-     * @param planPeriodFrom parameter for planPeriod from
-     * @param planPeriodTo   parameter for planPeriod to
+     * @param planYear parameter for planPeriod from
      *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET
-    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period_from/{planPeriodFrom}/plan_period_to/{planPeriodTo}")
+    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_year/{planYear}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastFixedCost(
             @PathParam("sbu") String sbu,
             @PathParam("subregion") String subregion,
             @PathParam("period") int period,
             @PathParam("entryType") String entryType,
-            @PathParam("planPeriodFrom") int planPeriodFrom,
-            @PathParam("planPeriodTo") int planPeriodTo) {
+            @PathParam("planYear") int planYear) {
 
-
+        Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
 
         return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
-                EntryType.valueOf(entryType), new Period(planPeriodFrom), new Period(planPeriodTo))).build();
+                EntryType.valueOf(entryType), new Period(planYear), planPeriodTo)).build();
     }
 
     /**
@@ -113,20 +112,20 @@ public class ForecastFixedCostsWS {
      *
      * @param sbu          parameter for sbu
      * @param subregion    parameter for subregion
-     * @param planYearFrom parameter for planYear from
+     * @param planYear parameter for planYear from
      *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET
-    @Path("/sbu/{sbu}/subregion/{subregion}/entry_type/budget/plan_period_from/{planYearFrom}/")
+    @Path("/sbu/{sbu}/subregion/{subregion}/entry_type/budget/plan_year/{planYear}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getForecastFixedCost(
+    public Response getForecastFixedCostBudget(
             @PathParam("sbu") String sbu,
             @PathParam("subregion") String subregion,
-            @PathParam("planYearFrom") int planYearFrom) {
+            @PathParam("planYear") int planYear) {
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYearFrom),
-                EntryType.BUDGET, new Period(planYearFrom), new Period(2000))).build();
+        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYear),
+                EntryType.BUDGET, new Period(planYear), null)).build();
 
     }
 
