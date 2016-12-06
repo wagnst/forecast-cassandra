@@ -35,6 +35,13 @@ public class ActualSalesAccessor implements DataService{
     }
 
     public static void main(String[] args) {
+        ActualSalesEntity entity = new ActualSalesAccessor().getSalesKPIs(
+                "Eichbaum Radler Zitrone",
+                201301,
+                "South America",
+                "3rd_party",
+                "BW B");
 
+        System.out.println(entity);
     }
 }
