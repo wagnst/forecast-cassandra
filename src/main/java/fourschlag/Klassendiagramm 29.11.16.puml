@@ -13,15 +13,15 @@ end title
 left to right direction
 
 package fourschlag {
-    package entities {
-        package accessors {
-            package fixedcosts {
+    package fourschlag.entities {
+        package fourschlag.entities.accessors {
+            package fourschlag.entities.accessors.fixedcosts {
                 Interface ActualFixedCostsAccessor
 
                 Interface ForecastFixedCostsAccessor
             }
 
-            package sales {
+            package fourschlag.entities.accessors.sales {
                 Interface ActualSalesAccessor
 
                 Interface ForecastSalesAccessor
@@ -35,8 +35,8 @@ package fourschlag {
         }
 
 
-        package tables{
-            package kpis {
+        package fourschlag.entities.tables{
+            package fourschlag.entities.tables.kpis {
                 package fixedcost {
                     Class ActualFixedCostsEntity
 
@@ -50,7 +50,7 @@ package fourschlag {
                 }
 
 
-            package sale{
+            package fourschlag.entities.tables.sale{
                 Class ActualSalesEntity
                 Class ForecastSalesEntity
                 Class SalesEntity
@@ -78,30 +78,18 @@ package fourschlag {
         }
 
 
-        package types {
-            package comparators {
+        package fourschlag.entities.types {
+            package fourschlag.entities.types.comparators {
                 Class OutputDataTypeComparator {
                     + int: compare()
                 }
             }
 
-            Enum Currency {
-                EURO
-				DOLLAR
-            }
+            Enum Currency
 
-            Enum DataSource {
-				BW_A
-				BW_B
-			}
+            Enum DataSource
 
-            Enum EntryType{
-				ACTUAL
-				FORECAST
-				ACTUAL_FORECAST
-				BUDGET
-				TOPDOWN
-			}
+            Enum EntryType
 
             Enum KeyPerformanceIndicators
 
@@ -115,10 +103,7 @@ package fourschlag {
                 + int : getPreviousPeriod()
             }
 
-            Enum SalesType {
-				THIRD_PARTY
-				TRANSFER
-			}
+            Enum SalesType
 
             Class ValidatedResult
 
@@ -132,51 +117,25 @@ package fourschlag {
             ' inheritances from Period
             Period <|-- ZeroMonthPeriod
 
+             ' create usages from Accessors to different Entities
+                    ActualSalesAccessor *-- ActualSalesEntity : use
+                    ExchangeRateAccessor *-- ExchangeRateEntity : use
+                    ForecastSalesAccessor *-- ForecastSalesEntity : use
+                    OrgStructureAccessor *-- OrgStructureEntity : use
+                    RegionAccessor *-- RegionEntity : use
+
         }
 
     }
- package services {
+ package fourschlag.services {
 
-        package data {
-
-            package requests {
-                package kpi {
+            package fourschlag.services.data.requests {
+                package fourschlag.services.data.requests.kpi {
                     Class FixedCostsRequest
 
-                    Abstract Class KpiRequest {
-                        +Stream<OutputDataType> : calculateKpis()
-                    }
+                    Abstract Class KpiRequest
 
-                    Class SalesRequest {
-                        +List<OutputDataType>: getSalesKpis()
-                    }
-
-
-                    KpiRequest <|-- FixedCostsRequest
-                    KpiRequest <|-- SalesRequest
-                    KpiRequest *-- entities.types : use
-                    KpiRequest *-- services.data.requests.ExchangeRateRequest : use
-                    KpiRequest *-- services.data.requests.Request : use
-                    KpiRequest *-- services.db.CassandraConnection : use
-                    KpiRequest *-- entities.tables.kpi.KpiEntity : use
-
-                    FixedCostsRequest *-- entities.types : use
-                    FixedCostsRequest *-- entities.accessors.fixedcosts : use
-                    FixedCostsRequest *-- entities.tables.kpi.KpiEntity : use
-                    FixedCostsRequest *-- entities.tables.kpi.fixedcosts : use
-                    FixedCostsRequest *-- services.data.requests : use
-                    FixedCostsRequest *-- services.db.CassandraConnection : use
-
-                    SalesRequest *-- entities.types : use
-                    SalesRequest *-- entities.accessors.sales.ActualSalesAccessor : use
-                    SalesRequest *-- entities.accessors.sales.ForecastSalesAccessor : use
-                    SalesRequest *-- entities.tables.kpi.KpiEntity : use
-                    SalesRequest *-- entities.tables.kpi.sales.ForecastSalesEntity : use
-                    SalesRequest *-- entities.tables.kpi.sales.SalesEntity : use
-                    SalesRequest *-- services.db.CassandraConnection : use
-                    SalesRequest *-- services.data.requests.ExchangeRateRequest : use
-                    SalesRequest *-- services.data.requests.OrgStructureAndRegionRequest : use
-
+                    Class SalesRequest
 
                 }
 
@@ -200,20 +159,21 @@ package fourschlag {
                     Request <|-- ExchangeRateRequest
                     Request <|-- OrgStructureAndRegionRequest
 
-                    ExchangeRateRequest *-- entities.accessors.ExchangeRateAccessor : use
-                    ExchangeRateRequest *-- entities.tables.ExchangeRateEntity : use
-                    ExchangeRateRequest *-- entities.types.Currency : use
-                    ExchangeRateRequest *-- entities.types.Period : use
-                    ExchangeRateRequest *-- services.db.CassandraConnection : use
 
-                    OrgStructureAndRegionRequest *-- entities.tables : use
-                    OrgStructureAndRegionRequest *-- services.db.CassandraConnection : use
-                    OrgStructureAndRegionRequest *-- entities.accessors : use
+                ' ExchangeRateRequest gets data from ExchangeRateAccessor
+                ExchangeRateRequest *-- ExchangeRateAccessor : use
 
-                    Request *-- services.db.CassandraConnection : use
+                ' KpiRequests uses KPI class
+                KpiRequests *-- KeyPerformanceIndicators : use
+
+                ' usages from SalesRequest
+                SalesRequest *-- ActualSalesAccessor : use
+                SalesRequest *-- ForecastSalesAccessor : use
+                SalesRequest *-- ExchangeRateRequest : use
+                SalesRequest *-- KeyPerformanceIndicators : use
             }
 
-            package service {
+            package fourschlag.services.data.service {
                 Class FixedCostsService {
                     +Stream<OutputDataType> : getFixedCostsKpis()
                 }
@@ -232,26 +192,15 @@ package fourschlag {
                   Service <|-- FixedCostsService
                   Service *-- services.db.CassandraConnection : use
 
-                  FixedCostsService *-- entities.types.Currency : use
-                  FixedCostsService *-- entities.types.OutputDataType : use
-                  FixedCostsService *-- entities.types.Period : use
-                  FixedCostsService *-- services.data.requests.ExchangeRateRequest : use
-                  FixedCostsService *-- services.data.requests.kpi.FixedCostsRequest : use
-                  FixedCostsService *-- services.data.requests.OrgStructureAndRegionRequest : use
-                  FixedCostsService *-- services.db.CassandraConnection : use
+                  FixedCostsService *-- entities.types : use
+                  FixedCostsService *-- services.data.requests :use
 
-                  SalesService *-- entities.types.Currency : use
-                  SalesService *-- entities.types.OutputDataType : use
-                  SalesService *-- entities.types.Period : use
-                  SalesService *-- entities.types.SalesType : use
-                  SalesService *-- services.data.requests.ExchangeRateRequest : use
-                  SalesService *-- services.data.requests.OrgStructureAndRegionRequest : use
-                  SalesService *-- services.data.requests.kpi.SalesRequest : use
-                  SalesService *-- services.db.CassandraConnection : use
+                  SalesService *-- entities.types :use
+                  SalesService *-- services.data.requests :use
+
             }
-        }
 
-        package db {
+        package fourschlag.services.data.db {
             Enum KeyspaceNames {
                 +String : getKeyspace()
             }
@@ -265,7 +214,6 @@ package fourschlag {
                 +Session : getSession()
                 +MappingManager : getManager()
                 +void : closeConnection()
-                +void : closeSession()
             }
 
             ' internal uses of CassandaConnection
@@ -276,8 +224,8 @@ package fourschlag {
             Service *-- CassandraConnection : use
         }
 
-        package web {
-            package ws {
+        package fourschlag.services.data.web {
+            package fourschlag.services.data.web.ws {
                 Class ForecastWS {
                     +Response : getSalesKPIs()
                 }
@@ -288,14 +236,10 @@ package fourschlag {
             ApplicationService -- ForecastWS
 
             ' WS uses SalesService to get the KPI data
-            ForecastWS *-- entities.types.Currency : use
-            ForecastWS *-- entities.types.OutputDataType: use
-            ForecastWS *-- entities.types.Period :use
-            ForecastWS *-- entities.types.comparators.OutputDataTypeComparator : use
+            ForecastWS *-- entities.types :use
             ForecastWS *-- services.data.services : use
             ForecastWS *-- services.db.CassandraConnection : use
         }
     }
 }
-
 @enduml
