@@ -89,9 +89,9 @@ public class ForecastFixedCostsWS {
      * Method returns multiple entries from table forecast_fixed_costs
      * as a valid WebService. Just taking care of budget values
      *
-     * @param sbu            parameter for sbu
-     * @param subregion      parameter for subregion
-     * @param planPeriodFrom parameter for planPeriod From
+     * @param sbu          parameter for sbu
+     * @param subregion    parameter for subregion
+     * @param planYearFrom parameter for planYear from
      *
      * @return multiple entries of forecast_fixed_costs
      */
