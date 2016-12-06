@@ -64,8 +64,8 @@ public class FixedCostsRequest extends Request {
      *
      * @return single entity of ForeCastFixedCostsEntity
      */
-    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
-        return forecastAccessor.getForecastFixedCost(sbu, subregion, period, planPeriod, entryType).one();
+    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
+        return forecastAccessor.getForecastFixedCost(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType.getType()).one();
     }
 
     /**
@@ -74,21 +74,20 @@ public class FixedCostsRequest extends Request {
      *
      * @return a list of entities which are present inside forecast_fixed_costs
      */
-    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, int period, String entryType, int planPeriodFrom, int planPeriodTo) {
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
-        Period countPeriod = Period.getPeriodByYear(planPeriodFrom);
 
         if (entryType.equals(EntryType.BUDGET.getType())) {
             /* in case we have budget as entry type we need to query all months seperately and append to list */
             for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
                 //simply use planPeriodFrom as planPeriod instead of writing a new method
-                resultList.addAll(forecastAccessor.getForecastFixedCost(sbu, subregion, countPeriod.getPeriod(), entryType).all());
+                resultList.addAll(forecastAccessor.getForecastFixedCost(sbu, subregion, planPeriodFrom.getPeriod(), entryType.getType()).all());
                 //increment period to fetch all months
-                countPeriod.increment();
+                planPeriodFrom.increment();
             }
         } else {
             /* all other entry types */
-            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo).all());
+            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period.getPeriod(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all());
         }
 
         return resultList;

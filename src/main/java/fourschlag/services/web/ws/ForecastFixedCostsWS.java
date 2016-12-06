@@ -1,6 +1,7 @@
 package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.Period;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.db.ClusterEndpoints;
@@ -41,7 +42,7 @@ public class ForecastFixedCostsWS {
      * @param subregion  parameter for subregion
      * @param period     parameter for period
      * @param entryType  parameter for entryType
-     * @param planPeriod parameter for planPeriod
+     * @param planPeriodInt parameter for planPeriod
      *
      * @return a specific entry of forecast_fixed_costs
      */
@@ -53,9 +54,27 @@ public class ForecastFixedCostsWS {
             @PathParam("subregion") String subregion,
             @PathParam("period") int period,
             @PathParam("entryType") String entryType,
-            @PathParam("planPeriod") int planPeriod) {
+            @PathParam("planPeriod") int planPeriodInt) {
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, period, entryType, planPeriod)).build();
+        Period currentPeriod;
+        Period planPeriod;
+        try {
+            currentPeriod = new Period(period);
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
+                    + ex.getMessage() + " : " + period).build();
+        }
+
+        try {
+            planPeriod = new Period(planPeriodInt);
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
+                    + ex.getMessage() + " : " + period).build();
+        }
+
+        /* TODO: Test if EntryType.valueOf() works properly */
+        return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
+                EntryType.valueOf(entryType), planPeriod)).build();
     }
 
     /**
@@ -82,7 +101,10 @@ public class ForecastFixedCostsWS {
             @PathParam("planPeriodFrom") int planPeriodFrom,
             @PathParam("planPeriodTo") int planPeriodTo) {
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo)).build();
+
+
+        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
+                EntryType.valueOf(entryType), new Period(planPeriodFrom), new Period(planPeriodTo))).build();
     }
 
     /**
@@ -103,7 +125,8 @@ public class ForecastFixedCostsWS {
             @PathParam("subregion") String subregion,
             @PathParam("planYearFrom") int planYearFrom) {
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, planYearFrom, EntryType.BUDGET.getType(), planYearFrom, 0)).build();
+        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYearFrom),
+                EntryType.BUDGET, new Period(planYearFrom), new Period(2000))).build();
 
     }
 
