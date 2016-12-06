@@ -21,7 +21,7 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  * Extends Request. Offers Functionality to request Sales KPIs for a specific
  * region, period and product main group
  */
-public class SalesRequest extends KpiRequest {
+public class SalesKpiRequest extends KpiRequest {
 
     private static final String FC_TYPE = "sales";
     private String productMainGroup;
@@ -34,14 +34,14 @@ public class SalesRequest extends KpiRequest {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public SalesRequest(CassandraConnection connection) {
+    public SalesKpiRequest(CassandraConnection connection) {
         super(connection);
 
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
 
     /**
-     * Constructor for SalesRequest
+     * Constructor for SalesKpiRequest
      *
      * @param connection          Cassandra connection that is supposed to be
      *                            used
@@ -56,9 +56,9 @@ public class SalesRequest extends KpiRequest {
      *                            currency
      * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
-                        String region, SalesType salesType, ExchangeRateRequest exchangeRates,
-                        OrgStructureAndRegionRequest orgAndRegionRequest) {
+    public SalesKpiRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
+                           String region, SalesType salesType, ExchangeRateRequest exchangeRates,
+                           OrgStructureAndRegionRequest orgAndRegionRequest) {
         super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;

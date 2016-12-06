@@ -22,7 +22,7 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a
  * specific region, period and product main group
  */
-public class FixedCostsRequest extends KpiRequest {
+public class FixedCostsKpiRequest extends KpiRequest {
     private static final String FC_TYPE = "fixed costs";
     private String subregion;
     private ActualFixedCostsAccessor actualAccessor;
@@ -33,20 +33,20 @@ public class FixedCostsRequest extends KpiRequest {
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public FixedCostsRequest(CassandraConnection connection) {
+    public FixedCostsKpiRequest(CassandraConnection connection) {
         super(connection);
 
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
     /**
-     * Constructor for FixedCostsRequest with additional parameters
+     * Constructor for FixedCostsKpiRequest with additional parameters
      *
      * @param connection Cassandra connection that is supposed to be used
      */
-    public FixedCostsRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
-                             String subregion, ExchangeRateRequest exchangeRates,
-                             OrgStructureAndRegionRequest orgAndRegionRequest) {
+    public FixedCostsKpiRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
+                                String subregion, ExchangeRateRequest exchangeRates,
+                                OrgStructureAndRegionRequest orgAndRegionRequest) {
         super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 

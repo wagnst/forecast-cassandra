@@ -1,15 +1,27 @@
-package fourschlag.services.data.requests.kpi.manipulation;
+package fourschlag.services.data.requests;
 
+import com.datastax.driver.mapping.Result;
+import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
 import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
-import fourschlag.services.data.requests.Request;
+import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.services.db.CassandraConnection;
 
-public class FixedCostsManipulationRequest extends Request {
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+public class FixedCostsRequest extends Request {
+
+    private final ActualFixedCostsAccessor actualAccessor;
     private final ForecastFixedCostsAccessor forecastAccessor;
+    private Map<String, Set<String>> sbuMap;
 
-    public FixedCostsManipulationRequest(CassandraConnection connection) {
+    public FixedCostsRequest(CassandraConnection connection) {
         super(connection);
+        actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
@@ -39,4 +51,35 @@ public class FixedCostsManipulationRequest extends Request {
     }
 
     //TODO: implement method for non-forecast related tables
+
+    public Map<String, Set<String>> getSubregionsAndSbu() {
+        if (sbuMap == null) {
+            querySubregionsAndSbu();
+        }
+        return sbuMap;
+    }
+
+    private void querySubregionsAndSbu() {
+        Result<ActualFixedCostsEntity> entitiesFromActual = actualAccessor.getDistinctSbuAndSubregions();
+        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastAccessor.getDistinctSbuAndSubregions();
+        sbuMap = new HashMap<>();
+
+        for (ActualFixedCostsEntity entity : entitiesFromActual) {
+            addToSbuMap(entity);
+        }
+
+        for (ForecastFixedCostsEntity entity : entitiesFromForecast) {
+            addToSbuMap(entity);
+        }
+    }
+
+    private void addToSbuMap(FixedCostsEntity entity) {
+        if (sbuMap.containsKey(entity.getSbu())) {
+            sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+        } else {
+            sbuMap.put(entity.getSbu(), new HashSet<String>() {{
+                add(entity.getSubregion());
+            }});
+        }
+    }
 }

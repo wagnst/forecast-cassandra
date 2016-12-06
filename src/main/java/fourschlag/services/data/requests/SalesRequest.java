@@ -1,15 +1,28 @@
-package fourschlag.services.data.requests.kpi.manipulation;
+package fourschlag.services.data.requests;
 
+import com.datastax.driver.mapping.Result;
+import fourschlag.entities.accessors.sales.ActualSalesAccessor;
 import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
-import fourschlag.services.data.requests.Request;
+import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
+import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
+import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.services.db.CassandraConnection;
 
-public class SalesManipulationRequest extends Request {
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+public class SalesRequest extends Request {
+
+    private final ActualSalesAccessor actualAccessor;
     private final ForecastSalesAccessor forecastAccessor;
+    private Map<String, Set<String>> productMap;
 
-    public SalesManipulationRequest(CassandraConnection connection) {
+    public SalesRequest(CassandraConnection connection) {
         super(connection);
+
+        actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
 
@@ -37,4 +50,35 @@ public class SalesManipulationRequest extends Request {
     }
 
     //TODO: implement method for non-forecast related tables
+
+    public Map<String, Set<String>> getPmgAndRegions() {
+        if (productMap == null) {
+            queryPmgAndRegions();
+        }
+        return productMap;
+    }
+
+    private void queryPmgAndRegions() {
+        Result<ActualSalesEntity> entitiesFromActual = actualAccessor.getDistinctPmgAndRegions();
+        Result<ForecastSalesEntity> entitiesFromForecast = forecastAccessor.getDistinctPmgAndRegions();
+        productMap = new HashMap<>();
+
+        for (ActualSalesEntity entity : entitiesFromActual) {
+            addToProductMap(entity);
+        }
+
+        for (ForecastSalesEntity entity : entitiesFromForecast) {
+            addToProductMap(entity);
+        }
+    }
+
+    private void addToProductMap(SalesEntity entity) {
+        if (productMap.containsKey(entity.getProductMainGroup())) {
+            productMap.get(entity.getProductMainGroup()).add(entity.getRegion());
+        } else {
+            productMap.put(entity.getProductMainGroup(), new HashSet<String>() {{
+                add(entity.getRegion());
+            }});
+        }
+    }
 }

@@ -7,8 +7,8 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.kpi.SalesRequest;
-import fourschlag.services.data.requests.kpi.manipulation.SalesManipulationRequest;
+import fourschlag.services.data.requests.kpi.SalesKpiRequest;
+import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
@@ -53,13 +53,13 @@ public class SalesService extends Service {
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
         OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        Map<String, Set<String>> productAndRegions = orgAndRegionRequest.getPmgAndRegionsFromSales();
+        Map<String, Set<String>> productAndRegions = new SalesRequest(getConnection()).getPmgAndRegions();
 
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
         resultStream = productAndRegions.keySet().stream().parallel()
                 .flatMap(product -> productAndRegions.get(product).stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
-                                .flatMap(salesType -> new SalesRequest(getConnection(),
+                                .flatMap(salesType -> new SalesKpiRequest(getConnection(),
                                         product, planPeriod, currentPeriod, region, salesType,
                                         exchangeRates, orgAndRegionRequest).calculateKpis())));
 
@@ -72,21 +72,21 @@ public class SalesService extends Service {
      * @return a list of all ForecastSalesEntities
      */
     public List<ForecastSalesEntity> getForecastSales() {
-        return new SalesRequest(getConnection()).getForecastSales();
+        return new SalesKpiRequest(getConnection()).getForecastSales();
     }
 
     /**
      * @return a list of specific ForecastSalesEntities
      */
     public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
-        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
+        return new SalesKpiRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
     }
 
     /**
      * @return a specific ForecastSalesEntity
      */
     public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
-        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
+        return new SalesKpiRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
     }
 
     /**
@@ -98,7 +98,7 @@ public class SalesService extends Service {
                                     int planQuarter, int planMonth, String entryType, String status, String usercomment, String productMainGroup, String salesType,
                                     double salesVolumes, double netSales, double cm1, int period, String region,
                                     int periodYear, int periodMonth, String currency, String userId, String entryTs) {
-        return new SalesManipulationRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
+        return new SalesRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
                 planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
     }
 }
