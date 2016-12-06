@@ -12,7 +12,6 @@ import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
@@ -28,17 +27,6 @@ public class SalesKpiRequest extends KpiRequest {
     private SalesType salesType;
     private ActualSalesAccessor actualAccessor;
     private ForecastSalesAccessor forecastAccessor;
-
-    /**
-     * Default constructor to only open a database connection
-     *
-     * @param connection Cassandra connection that is supposed to be used
-     */
-    public SalesKpiRequest(CassandraConnection connection) {
-        super(connection);
-
-        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
-    }
 
     /**
      * Constructor for SalesKpiRequest
@@ -302,33 +290,6 @@ public class SalesKpiRequest extends KpiRequest {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);
-    }
-
-    /**
-     * Gets all ForecastSales with no filter applied
-     *
-     * @return all entities which are present inside forecast_sales
-     */
-    public List<ForecastSalesEntity> getForecastSales() {
-        return forecastAccessor.getAllForecastSales().all();
-    }
-
-    /**
-     * Gets a specific list of ForecastSalesEnteties with filter applied
-     *
-     * @return specific entities which are present inside forecast_sales
-     */
-    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo).all();
-    }
-
-    /**
-     * Gets a specific ForecastSalesEntity filtered by joined primary keys
-     *
-     * @return single entity of ForecastSalesEntity
-     */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
     }
 
 }

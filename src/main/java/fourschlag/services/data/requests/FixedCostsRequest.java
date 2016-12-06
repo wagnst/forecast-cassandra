@@ -6,12 +6,12 @@ import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
 import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
+import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.OutputDataType;
+import fourschlag.entities.types.Period;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class FixedCostsRequest extends Request {
 
@@ -48,6 +48,50 @@ public class FixedCostsRequest extends Request {
         }
 
         return true;
+    }
+
+    /**
+     * Gets all ForecastFixedCostsEntities with no filter applied
+     *
+     * @return all entities which are present inside forecast_fixed_costs
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts() {
+        return forecastAccessor.getAllForecastFixedCosts().all();
+    }
+
+    /**
+     * Gets a specific ForecastFixedCostsEntity filtered by joined primary keys
+     *
+     * @return single entity of ForeCastFixedCostsEntity
+     */
+    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
+        return forecastAccessor.getForecastFixedCost(sbu, subregion, period, planPeriod, entryType).one();
+    }
+
+    /**
+     * Gets specific ForecastFixedCostsEntites filtered by senseful drill down
+     * parameters
+     *
+     * @return a list of entities which are present inside forecast_fixed_costs
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, int period, String entryType, int planPeriodFrom, int planPeriodTo) {
+        List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
+        Period countPeriod = Period.getPeriodByYear(planPeriodFrom);
+
+        if (entryType.equals(EntryType.BUDGET.getType())) {
+            /* in case we have budget as entry type we need to query all months seperately and append to list */
+            for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
+                //simply use planPeriodFrom as planPeriod instead of writing a new method
+                resultList.addAll(forecastAccessor.getForecastFixedCost(sbu, subregion, countPeriod.getPeriod(), entryType).all());
+                //increment period to fetch all months
+                countPeriod.increment();
+            }
+        } else {
+            /* all other entry types */
+            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo).all());
+        }
+
+        return resultList;
     }
 
     //TODO: implement method for non-forecast related tables

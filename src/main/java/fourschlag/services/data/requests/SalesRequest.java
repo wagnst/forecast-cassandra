@@ -8,10 +8,7 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SalesRequest extends Request {
 
@@ -50,6 +47,34 @@ public class SalesRequest extends Request {
     }
 
     //TODO: implement method for non-forecast related tables
+
+
+    /**
+     * Gets all ForecastSales with no filter applied
+     *
+     * @return all entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales() {
+        return forecastAccessor.getAllForecastSales().all();
+    }
+
+    /**
+     * Gets a specific list of ForecastSalesEnteties with filter applied
+     *
+     * @return specific entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo).all();
+    }
+
+    /**
+     * Gets a specific ForecastSalesEntity filtered by joined primary keys
+     *
+     * @return single entity of ForecastSalesEntity
+     */
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
+    }
 
     public Map<String, Set<String>> getPmgAndRegions() {
         if (productMap == null) {
