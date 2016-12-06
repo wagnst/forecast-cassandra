@@ -1,57 +1,55 @@
 @startuml
 
-node "<<executionEnvironment>>\n :__Laufzeitumgebung__" as LZ{
+node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
 
-    folder "fourschlag.war"{
+    package "fourschlag.war" <<package>>{
 
-        'folder "jmeter"{
-        '   artifact "<<artifact>>\n FourschlagTest.jmx"
+        'package "jmeter"{
+        '   artifact "FourschlagTest.jmx" <<artifact>>
         '}
 
-        folder "libs"{
+        package "libs" <<package>>{
 
-            folder "Webservice Drivers"{
-                artifact "<<artifact>>\n jackson-jaxrs-base"
-                artifact "<<artifact>>\n jackson-jaxrs-json-provider"
-                artifact "<<artifact>>\n jackson-jaxrs-providers"
-                artifact "<<artifact>>\n jersey-container-servlet"
+            package "Webservice Drivers" <<package>>{
+                artifact "jackson-jaxrs-base" <<artifact>>
+                artifact "jackson-jaxrs-json-provider" <<artifact>>
+                artifact "jackson-jaxrs-providers" <<artifact>>
+                artifact "jersey-container-servlet" <<artifact>>
             }
 
-            folder "Cassandra Drivers"{
-                artifact "<<artifact>>\n cassandra-driver-core"
-                artifact "<<artifact>>\n cassandra-driver-extras"
-                artifact "<<artifact>>\n cassandra-driver-mapping"
+            package "Cassandra Drivers" <<package>>{
+                artifact "cassandra-driver-core" <<artifact>>
+                artifact "cassandra-driver-extras" <<artifact>>
+                artifact "cassandra-driver-mapping" <<artifact>>
             }
+        }
+
+        package "src" <<package>>{
+            package "services"
+            package "entities"
 
         }
 
-        folder "src"{
-            folder "services"
-            folder "entities"
-        }
-
-        folder "web"{
-            folder "frontend"
-            folder "WEB-INF"
-            artifact "<<artifact>>\n index.jsp"
+        package "web" <<package>>{
+            package "frontend"
+            package "WEB-INF"
+            artifact "index.jsp" <<artifact>>
         }
     }
 }
 
-node "<<device>>\n __:Rechner, Service Nutzer__" as N2{
+node "__:Rechner, Service Nutzer__" as N2 <<device>>{
 
-        artifact "<<artifact>>\n WS-fähige Bibliothek"
+        artifact "WS-fähige Bibliothek" <<artifact>>
  }
 
-node "<<device>>\n :__Datenbankserver 1...n, Linux__" as N1{
+node ":__Datenbankserver 1...n, Linux__" as N1 <<device>>{
 
-    folder "importer"{
-        artifact "<<artifact>>\n config.json"
-        artifact "<<artifact>>\n importMain.py"
+    package "importer"{
+        artifact "config.json" <<artifact>>
+        artifact "importMain.py" <<artifact>>
     }
-
-    database "<<database>>\n :Apache Cassandra" as Cassandra
-
+    database ":Apache Cassandra" as Cassandra <<database>>
 }
 
 LZ == N1: <<Cassandra´s Binary Protocol>>
