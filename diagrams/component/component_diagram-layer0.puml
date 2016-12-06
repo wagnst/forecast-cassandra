@@ -9,7 +9,7 @@ node "Systemkontext" {
     interface HTTP
 }
 
-CQL - [Admin]
+    CQL - [Admin]
     HTTP - [Fourschlag System]
     [Fourschlag System] - CQL
     [SP-Anwendung] - HTTP
