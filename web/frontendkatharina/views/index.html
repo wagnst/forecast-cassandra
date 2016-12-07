@@ -71,20 +71,21 @@
                 <div class="col-xs-10 col-md-3">
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               for="backendServer">Backend</label>
+                               >Backend</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
-                                   name="backendServer"
+                                   id="backendServer"
                                    value="141.19.145.142:8080">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               for="kpiType">Area</label>
+                               >Area</label>
                         <div class="col-lg-8">
                             <select class="form-control" id="kpiType">
+                                <option selected="selected">all</option>
                                 <option>sales</option>
-                                <option>fixed costs</option>
+                                <option>fixedcosts</option>
                             </select>
                         </div>
                     </div>
@@ -93,7 +94,7 @@
                 <div class="col-xs-12 col-md-3">
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               for="year">Plan-Year</label>
+                               >Plan-Year</label>
                         <div class="col-lg-8">
 
                             <input type="text" class="form-control"
@@ -104,7 +105,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               for="period">Period</label>
+                               >Period</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    id="datepicker_period"
@@ -117,7 +118,7 @@
                                for="currency">Currency</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
-                                   name="currency"
+                                   id="currency"
                                    value="eur">
                         </div>
                     </div>
@@ -125,7 +126,7 @@
                 <div class="col-xs-1">
                     <div class="form-group">
                         <label class="col-lg-2 control-label"
-                               for=""></label>
+                               ></label>
                         <div class="col-lg-2">
                             <button type="button"
                                     id="startbutton"
@@ -204,51 +205,53 @@
             { "data": "BJ4" }
 -->
 <div>
-    <table id="example" class="display" cellspacing="0">
-        <thead>
-        <tr>
-            <th>ENTRY_TYPE</th>
-            <th>REGION</th>
-            <th>SUBREGION</th>
-            <th>SBU</th>
-            <th>PRODUCT_MAIN_GROUP</th>
-            <th>SALES_TYPE</th>
-            <th>FC_TYPE</th>
-            <th>ORDER_NUMBER</th>
-            <th>KPI</th>
-            <th>UNIT</th>
-            <th>M01</th>
-            <th>M02</th>
-            <th>M03</th>
-            <th>M04</th>
-            <th>M05</th>
-            <th>M06</th>
-            <th>M07</th>
-            <th>M08</th>
-            <th>M09</th>
-            <th>M10</th>
-            <th>M11</th>
-            <th>M12</th>
-            <th>M13</th>
-            <th>M14</th>
-            <th>M15</th>
-            <th>M16</th>
-            <th>M17</th>
-            <th>M18</th>
-            <th>BJ2</th>
-            <th>BJ3</th>
-            <th>BJ4</th>
-        </tr>
-        </thead>
-        <tfoot>
+    <div>
+        <table id="KpiTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>ENTRY_TYPE</th>
+                <th>REGION</th>
+                <th>SUBREGION</th>
+                <th>SBU</th>
+                <th>PRODUCT_MAIN_GROUP</th>
+                <th>SALES_TYPE</th>
+                <th>FC_TYPE</th>
+                <th>ORDER_NUMBER</th>
+                <th>KPI</th>
+                <th>UNIT</th>
+                <th>M01</th>
+                <th>M02</th>
+                <th>M03</th>
+                <th>M04</th>
+                <th>M05</th>
+                <th>M06</th>
+                <th>M07</th>
+                <th>M08</th>
+                <th>M09</th>
+                <th>M10</th>
+                <th>M11</th>
+                <th>M12</th>
+                <th>M13</th>
+                <th>M14</th>
+                <th>M15</th>
+                <th>M16</th>
+                <th>M17</th>
+                <th>M18</th>
+                <th>BJ2</th>
+                <th>BJ3</th>
+                <th>BJ4</th>
+                <th>Edit</th>
+            </tr>
+            </thead>
+            <tfoot>
 
-        </tfoot>
-        <tbody>
+            </tfoot>
+            <tbody>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
-
 
 <script src="../javascript/main.js"></script>
 <script src="../js/bootstrap.min.js"></script>
