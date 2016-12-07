@@ -75,7 +75,7 @@ public class ForecastFixedCostsWS {
 
         /* TODO: Test if EntryType.valueOf() works properly */
         return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
-                EntryType.valueOf(entryType), planPeriod)).build();
+                EntryType.valueOf(entryType.toUpperCase()), planPeriod)).build();
     }
 
     /**
@@ -103,7 +103,7 @@ public class ForecastFixedCostsWS {
         Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
 
         return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
-                EntryType.valueOf(entryType), new Period(planYear), planPeriodTo)).build();
+                EntryType.valueOf(entryType.toUpperCase()), new Period(planYear), planPeriodTo)).build();
     }
 
     /**
