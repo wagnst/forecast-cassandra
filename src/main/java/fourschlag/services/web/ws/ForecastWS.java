@@ -6,10 +6,6 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.data.service.SalesService;
-import fourschlag.services.db.CassandraConnection;
-import fourschlag.services.db.ClusterEndpoints;
-import fourschlag.services.db.ConnectionPool;
-import fourschlag.services.db.KeyspaceNames;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -28,10 +24,9 @@ import java.util.stream.Stream;
 @Path("/forecast")
 public class ForecastWS {
 
-    private CassandraConnection connection = ConnectionPool
-            .getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
-    private SalesService salesService = new SalesService(connection);
-    private FixedCostsService fixedCostsService = new FixedCostsService(connection);
+    private SalesService salesService = new SalesService();
+    private FixedCostsService fixedCostsService = new FixedCostsService();
+
 
     /* TODO: Maybe close session each time, but not connection */
     /* TODO: Create Connection pool and remove the connection from this WS */

@@ -1,10 +1,9 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.accessors.ExchangeRateAccessor;
-import fourschlag.entities.tables.ExchangeRateEntity;
+import fourschlag.entities.jpalAccessors.ExchangeRateAccessor;
+import fourschlag.entities.jpaTables.ExchangeRateEntity;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.Period;
-import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +22,12 @@ public class ExchangeRateRequest extends Request {
     /**
      * Constructor for ExchangeRateRequest
      *
-     * @param connection Cassandra connection that is supposed to be used
      * @param toCurrency the desired currency
      */
-    public ExchangeRateRequest(CassandraConnection connection, Currency toCurrency) {
-        super(connection);
+    public ExchangeRateRequest(Currency toCurrency) {
         this.toCurrency = toCurrency;
         this.exchangeRates = new HashMap<>();
-        accessor = getManager().createAccessor(ExchangeRateAccessor.class);
+        accessor = new ExchangeRateAccessor();
     }
 
     /**

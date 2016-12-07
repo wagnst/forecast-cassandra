@@ -4,9 +4,9 @@ import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.kpi.FixedCostsRequest;
-import fourschlag.services.db.CassandraConnection;
+import fourschlag.services.data.requests.kpi.FixedCostsKpiRequest;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,15 +16,6 @@ import java.util.stream.Stream;
  * Extends Service. Provides functionality to get fixed costs KPIs
  */
 public class FixedCostsService extends Service {
-
-    /**
-     * Constructor
-     *
-     * @param connection Cassandra connection that is supposed to be used
-     */
-    public FixedCostsService(CassandraConnection connection) {
-        super(connection);
-    }
 
     /**
      * Calculates all Fixed Costs KPIs for a time span (planYear) and from certain
@@ -43,18 +34,18 @@ public class FixedCostsService extends Service {
         Stream<OutputDataType> resultStream;
 
         /* Create instance of ExchangeRateRequest with the desired currency */
-        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
+        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(toCurrency);
 
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
-        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
+        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest();
 
-        Map<String, Set<String>> sbuAndSubregions = orgAndRegionRequest.getSubregionsAndSbuFromFixedCosts();
+        Map<String, Set<String>> sbuAndSubregions = new FixedCostsRequest().getSubregionsAndSbuFromFixedCosts();
 
-        /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsRequest is created */
+        /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsKpiRequest is created */
         resultStream = sbuAndSubregions.keySet().stream().parallel()
                 .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
-                        .flatMap(subregion -> new FixedCostsRequest(getConnection(), sbu, planPeriod, currentPeriod,
-                                subregion, exchangeRates, orgAndRegionRequest).calculateKpis()));
+                        .flatMap(subregion -> new FixedCostsKpiRequest(sbu, planPeriod, currentPeriod, subregion,
+                                exchangeRates, orgAndRegionRequest).calculateKpis()));
 
         /* Finally the result stream is returned */
         return resultStream;

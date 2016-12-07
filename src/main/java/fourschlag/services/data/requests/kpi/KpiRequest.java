@@ -1,10 +1,9 @@
 package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.mysqlTables.KpiEntity;
+import fourschlag.entities.jpaTables.KpiEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.Request;
-import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ public abstract class KpiRequest extends Request {
     /**
      * Constructor
      *
-     * @param connection        Cassandra connection that is supposed to be used
      * @param sbu               SBU to filter for
      * @param region            Region to filter for
      * @param planPeriod        Indicates the time span for which the KPIs are
@@ -42,9 +40,8 @@ public abstract class KpiRequest extends Request {
      * @param exchangeRates     ExchangeRateRequest with the desired output currency
      * @param fcType            The type of KPI (example: "sales" or "fixed costs")
      */
-    public KpiRequest(CassandraConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
+    public KpiRequest(String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
-        super(connection);
         this.sbu = sbu;
         this.region = region;
         this.planPeriod = planPeriod;
