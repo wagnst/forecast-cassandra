@@ -10,6 +10,6 @@ public class RegionAccessor extends Accessor {
         Query query = getEntityManager().createQuery(
                 "select e from RegionEntity e", RegionEntity.class);
 
-        return (List<RegionEntity>) query.getResultList();
+        return query.getResultList();
     }
 }

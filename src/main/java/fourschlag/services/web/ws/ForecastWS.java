@@ -94,10 +94,6 @@ public class ForecastWS {
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
-    public static void main(String[] args) {
-        new ForecastWS().getKPIs("eur", 2016, 201606);
-    }
-
     /**
      * This method collects only sales dependent forecast KPI's in
      * the different service classes

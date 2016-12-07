@@ -66,6 +66,6 @@ public class ForecastSalesAccessor extends Accessor {
                 "select distinct new ForecastSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ForecastSalesEntity e", ForecastSalesEntity.class);
 
-        return (List<ForecastSalesEntity>) query.getResultList();
+        return query.getResultList();
     }
 }

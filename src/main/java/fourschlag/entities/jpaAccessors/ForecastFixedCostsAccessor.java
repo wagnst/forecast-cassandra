@@ -41,6 +41,6 @@ public class ForecastFixedCostsAccessor extends Accessor {
                 "select distinct new ForecastFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ForecastFixedCostsEntity e", ForecastFixedCostsEntity.class);
 
-        return (List<ForecastFixedCostsEntity>) query.getSingleResult();
+        return query.getResultList();
     }
 }

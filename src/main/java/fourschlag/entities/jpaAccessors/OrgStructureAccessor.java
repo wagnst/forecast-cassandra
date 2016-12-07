@@ -10,6 +10,6 @@ public class OrgStructureAccessor extends Accessor {
         Query query = getEntityManager().createQuery(
                 "select e from OrgStructureEntity e", OrgStructureEntity.class);
 
-        return (List<OrgStructureEntity>) query.getResultList();
+        return query.getResultList();
     }
 }

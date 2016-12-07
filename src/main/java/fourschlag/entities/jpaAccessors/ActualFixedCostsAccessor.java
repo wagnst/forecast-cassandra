@@ -34,6 +34,6 @@ public class ActualFixedCostsAccessor extends Accessor {
                 "select distinct new ActualFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ActualFixedCostsEntity e", ActualFixedCostsEntity.class);
 
-        return (List<ActualFixedCostsEntity>) query.getSingleResult();
+        return query.getResultList();
     }
 }
