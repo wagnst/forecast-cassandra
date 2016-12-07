@@ -1,7 +1,7 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.jpalAccessors.OrgStructureAccessor;
-import fourschlag.entities.jpalAccessors.RegionAccessor;
+import fourschlag.entities.jpaAccessors.OrgStructureAccessor;
+import fourschlag.entities.jpaAccessors.RegionAccessor;
 import fourschlag.entities.jpaTables.OrgStructureEntity;
 import fourschlag.entities.jpaTables.RegionEntity;
 

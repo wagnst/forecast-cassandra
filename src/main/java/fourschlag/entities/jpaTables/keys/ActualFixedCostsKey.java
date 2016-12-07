@@ -15,6 +15,14 @@ public class ActualFixedCostsKey implements Serializable {
     @Column(name = "subregion")
     private String subregion;
 
+    public ActualFixedCostsKey() {
+    }
+
+    public ActualFixedCostsKey(String sbu, String subregion) {
+        this.sbu = sbu;
+        this.subregion = subregion;
+    }
+
     public int getPeriod() {
         return period;
     }

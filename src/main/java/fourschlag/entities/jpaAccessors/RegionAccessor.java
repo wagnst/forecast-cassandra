@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.RegionEntity;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class RegionAccessor extends Accessor {
     public List<RegionEntity> getSubregions() {
         Query query = getEntityManager().createQuery(
-                "select e.primaryKey.subregion, e.primaryKey.region from RegionEntity e");
+                "select e from RegionEntity e", RegionEntity.class);
 
         return (List<RegionEntity>) query.getResultList();
     }

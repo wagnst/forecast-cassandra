@@ -36,6 +36,10 @@ public class ActualSalesEntity extends SalesEntity {
         this.primaryKey = new ActualSalesKey(productMainGroup, region);
     }
 
+    public ActualSalesEntity(double salesVolumes, double netSales, double cm1, String currency) {
+        super(salesVolumes, netSales, cm1, currency);
+    }
+
     public ActualSalesKey getPrimaryKey() {
         return primaryKey;
     }

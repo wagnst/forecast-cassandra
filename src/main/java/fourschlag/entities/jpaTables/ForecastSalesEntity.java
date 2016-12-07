@@ -53,6 +53,25 @@ public class ForecastSalesEntity extends SalesEntity {
     @Column(name = "usercomment")
     private String usercomment;
 
+    public ForecastSalesEntity() {
+    }
+
+    public ForecastSalesEntity(String productMainGroup, String region) {
+        this.primaryKey = new ForecastSalesKey(productMainGroup, region);
+    }
+
+    public ForecastSalesEntity(double salesVolumes, double netSales, double cm1, double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1 , String currency) {
+        super(salesVolumes, netSales, cm1, currency);
+        this.topdownAdjustSalesVolumes = topdownAdjustSalesVolumes;
+        this.topdownAdjustNetSales = topdownAdjustNetSales;
+        this.topdownAdjustCm1 = topdownAdjustCm1;
+    }
+
+    public ForecastSalesEntity(double cm1, double topdownAdjustCm1, String currency) {
+        super(cm1, currency);
+        this.topdownAdjustCm1 = topdownAdjustCm1;
+    }
+
     public ForecastSalesKey getPrimaryKey() {
         return primaryKey;
     }

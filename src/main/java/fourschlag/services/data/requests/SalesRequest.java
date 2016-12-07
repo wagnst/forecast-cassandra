@@ -1,7 +1,7 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.jpalAccessors.ActualSalesAccessor;
-import fourschlag.entities.jpalAccessors.ForecastSalesAccessor;
+import fourschlag.entities.jpaAccessors.ActualSalesAccessor;
+import fourschlag.entities.jpaAccessors.ForecastSalesAccessor;
 import fourschlag.entities.jpaTables.ActualSalesEntity;
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
 

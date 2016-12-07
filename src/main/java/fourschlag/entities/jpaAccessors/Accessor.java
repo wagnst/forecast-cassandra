@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;

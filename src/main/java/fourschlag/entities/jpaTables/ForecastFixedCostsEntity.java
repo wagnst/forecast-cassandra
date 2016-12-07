@@ -49,6 +49,25 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
     @Column(name = "usercomment")
     private String usercomment;
 
+    public ForecastFixedCostsEntity() {
+    }
+
+    public ForecastFixedCostsEntity (String sbu, String subregion) {
+        this.primaryKey = new ForecastFixedCostsKey(sbu, subregion);
+    }
+
+    public ForecastFixedCostsEntity(double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
+                                    double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd,
+                                    double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
+                                    double otherOpCostCompany, double specItems, double provisions, double currencyGains,
+                                    double valAdjustInventories, double otherFixCost, double depreciation, double capCost,
+                                    double equityIncome, double topdownAdjustFixCosts, String currency) {
+        super(fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd,
+                adminCostCompany, otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains,
+                valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome, currency);
+        this.topdownAdjustFixCosts = topdownAdjustFixCosts;
+    }
+
     public ForecastFixedCostsKey getPrimaryKey() {
         return primaryKey;
     }

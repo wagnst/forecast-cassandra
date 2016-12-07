@@ -14,6 +14,21 @@ public class SalesEntity extends KpiEntity {
     @Column(name = "cm1")
     private double cm1;
 
+    public SalesEntity() {
+    }
+
+    public SalesEntity(double salesVolumes, double netSales, double cm1, String currency) {
+        super(currency);
+        this.salesVolumes = salesVolumes;
+        this.netSales = netSales;
+        this.cm1 = cm1;
+    }
+
+    public SalesEntity(double cm1, String currency) {
+        super(currency);
+        this.cm1 = cm1;
+    }
+
     public double getSalesVolumes() {
         return salesVolumes;
     }

@@ -1,7 +1,7 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.jpalAccessors.ActualFixedCostsAccessor;
-import fourschlag.entities.jpalAccessors.ForecastFixedCostsAccessor;
+import fourschlag.entities.jpaAccessors.ActualFixedCostsAccessor;
+import fourschlag.entities.jpaAccessors.ForecastFixedCostsAccessor;
 import fourschlag.entities.jpaTables.ActualFixedCostsEntity;
 import fourschlag.entities.jpaTables.ForecastFixedCostsEntity;
 

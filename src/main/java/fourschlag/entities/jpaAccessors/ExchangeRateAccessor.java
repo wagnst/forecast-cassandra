@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
 
@@ -11,10 +11,10 @@ public class ExchangeRateAccessor extends Accessor{
             String toCurrency) {
 
         Query query = getEntityManager().createQuery(
-                "select e.rate from ExchangeRateEntity e" +
+                "select e from ExchangeRateEntity e" +
                         "where e.period = " + period + " " +
                         "and e.primaryKey.fromCurrency = '" + fromCurrency + "' " +
-                        "and e.primaryKey.toCurrency = '" + toCurrency + "'");
+                        "and e.primaryKey.toCurrency = '" + toCurrency + "'", ExchangeRateEntity.class);
 
         return (ExchangeRateEntity) query.getSingleResult();
     }

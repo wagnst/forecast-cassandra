@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
 
@@ -15,14 +15,15 @@ public class ForecastSalesAccessor extends Accessor {
             String entryType) {
 
         Query query = getEntityManager().createQuery(
-                "select e.salesVolumes, e.netSales, e.cm1, e.topdownAdjustSalesVolumes, e.topdownAdjustNetSales, e.topdownAdjustCm1, e.currency " +
+                "select new ForecastSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.topdownAdjustSalesVolumes," +
+                        " e.topdownAdjustNetSales, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
                         "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
                         "and e.primaryKey.period = " + period + " " +
                         "and e.primaryKey.planPeriod = " + planPeriod + " " +
                         "and e.primaryKey.region = '" + region + "' " +
                         "and e.primaryKey.salesType = '" + salesType + "' " +
-                        "and e.primaryKey.entryType = '" + entryType + "'");
+                        "and e.primaryKey.entryType = '" + entryType + "'", ForecastSalesEntity.class);
 
         return (ForecastSalesEntity) query.getSingleResult();
     }
@@ -35,20 +36,22 @@ public class ForecastSalesAccessor extends Accessor {
             String salesType) {
 
         Query query = getEntityManager().createQuery(
-                "select e.cm1, e.topdownAdjustCm1, e.currency " +
+                "select new ForecastSalesEntity(e.cm1, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
                         "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
                         "and e.primaryKey.period = " + period + " " +
                         "and e.primaryKey.planPeriod = " + planPeriod + " " +
                         "and e.primaryKey.region = '" + region + "' " +
                         "and e.primaryKey.salesType = '" + salesType + "' " +
-                        "and e.primaryKey.entryType = 'forecast'");
+                        "and e.primaryKey.entryType = 'forecast'", ForecastSalesEntity.class);
 
         return (ForecastSalesEntity) query.getSingleResult();
     }
 
     public List<ForecastSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManager().createQuery("select distinct e.primaryKey.productMainGroup, e.primaryKey.region from ForecastSalesEntity e");
+        Query query = getEntityManager().createQuery(
+                "select distinct new ForecastSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
+                        "from ForecastSalesEntity e", ForecastSalesEntity.class);
 
         return (List<ForecastSalesEntity>) query.getResultList();
     }

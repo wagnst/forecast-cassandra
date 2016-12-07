@@ -65,6 +65,37 @@ public class FixedCostsEntity extends KpiEntity {
     @Column(name = "equity_income")
     private double equityIncome;
 
+    public FixedCostsEntity() {
+    }
+
+    public FixedCostsEntity(double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
+                            double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd,
+                            double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany,
+                            double specItems, double provisions, double currencyGains, double valAdjustInventories,
+                            double otherFixCost, double depreciation, double capCost, double equityIncome, String currency) {
+        super(currency);
+        this.fixPreManCost = fixPreManCost;
+        this.shipCost = shipCost;
+        this.sellCost = sellCost;
+        this.diffActPreManCost = diffActPreManCost;
+        this.idleEquipCost = idleEquipCost;
+        this.rdCost = rdCost;
+        this.adminCostBu = adminCostBu;
+        this.adminCostOd = adminCostOd;
+        this.adminCostCompany = adminCostCompany;
+        this.otherOpCostBu = otherOpCostBu;
+        this.otherOpCostOd = otherOpCostOd;
+        this.otherOpCostCompany = otherOpCostCompany;
+        this.specItems = specItems;
+        this.provisions = provisions;
+        this.currencyGains = currencyGains;
+        this.valAdjustInventories = valAdjustInventories;
+        this.otherFixCost = otherFixCost;
+        this.depreciation = depreciation;
+        this.capCost = capCost;
+        this.equityIncome = equityIncome;
+    }
+
     public double getFixPreManCost() {
         return fixPreManCost;
     }

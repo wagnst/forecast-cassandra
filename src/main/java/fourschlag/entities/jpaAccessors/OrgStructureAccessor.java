@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.OrgStructureEntity;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class OrgStructureAccessor extends Accessor {
     public List<OrgStructureEntity> getProductsAndSbus() {
         Query query = getEntityManager().createQuery(
-                "select e.primaryKey.productMainGroup, e.primaryKey.sbu from OrgStructureEntity e");
+                "select e from OrgStructureEntity e", OrgStructureEntity.class);
 
         return (List<OrgStructureEntity>) query.getResultList();
     }

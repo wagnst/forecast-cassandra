@@ -1,4 +1,4 @@
-package fourschlag.entities.jpalAccessors;
+package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ActualSalesEntity;
 
@@ -15,7 +15,7 @@ public class ActualSalesAccessor extends Accessor {
             String dataSource) {
 
         Query query = getEntityManager().createQuery(
-                "select e from ActualSalesEntity e " +
+                "select new ActualSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.currency) from ActualSalesEntity e " +
                         "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
                         "and e.primaryKey.period = " + period + " " +
                         "and e.primaryKey.region = '" + region + "' " +
@@ -27,7 +27,7 @@ public class ActualSalesAccessor extends Accessor {
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {
         Query query = getEntityManager().createQuery(
-                "select distinct NEW ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
+                "select distinct new ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ActualSalesEntity e", ActualSalesEntity.class);
 
         return query.getResultList();

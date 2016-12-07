@@ -24,6 +24,14 @@ public class ForecastSalesKey implements Serializable{
     @Column(name = "entry_type")
     private String entryType;
 
+    public ForecastSalesKey() {
+    }
+
+    public ForecastSalesKey(String productMainGroup, String region) {
+        this.region = region;
+        this.productMainGroup = productMainGroup;
+    }
+
     public int getPeriod() {
         return period;
     }

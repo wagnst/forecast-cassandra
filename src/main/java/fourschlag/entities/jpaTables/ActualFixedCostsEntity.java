@@ -34,6 +34,23 @@ public class ActualFixedCostsEntity extends FixedCostsEntity {
     @Column(name = "period_quarter")
     private int periodQuarter;
 
+    public ActualFixedCostsEntity() {}
+
+    public ActualFixedCostsEntity(String sbu, String subregion) {
+        this.primaryKey = new ActualFixedCostsKey(sbu, subregion);
+    }
+
+    public ActualFixedCostsEntity(double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
+                                  double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd,
+                                  double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
+                                  double otherOpCostCompany, double specItems, double provisions, double currencyGains,
+                                  double valAdjustInventories, double otherFixCost, double depreciation, double capCost,
+                                  double equityIncome, String currency) {
+        super(fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd,
+                adminCostCompany, otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains,
+                valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome, currency);
+    }
+
     public ActualFixedCostsKey getPrimaryKey() {
         return primaryKey;
     }

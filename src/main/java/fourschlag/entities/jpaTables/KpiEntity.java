@@ -8,6 +8,13 @@ public class KpiEntity {
     @Column(name = "currency")
     private String currency;
 
+    public KpiEntity() {
+    }
+
+    public KpiEntity(String currency) {
+        this.currency = currency;
+    }
+
     public String getCurrency() {
         return currency;
     }

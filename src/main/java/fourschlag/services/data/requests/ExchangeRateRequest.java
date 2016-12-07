@@ -1,6 +1,6 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.jpalAccessors.ExchangeRateAccessor;
+import fourschlag.entities.jpaAccessors.ExchangeRateAccessor;
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.Period;

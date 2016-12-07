@@ -21,6 +21,14 @@ public class ForecastFixedCostsKey implements Serializable {
     @Column(name = "entry_type")
     private String entryType;
 
+    public ForecastFixedCostsKey() {
+    }
+
+    public ForecastFixedCostsKey(String sbu, String subregion) {
+        this.sbu = sbu;
+        this.subregion = subregion;
+    }
+
     public int getPeriod() {
         return period;
     }
