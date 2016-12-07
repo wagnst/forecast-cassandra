@@ -15,7 +15,7 @@ public class ActualSalesAccessor extends Accessor {
             String dataSource) {
 
         Query query = getEntityManager().createQuery(
-                "select * from ActualSalesEntity e " +
+                "select e from ActualSalesEntity e " +
                         "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
                         "and e.primaryKey.period = " + period + " " +
                         "and e.primaryKey.region = '" + region + "' " +
@@ -31,9 +31,5 @@ public class ActualSalesAccessor extends Accessor {
                         "from ActualSalesEntity e", ActualSalesEntity.class);
 
         return query.getResultList();
-    }
-
-    public static void main(String[] args) {
-        ActualSalesEntity entity = new ActualSalesAccessor().getSalesKPIs("Beck's Gold", 201601, "Asia", "3rd_party", "BW B");
     }
 }
