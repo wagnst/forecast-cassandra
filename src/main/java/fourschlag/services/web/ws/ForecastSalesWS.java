@@ -1,5 +1,9 @@
 package fourschlag.services.web.ws;
 
+import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.OutputDataType;
+import fourschlag.entities.types.Period;
+import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.service.SalesService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.db.ClusterEndpoints;
@@ -10,13 +14,24 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static fourschlag.services.web.ws.ParameterValidator.*;
+
 /**
  * ForecastSalesWS offers web service to get KPIs from a database
  */
-@Path("/sales")
+@Path("/{keyspace}/sales")
 public class ForecastSalesWS {
-    private CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
-    private SalesService salesService = new SalesService(connection);
+
+    private CassandraConnection connection;
+    private SalesService salesService;
+
+    /**
+     * Constructor to initialize the database connection and services
+     */
+    public ForecastSalesWS(@PathParam("keyspace") String keyspace) {
+        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        salesService = new SalesService(connection);
+    }
 
     /**
      * Method returns all entries from table forecast_sales
@@ -45,9 +60,17 @@ public class ForecastSalesWS {
             @PathParam("region") String region,
             @PathParam("period") int period,
             @PathParam("salesType") String salesType,
-            @PathParam("planPeriod") int planPeriod,
+            @PathParam("planPeriod") int planPeriodInt,
             @PathParam("entryType") String entryType) {
-        return Response.ok(salesService.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType)).build();
+
+        if (validatePeriod(period) && validateSalesType(salesType) && validatPlanPeriod(planPeriodInt) && validateEntryType(entryType)) {
+            Period currentPeriod = new Period(period);
+            Period planPeriod = new Period(planPeriodInt);
+            return Response.ok(salesService.getForecastSales(productMainGroup, region, currentPeriod,
+                    SalesType.valueOf(salesType.toUpperCase()), planPeriod, EntryType.valueOf(entryType.toUpperCase()))).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
     }
 
     /**
@@ -57,7 +80,7 @@ public class ForecastSalesWS {
      * @return a specific entry of forecast_sales
      */
     @GET
-    @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/entry_type/{entryType}/plan_period_from/{planPeriodFrom}/plan_period_to/{planPeriodTo}")
+    @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/entry_type/{entryType}/plan_year/{planYear}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastFixedCost(
             @PathParam("productMainGroup") String productMainGroup,
@@ -65,9 +88,16 @@ public class ForecastSalesWS {
             @PathParam("period") int period,
             @PathParam("salesType") String salesType,
             @PathParam("entryType") String entryType,
-            @PathParam("planPeriodFrom") int planPeriodFrom,
-            @PathParam("planPeriodTo") int planPeriodTo) {
-        return Response.ok(salesService.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo)).build();
+            @PathParam("planYear") int planYear) {
+
+        if (validatePeriod(period) && validateSalesType(salesType) && validateEntryType(entryType)) {
+            Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+            return Response.ok(salesService.getForecastSales(productMainGroup, region, new Period(period),
+                    SalesType.valueOf(salesType.toUpperCase()), EntryType.valueOf(entryType.toUpperCase()),
+                    new Period(planYear), planPeriodTo)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
     }
 
     /**
@@ -107,7 +137,7 @@ public class ForecastSalesWS {
                 status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
     }
 }

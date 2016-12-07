@@ -1,10 +1,7 @@
 package fourschlag.services.data.service;
 
 import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
-import fourschlag.entities.types.Currency;
-import fourschlag.entities.types.OutputDataType;
-import fourschlag.entities.types.Period;
-import fourschlag.entities.types.SalesType;
+import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.kpi.SalesKpiRequest;
@@ -78,14 +75,14 @@ public class SalesService extends Service {
     /**
      * @return a list of specific ForecastSalesEntities
      */
-    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
         return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
     }
 
     /**
      * @return a specific ForecastSalesEntity
      */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, Period planPeriod, EntryType entryType) {
         return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
     }
 

@@ -22,15 +22,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static fourschlag.services.web.ws.ParameterValidator.*;
+
 /**
  * ForecastWS offers web service to get KPIs from a database
  */
-@Path("/forecast")
+@Path("/{keyspace}/forecast/")
 public class ForecastWS {
 
-    private CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
-    private SalesService salesService = new SalesService(connection);
-    private FixedCostsService fixedCostsService = new FixedCostsService(connection);
+    private CassandraConnection connection;
+    private SalesService salesService;
+    private FixedCostsService fixedCostsService;
+
+    /**
+     * Constructor to initialize the database connection and services
+     */
+    public ForecastWS(@PathParam("keyspace") String keyspace) {
+        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        salesService = new SalesService(connection);
+        fixedCostsService = new FixedCostsService(connection);
+    }
 
     /* TODO: Maybe close session each time, but not connection */
     /* TODO: Create Connection pool and remove the connection from this WS */
@@ -52,51 +63,34 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
+
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        /* Get correct currency object from currency enum */
-        Currency curr = Currency.getCurrencyByAbbreviation(currency);
+        if (validateCurrency(currency) && validatePeriod(period)) {
+            Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
-        /* If no currency is found, abort the request */
-        if (curr == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Currency not supported: "
-                    + currency).build();
-        }
+            Period currentPeriod = new Period(period);
+            Period planPeriod = Period.getPeriodByYear(planYear);
 
-        Period currentPeriod;
-        Period planPeriod;
-        try {
-            /* Create instance of Period with the given int value */
-            currentPeriod = new Period(period);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
-                    + ex.getMessage() + " : " + period).build();
-        }
-
-        try {
-            planPeriod = Period.getPeriodByYear(planYear);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter planYear is not valid: "
-                    + ex.getMessage() + " : " + planYear).build();
-        }
-
-        /* Get all Sales KPIs and save them to a stream */
-        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planPeriod, currentPeriod, curr);
-        /* Also save the Fixed Costs KPIs to a stream */
-        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planPeriod, currentPeriod, curr);
-
-        /* Combine both streams to one */
-        List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
+            /* Get all Sales KPIs and save them to a stream */
+            Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(planPeriod, currentPeriod, curr);
+            /* Also save the Fixed Costs KPIs to a stream */
+            Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(planPeriod, currentPeriod, curr);
+            /* Combine both streams to one */
+            List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
                 /* Sort the whole stream */
-                .sorted(new OutputDataTypeComparator())
+                    .sorted(new OutputDataTypeComparator())
                 /* Convert the stream to a List */
-                .collect(Collectors.toList());
+                    .collect(Collectors.toList());
 
         /* Close both streams */
-        salesKpis.close();
-        fixedCostsKpis.close();
+            salesKpis.close();
+            fixedCostsKpis.close();
         /* Return the result list with a code 200 */
-        return Response.ok(resultList, Params.MEDIATYPE).build();
+            return Response.ok(resultList, Params.MEDIATYPE).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
     }
 
     /**
@@ -116,43 +110,26 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
+
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        /* Get correct currency object from currency enum */
-        Currency curr = Currency.getCurrencyByAbbreviation(currency);
+        if (validateCurrency(currency) && validatePeriod(period)) {
+            Currency curr = Currency.getCurrencyByAbbreviation(currency);
+            Period currentPeriod = new Period(period);
+            Period planPeriod = Period.getPeriodByYear(planYear);
 
-        /* If no currency is found, abort the request */
-        if (curr == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Currency not supported: "
-                    + currency).build();
+            /* Get all Sales KPIs and save them to a stream */
+            List<OutputDataType> resultList = salesService.getSalesKPIs(planPeriod, currentPeriod, curr)
+                    /* Sort the whole stream */
+                    .sorted(new OutputDataTypeComparator())
+                    /* Convert the stream to a List */
+                    .collect(Collectors.toList());
+
+            /* Return the result list with a code 200 */
+            return Response.ok(resultList, Params.MEDIATYPE).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
-
-        Period currentPeriod;
-        Period planPeriod;
-        try {
-            /* Create instance of Period with the given int value */
-            currentPeriod = new Period(period);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
-                    + ex.getMessage() + " : " + period).build();
-        }
-
-        try {
-            planPeriod = Period.getPeriodByYear(planYear);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter planYear is not valid: "
-                    + ex.getMessage() + " : " + planYear).build();
-        }
-
-        /* Get all Sales KPIs and save them to a stream */
-        List<OutputDataType> resultList = salesService.getSalesKPIs(planPeriod, currentPeriod, curr)
-                /* Sort the whole stream */
-                .sorted(new OutputDataTypeComparator())
-                /* Convert the stream to a List */
-                .collect(Collectors.toList());
-
-        /* Return the result list with a code 200 */
-        return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
     /**
@@ -172,44 +149,25 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
+
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        /* Get correct currency object from currency enum */
-        Currency curr = Currency.getCurrencyByAbbreviation(currency);
+        if (validateCurrency(currency) && validatePeriod(period)) {
+            Currency curr = Currency.getCurrencyByAbbreviation(currency);
+            Period currentPeriod = new Period(period);
+            Period planPeriod = Period.getPeriodByYear(planYear);
 
-        /* If no currency is found, abort the request */
-        if (curr == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter currency not supported: "
-                    + currency).build();
+            /* Get all Fixed-Costs KPIs and save them to a stream */
+            List<OutputDataType> resultList = fixedCostsService.getFixedCostsKpis(planPeriod, currentPeriod, curr)
+                    /* Sort the whole stream */
+                    .sorted(new OutputDataTypeComparator())
+                    /* Convert the stream to a List */
+                    .collect(Collectors.toList());
+
+            /* Return the result list with a code 200 */
+            return Response.ok(resultList, Params.MEDIATYPE).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
-
-        Period currentPeriod;
-        Period planPeriod;
-        try {
-            /* Create instance of Period with the given int value */
-            currentPeriod = new Period(period);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
-                    + ex.getMessage() + " : " + period).build();
-        }
-
-        try {
-            planPeriod = Period.getPeriodByYear(planYear);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter planYear is not valid: "
-                    + ex.getMessage() + " : " + planYear).build();
-        }
-
-        /* Get all Fixed-Costs KPIs and save them to a stream */
-        List<OutputDataType> resultList = fixedCostsService.getFixedCostsKpis(planPeriod, currentPeriod, curr)
-                /* Sort the whole stream */
-                .sorted(new OutputDataTypeComparator())
-                /* Convert the stream to a List */
-                .collect(Collectors.toList());
-
-        /* Return the result list with a code 200 */
-        return Response.ok(resultList, Params.MEDIATYPE).build();
     }
-
-
 }

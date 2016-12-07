@@ -6,9 +6,9 @@ import fourschlag.entities.types.EntryType;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
+import fourschlag.services.data.requests.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.kpi.FixedCostsKpiRequest;
-import fourschlag.services.data.requests.FixedCostsRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class FixedCostsService extends Service {
      * @param planPeriodTo   in case we have entry_type eq budget leave ot
      *                       planPeriodTo
      *
-     * @return
+     * @return a list of specific ForecastFixedCostsEntities
      */
     public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
         return new FixedCostsRequest(getConnection()).getForecastFixedCosts(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo);
