@@ -32,4 +32,13 @@ public class ActualSalesAccessor extends Accessor {
 
         return query.getResultList();
     }
+
+    public static void main(String[] args) {
+        String productMainGroup = "Beck''s Gold";
+        Query query = getEntityManager().createQuery(
+                "select e from ActualSalesEntity e where e.primaryKey.productMainGroup = :productMainGroup",
+                ActualSalesEntity.class);
+
+        ActualSalesEntity entity = (ActualSalesEntity) query.setParameter("productMainGroup", productMainGroup);
+    }
 }
