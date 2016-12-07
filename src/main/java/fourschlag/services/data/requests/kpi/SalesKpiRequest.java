@@ -12,7 +12,6 @@ import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import static fourschlag.entities.types.KeyPerformanceIndicators.*;
@@ -21,7 +20,7 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
  * Extends Request. Offers Functionality to request Sales KPIs for a specific
  * region, period and product main group
  */
-public class SalesRequest extends KpiRequest {
+public class SalesKpiRequest extends KpiRequest {
 
     private static final String FC_TYPE = "sales";
     private String productMainGroup;
@@ -30,18 +29,7 @@ public class SalesRequest extends KpiRequest {
     private ForecastSalesAccessor forecastAccessor;
 
     /**
-     * Default constructor to only open a database connection
-     *
-     * @param connection Cassandra connection that is supposed to be used
-     */
-    public SalesRequest(CassandraConnection connection) {
-        super(connection);
-
-        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
-    }
-
-    /**
-     * Constructor for SalesRequest
+     * Constructor for SalesKpiRequest
      *
      * @param connection          Cassandra connection that is supposed to be
      *                            used
@@ -56,9 +44,9 @@ public class SalesRequest extends KpiRequest {
      *                            currency
      * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
-    public SalesRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
-                        String region, SalesType salesType, ExchangeRateRequest exchangeRates,
-                        OrgStructureAndRegionRequest orgAndRegionRequest) {
+    public SalesKpiRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
+                           String region, SalesType salesType, ExchangeRateRequest exchangeRates,
+                           OrgStructureAndRegionRequest orgAndRegionRequest) {
         super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
@@ -302,24 +290,6 @@ public class SalesRequest extends KpiRequest {
         return new OutputDataType(kpi, sbu, productMainGroup,
                 region, region, salesType.toString(), entryType.toString(), exchangeRates.getToCurrency(), monthlyValues,
                 bjValues);
-    }
-
-    /**
-     * Gets all ForecastSales with no filter applied
-     *
-     * @return all entities which are present inside forecast_sales
-     */
-    public List<ForecastSalesEntity> getForecastSales() {
-        return forecastAccessor.getAllForecastSales().all();
-    }
-
-    /**
-     * Gets a specific ForecastSalesEntity filtered by joined primary keys
-     *
-     * @return single entity of ForecastSalesEntity
-     */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
     }
 
 }

@@ -2,12 +2,13 @@ package fourschlag.services.data.service;
 
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.Currency;
+import fourschlag.entities.types.EntryType;
 import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.kpi.FixedCostsRequest;
-import fourschlag.services.data.requests.kpi.manipulation.FixedCostsManipulationRequest;
+import fourschlag.services.data.requests.kpi.FixedCostsKpiRequest;
+import fourschlag.services.data.requests.FixedCostsRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.List;
@@ -52,12 +53,12 @@ public class FixedCostsService extends Service {
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
         OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        Map<String, Set<String>> sbuAndSubregions = orgAndRegionRequest.getSubregionsAndSbuFromFixedCosts();
+        Map<String, Set<String>> sbuAndSubregions = new FixedCostsRequest(getConnection()).getSubregionsAndSbu();
 
-        /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsRequest is created */
+        /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsKpiRequest is created */
         resultStream = sbuAndSubregions.keySet().stream().parallel()
                 .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
-                        .flatMap(subregion -> new FixedCostsRequest(getConnection(), sbu, planPeriod, currentPeriod,
+                        .flatMap(subregion -> new FixedCostsKpiRequest(getConnection(), sbu, planPeriod, currentPeriod,
                                 subregion, exchangeRates, orgAndRegionRequest).calculateKpis()));
 
         /* Finally the result stream is returned */
@@ -72,9 +73,29 @@ public class FixedCostsService extends Service {
     }
 
     /**
+     * Method selects FixedCosts depending on parameters. In Request will be
+     * decided if we have some special cases of entryType and depending on that
+     * selecting everything required through the accessors
+     *
+     * @param subregion      desired subregion
+     * @param sbu            desired sbu
+     * @param period         desired period
+     * @param entryType      desired entryType
+     * @param planPeriodFrom in case we have entry_type eq budget leave ot
+     *                       planPeriodTo
+     * @param planPeriodTo   in case we have entry_type eq budget leave ot
+     *                       planPeriodTo
+     *
+     * @return
+     */
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
+        return new FixedCostsRequest(getConnection()).getForecastFixedCosts(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo);
+    }
+
+    /**
      * @return a specific ForecastFixedCostsEntity
      */
-    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, int period, String entryType, int planPeriod) {
+    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
         return new FixedCostsRequest(getConnection()).getForecastFixedCosts(sbu, subregion, period, entryType, planPeriod);
     }
 
@@ -89,7 +110,7 @@ public class FixedCostsService extends Service {
                                          double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
                                          int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
                                          String userId, String entryTs) {
-        return new FixedCostsManipulationRequest(getConnection()).setForecastFixedCosts(
+        return new FixedCostsRequest(getConnection()).setForecastFixedCosts(
                 sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                 otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
                 planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs

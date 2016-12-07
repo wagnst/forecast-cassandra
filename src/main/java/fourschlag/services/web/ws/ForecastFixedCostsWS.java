@@ -1,5 +1,8 @@
 package fourschlag.services.web.ws;
 
+import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.OutputDataType;
+import fourschlag.entities.types.Period;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.db.CassandraConnection;
 import fourschlag.services.db.ClusterEndpoints;
@@ -33,27 +36,97 @@ public class ForecastFixedCostsWS {
     }
 
     /**
-     * Method returns a specifiy entry from table forecast_fixed_costs
+     * Method returns a specific entry from table forecast_fixed_costs
      * as a valid WebService
      *
      * @param sbu        parameter for sbu
      * @param subregion  parameter for subregion
      * @param period     parameter for period
      * @param entryType  parameter for entryType
-     * @param planPeriod parameter for planPeriod
+     * @param planPeriodInt parameter for planPeriod
      *
      * @return a specific entry of forecast_fixed_costs
      */
     @GET
     @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period/{planPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
+    public Response getOneForecastFixedCost(
+            @PathParam("sbu") String sbu,
+            @PathParam("subregion") String subregion,
+            @PathParam("period") int period,
+            @PathParam("entryType") String entryType,
+            @PathParam("planPeriod") int planPeriodInt) {
+
+        Period currentPeriod;
+        Period planPeriod;
+        try {
+            currentPeriod = new Period(period);
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
+                    + ex.getMessage() + " : " + period).build();
+        }
+
+        try {
+            planPeriod = new Period(planPeriodInt);
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
+                    + ex.getMessage() + " : " + period).build();
+        }
+
+        /* TODO: Test if EntryType.valueOf() works properly */
+        return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
+                EntryType.valueOf(entryType), planPeriod)).build();
+    }
+
+    /**
+     * Method returns multiple entries from table forecast_fixed_costs
+     * as a valid WebService
+     *
+     * @param sbu            parameter for sbu
+     * @param subregion      parameter for subregion
+     * @param period         parameter for period
+     * @param entryType      parameter for entryType
+     * @param planYear parameter for planPeriod from
+     *
+     * @return multiple entries of forecast_fixed_costs
+     */
+    @GET
+    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_year/{planYear}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastFixedCost(
             @PathParam("sbu") String sbu,
             @PathParam("subregion") String subregion,
             @PathParam("period") int period,
             @PathParam("entryType") String entryType,
-            @PathParam("planPeriod") int planPeriod) {
-        return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, period, entryType, planPeriod)).build();
+            @PathParam("planYear") int planYear) {
+
+        Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+
+        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
+                EntryType.valueOf(entryType), new Period(planYear), planPeriodTo)).build();
+    }
+
+    /**
+     * Method returns multiple entries from table forecast_fixed_costs
+     * as a valid WebService. Just taking care of budget values
+     *
+     * @param sbu          parameter for sbu
+     * @param subregion    parameter for subregion
+     * @param planYear parameter for planYear from
+     *
+     * @return multiple entries of forecast_fixed_costs
+     */
+    @GET
+    @Path("/sbu/{sbu}/subregion/{subregion}/entry_type/budget/plan_year/{planYear}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getForecastFixedCostBudget(
+            @PathParam("sbu") String sbu,
+            @PathParam("subregion") String subregion,
+            @PathParam("planYear") int planYear) {
+
+        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYear),
+                EntryType.BUDGET, new Period(planYear), null)).build();
+
     }
 
     /**

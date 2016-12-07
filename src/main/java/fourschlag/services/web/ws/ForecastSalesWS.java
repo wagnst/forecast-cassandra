@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * ForecastWS offers web service to get KPIs from a database
+ * ForecastSalesWS offers web service to get KPIs from a database
  */
 @Path("/sales")
 public class ForecastSalesWS {
@@ -32,16 +32,15 @@ public class ForecastSalesWS {
     }
 
     /**
-     * Method returns a specifiy entry from table forecast_fixed_costs
+     * Method returns a specific entry from table forecast_sales
      * as a valid WebService
      *
-     * @return a specific entry of forecast_fixed_costs
+     * @return a specific entry of forecast_sales
      */
     @GET
     @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/plan_period/{planPeriod}/entry_type/{entryType}")
     @Produces(MediaType.APPLICATION_JSON)
-
-    public Response getForecastFixedCost(
+    public Response getOneForecastFixedCost(
             @PathParam("productMainGroup") String productMainGroup,
             @PathParam("region") String region,
             @PathParam("period") int period,
@@ -49,6 +48,26 @@ public class ForecastSalesWS {
             @PathParam("planPeriod") int planPeriod,
             @PathParam("entryType") String entryType) {
         return Response.ok(salesService.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType)).build();
+    }
+
+    /**
+     * Method returns specific entries from table forecast_sales
+     * as a valid WebService
+     *
+     * @return a specific entry of forecast_sales
+     */
+    @GET
+    @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/entry_type/{entryType}/plan_period_from/{planPeriodFrom}/plan_period_to/{planPeriodTo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getForecastFixedCost(
+            @PathParam("productMainGroup") String productMainGroup,
+            @PathParam("region") String region,
+            @PathParam("period") int period,
+            @PathParam("salesType") String salesType,
+            @PathParam("entryType") String entryType,
+            @PathParam("planPeriodFrom") int planPeriodFrom,
+            @PathParam("planPeriodTo") int planPeriodTo) {
+        return Response.ok(salesService.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo)).build();
     }
 
     /**

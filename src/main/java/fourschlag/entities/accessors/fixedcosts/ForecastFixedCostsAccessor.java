@@ -42,6 +42,27 @@ public interface ForecastFixedCostsAccessor {
             @Param("entry_type") String entryType
     );
 
+    /*CQL-Query to get a unique record (depends on primary keys
+        sbu, subregion, period, entry_type and plan_period */
+    @Query("SELECT * FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :plan_period AND entry_type = :entry_type AND plan_period = :plan_period")
+    Result<ForecastFixedCostsEntity> getForecastFixedCost(
+            @Param("sbu") String sbu,
+            @Param("subregion") String subregion,
+            @Param("plan_period") int planPeriod,
+            @Param("entry_type") String entryType
+    );
+
+    /*CQL-Query to get drill-down relevant source data*/
+    @Query("SELECT * FROM forecast_fixed_costs WHERE subregion = :subregion AND sbu = :sbu AND period = :period AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
+    Result<ForecastFixedCostsEntity> getForecastFixedCost(
+            @Param("subregion") String subregion,
+            @Param("sbu") String sbu,
+            @Param("period") int period,
+            @Param("entry_type") String entryType,
+            @Param("plan_period_from") int planPeriodFrom,
+            @Param("plan_period_to") int planPeriodTo
+    );
+
     /*CQL-Query to update a record via primary keys
         sbu, subregion, period, entry_type and plan_period */
     @Query("UPDATE forecast_fixed_costs SET fix_pre_man_cost=:fix_pre_man_cost, ship_cost=:ship_cost, sell_cost=:sell_cost, diff_act_pre_man_cost=:diff_act_pre_man_cost, idle_equip_cost=:idle_equip_cost, rd_cost=:rd_cost, admin_cost_bu=:admin_cost_bu, admin_cost_od=:admin_cost_od, admin_cost_company=:admin_cost_company, other_op_cost_bu=:other_op_cost_bu, other_op_cost_od=:other_op_cost_od, other_op_cost_company=:other_op_cost_company, spec_items=:spec_items, provisions=:provisions, currency_gains=:currency_gains, val_adjust_inventories=:val_adjust_inventories, other_fix_cost=:other_fix_cost, depreciation=:depreciation, cap_cost=:cap_cost, equity_income=:equity_income, topdown_adjust_fix_costs=:topdown_adjust_fix_costs, plan_year=:plan_year, plan_half_year=:plan_half_year, plan_quarter=:plan_quarter, plan_month=:plan_month, status=:status, usercomment=:usercomment, region=:region, period_year=:period_year, period_month=:period_month, currency=:currency, userid=:userid, entry_ts=:entry_ts WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND plan_period = :plan_period AND entry_type = :entry_type")
