@@ -34,6 +34,23 @@ public enum EntryType {
     }
 
     /**
+     * Compares a String with the each content of this enum and returns null or
+     * itself
+     *
+     * @param str String which shall be compared
+     *
+     * @return null or the valid enum
+     */
+    public static EntryType getEntryTypeByString(String str) {
+        for (EntryType et : EntryType.values()) {
+            if (et.getType().equals(str)) {
+                return et;
+            }
+        }
+        return null;
+    }
+
+    /**
      * toString method to print out the currently used type
      *
      * @return EntryType that is currently used
