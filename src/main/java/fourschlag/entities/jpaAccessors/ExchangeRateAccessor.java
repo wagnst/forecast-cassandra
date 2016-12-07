@@ -11,10 +11,14 @@ public class ExchangeRateAccessor extends Accessor{
             String toCurrency) {
 
         Query query = getEntityManager().createQuery(
-                "select e from ExchangeRateEntity e" +
-                        "where e.period = " + period + " " +
-                        "and e.primaryKey.fromCurrency = '" + fromCurrency + "' " +
-                        "and e.primaryKey.toCurrency = '" + toCurrency + "'", ExchangeRateEntity.class);
+                "select e from ExchangeRateEntity e " +
+                        "where e.primaryKey.period = :period " +
+                        "and e.primaryKey.fromCurrency = :fromCurrency " +
+                        "and e.primaryKey.toCurrency = :toCurrency", ExchangeRateEntity.class);
+
+        query.setParameter("period", period);
+        query.setParameter("fromCurrency", fromCurrency);
+        query.setParameter("toCurrency", toCurrency);
 
         return (ExchangeRateEntity) query.getSingleResult();
     }

@@ -18,12 +18,19 @@ public class ForecastSalesAccessor extends Accessor {
                 "select new ForecastSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.topdownAdjustSalesVolumes," +
                         " e.topdownAdjustNetSales, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
-                        "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
-                        "and e.primaryKey.period = " + period + " " +
-                        "and e.primaryKey.planPeriod = " + planPeriod + " " +
-                        "and e.primaryKey.region = '" + region + "' " +
-                        "and e.primaryKey.salesType = '" + salesType + "' " +
-                        "and e.primaryKey.entryType = '" + entryType + "'", ForecastSalesEntity.class);
+                        "where e.primaryKey.productMainGroup = :productMainGroup " +
+                        "and e.primaryKey.period = :period " +
+                        "and e.primaryKey.planPeriod = :planPeriod " +
+                        "and e.primaryKey.region = :region " +
+                        "and e.primaryKey.salesType = :salesType " +
+                        "and e.primaryKey.entryType = :entryType", ForecastSalesEntity.class);
+
+        query.setParameter("productMainGroup", productMainGroup);
+        query.setParameter("period", period);
+        query.setParameter("planPeriod", planPeriod);
+        query.setParameter("region", region);
+        query.setParameter("salesType", salesType);
+        query.setParameter("entryType", entryType);
 
         return (ForecastSalesEntity) query.getSingleResult();
     }
@@ -38,12 +45,18 @@ public class ForecastSalesAccessor extends Accessor {
         Query query = getEntityManager().createQuery(
                 "select new ForecastSalesEntity(e.cm1, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
-                        "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
-                        "and e.primaryKey.period = " + period + " " +
-                        "and e.primaryKey.planPeriod = " + planPeriod + " " +
-                        "and e.primaryKey.region = '" + region + "' " +
-                        "and e.primaryKey.salesType = '" + salesType + "' " +
+                        "where e.primaryKey.productMainGroup = :productMainGroup " +
+                        "and e.primaryKey.period = :period " +
+                        "and e.primaryKey.planPeriod = :planPeriod " +
+                        "and e.primaryKey.region = :region " +
+                        "and e.primaryKey.salesType = :salesType " +
                         "and e.primaryKey.entryType = 'forecast'", ForecastSalesEntity.class);
+
+        query.setParameter("productMainGroup", productMainGroup);
+        query.setParameter("period", period);
+        query.setParameter("planPeriod", planPeriod);
+        query.setParameter("region", region);
+        query.setParameter("salesType", salesType);
 
         return (ForecastSalesEntity) query.getSingleResult();
     }

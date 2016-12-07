@@ -21,11 +21,17 @@ public class ForecastFixedCostsAccessor extends Accessor {
                         " e.valAdjustInventories, e.otherFixCost, e.depreciation, e.capCost, e.equityIncome," +
                         " e.topdownAdjustFixCosts, e.currency) " +
                         "from ForecastFixedCostsEntity e " +
-                        "where e.primaryKey.sbu = '" + sbu + "' " +
-                        "and e.primaryKey.subregion = '" + subregion + "' " +
-                        "and e.primaryKey.period = " + period + " " +
-                        "and e.primaryKey.planPeriod = " + planPeriod + " " +
-                        "and e.primaryKey.entryType = '" + entryType + "'", ForecastFixedCostsEntity.class);
+                        "where e.primaryKey.sbu = :sbu " +
+                        "and e.primaryKey.subregion = :subregion " +
+                        "and e.primaryKey.period = :period " +
+                        "and e.primaryKey.planPeriod = :planPeriod " +
+                        "and e.primaryKey.entryType = :entryType", ForecastFixedCostsEntity.class);
+
+        query.setParameter("sbu", sbu);
+        query.setParameter("subregion", subregion);
+        query.setParameter("period", period);
+        query.setParameter("planPeriod", planPeriod);
+        query.setParameter("entryType", entryType);
 
         return (ForecastFixedCostsEntity) query.getSingleResult();
     }

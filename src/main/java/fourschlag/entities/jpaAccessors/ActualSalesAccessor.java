@@ -16,11 +16,17 @@ public class ActualSalesAccessor extends Accessor {
 
         Query query = getEntityManager().createQuery(
                 "select new ActualSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.currency) from ActualSalesEntity e " +
-                        "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
-                        "and e.primaryKey.period = " + period + " " +
-                        "and e.primaryKey.region = '" + region + "' " +
-                        "and e.primaryKey.salesType = '" + salesType + "' " +
-                        "and e.primaryKey.dataSource = '" + dataSource + "'", ActualSalesEntity.class);
+                        "where e.primaryKey.productMainGroup = :productMainGroup " +
+                        "and e.primaryKey.period = :period " +
+                        "and e.primaryKey.region = :region " +
+                        "and e.primaryKey.salesType = :salesType " +
+                        "and e.primaryKey.dataSource = :dataSource", ActualSalesEntity.class);
+
+        query.setParameter("productMainGroup", productMainGroup);
+        query.setParameter("period", period);
+        query.setParameter("region", region);
+        query.setParameter("salesType", salesType);
+        query.setParameter("dataSource", salesType);
 
         return (ActualSalesEntity) query.getSingleResult();
     }

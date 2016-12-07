@@ -18,9 +18,13 @@ public class ActualFixedCostsAccessor extends Accessor {
                         " e.otherOpCostOd, e.otherOpCostCompany, e.specItems, e.provisions, e.currencyGains," +
                         " e.valAdjustInventories, e.otherFixCost, e.depreciation, e.capCost, e.equityIncome, e.currency) " +
                         "from ActualFixedCostsEntity e " +
-                        "where e.primaryKey.sbu = '" + sbu + "' " +
-                        "and e.primaryKey.subregion = '" + subregion + "' " +
-                        "and e.primaryKey.period = " + period, ActualFixedCostsEntity.class);
+                        "where e.primaryKey.sbu = :sbu " +
+                        "and e.primaryKey.subregion = :subregion " +
+                        "and e.primaryKey.period = :period", ActualFixedCostsEntity.class);
+
+        query.setParameter("sbu", sbu);
+        query.setParameter("subregion", subregion);
+        query.setParameter("period", period);
 
         return (ActualFixedCostsEntity) query.getSingleResult();
     }
