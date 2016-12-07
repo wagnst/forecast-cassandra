@@ -26,8 +26,12 @@ public class ActualSalesAccessor extends Accessor {
     }
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManager().createQuery("select distinct e.primaryKey.productMainGroup, e.primaryKey.region from ActualSalesEntity e");
+        Query query = getEntityManager().createQuery("select distinct NEW ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) from ActualSalesEntity e", ActualSalesEntity.class);
 
-        return (List<ActualSalesEntity>) query.getResultList();
+        return query.getResultList();
+    }
+
+    public static void main(String[] args) {
+        List<ActualSalesEntity> list = new ActualSalesAccessor().getDistinctPmgAndRegions();
     }
 }

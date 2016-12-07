@@ -32,6 +32,10 @@ public class ActualSalesEntity extends SalesEntity {
     public ActualSalesEntity() {
     }
 
+    public ActualSalesEntity(String productMainGroup, String region) {
+        this.primaryKey = new ActualSalesKey(productMainGroup, region);
+    }
+
     public ActualSalesKey getPrimaryKey() {
         return primaryKey;
     }

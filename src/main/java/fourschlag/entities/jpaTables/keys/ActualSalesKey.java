@@ -21,6 +21,13 @@ public class ActualSalesKey implements Serializable {
     @Column(name = "region", nullable = false)
     private String region;
 
+    public ActualSalesKey(String productMainGroup, String region) {
+        this.productMainGroup = productMainGroup;
+        this.region = region;
+    }
+
+    public ActualSalesKey() {}
+
     public String getDataSource() {
         return dataSource;
     }
