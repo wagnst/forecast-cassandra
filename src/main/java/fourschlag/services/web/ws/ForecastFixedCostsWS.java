@@ -13,14 +13,25 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static fourschlag.services.web.ws.ParameterValidator.*;
+
 /**
  * ForecastFixedCostsWS offers web service to get plain fixed costs data from a
  * database
  */
-@Path("/fixedcosts")
+@Path("/{keyspace}/fixedcosts")
 public class ForecastFixedCostsWS {
-    private CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.ORIGINAL_VERSION, true);
-    private FixedCostsService fixedCostsService = new FixedCostsService(connection);
+
+    private CassandraConnection connection;
+    private FixedCostsService fixedCostsService;
+
+    /**
+     * Constructor to initialize the database connection and services
+     */
+    public ForecastFixedCostsWS(@PathParam("keyspace") String keyspace) {
+        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        fixedCostsService = new FixedCostsService(connection);
+    }
 
     /**
      * Method returns all entries from table forecast_fixed_costs
@@ -39,10 +50,10 @@ public class ForecastFixedCostsWS {
      * Method returns a specific entry from table forecast_fixed_costs
      * as a valid WebService
      *
-     * @param sbu        parameter for sbu
-     * @param subregion  parameter for subregion
-     * @param period     parameter for period
-     * @param entryType  parameter for entryType
+     * @param sbu           parameter for sbu
+     * @param subregion     parameter for subregion
+     * @param period        parameter for period
+     * @param entryType     parameter for entryType
      * @param planPeriodInt parameter for planPeriod
      *
      * @return a specific entry of forecast_fixed_costs
@@ -57,36 +68,27 @@ public class ForecastFixedCostsWS {
             @PathParam("entryType") String entryType,
             @PathParam("planPeriod") int planPeriodInt) {
 
-        Period currentPeriod;
-        Period planPeriod;
-        try {
-            currentPeriod = new Period(period);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
-                    + ex.getMessage() + " : " + period).build();
-        }
+        if (validatePeriod(period) && validateEntryType(entryType) && validatPlanPeriod(planPeriodInt)) {
+            Period currentPeriod = new Period(period);
+            Period planPeriod = new Period(planPeriodInt);
 
-        try {
-            planPeriod = new Period(planPeriodInt);
-        } catch (IllegalArgumentException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameter period is not valid: "
-                    + ex.getMessage() + " : " + period).build();
+            /* TODO: Test if EntryType.valueOf() works properly */
+            return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
+                    EntryType.valueOf(entryType.toUpperCase()), planPeriod)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
-
-        /* TODO: Test if EntryType.valueOf() works properly */
-        return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
-                EntryType.valueOf(entryType.toUpperCase()), planPeriod)).build();
     }
 
     /**
      * Method returns multiple entries from table forecast_fixed_costs
      * as a valid WebService
      *
-     * @param sbu            parameter for sbu
-     * @param subregion      parameter for subregion
-     * @param period         parameter for period
-     * @param entryType      parameter for entryType
-     * @param planYear parameter for planPeriod from
+     * @param sbu       parameter for sbu
+     * @param subregion parameter for subregion
+     * @param period    parameter for period
+     * @param entryType parameter for entryType
+     * @param planYear  parameter for planPeriod from
      *
      * @return multiple entries of forecast_fixed_costs
      */
@@ -100,19 +102,23 @@ public class ForecastFixedCostsWS {
             @PathParam("entryType") String entryType,
             @PathParam("planYear") int planYear) {
 
-        Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+        if (validatePeriod(period) && validateEntryType(entryType)) {
+            Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
-                EntryType.valueOf(entryType.toUpperCase()), new Period(planYear), planPeriodTo)).build();
+            return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
+                    EntryType.valueOf(entryType.toUpperCase()), new Period(planYear), planPeriodTo)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
     }
 
     /**
      * Method returns multiple entries from table forecast_fixed_costs
      * as a valid WebService. Just taking care of budget values
      *
-     * @param sbu          parameter for sbu
-     * @param subregion    parameter for subregion
-     * @param planYear parameter for planYear from
+     * @param sbu       parameter for sbu
+     * @param subregion parameter for subregion
+     * @param planYear  parameter for planYear from
      *
      * @return multiple entries of forecast_fixed_costs
      */
@@ -124,9 +130,13 @@ public class ForecastFixedCostsWS {
             @PathParam("subregion") String subregion,
             @PathParam("planYear") int planYear) {
 
-        return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYear),
-                EntryType.BUDGET, new Period(planYear), null)).build();
-
+        //TODO: Validate something here
+        if (true) {
+            return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYear),
+                    EntryType.BUDGET, new Period(planYear), null)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
     }
 
     /**
@@ -182,7 +192,7 @@ public class ForecastFixedCostsWS {
                 planPeriod, planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
     }
 }
