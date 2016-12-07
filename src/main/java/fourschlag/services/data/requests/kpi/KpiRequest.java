@@ -1,6 +1,6 @@
 package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.mysqlTables.KpiEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.Request;

@@ -1,27 +1,18 @@
 package fourschlag.entities.tables.kpi.sales;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Table;
-
 import java.util.UUID;
 
 /**
  * Extends SalesEntity. Provides the data from the ActualSales table
  */
-
-@Table(name = "actual_sales")
 public class ActualSalesEntity extends SalesEntity {
 
-    @Column(name = "data_source")
     private String dataSource;
 
-    @Column(name = "sbu")
     private String sbu;
 
-    @Column(name = "period_half_year")
     private int periodHalfYear;
 
-    @Column(name = "period_quarter")
     private int periodQuarter;
 
     public ActualSalesEntity() {

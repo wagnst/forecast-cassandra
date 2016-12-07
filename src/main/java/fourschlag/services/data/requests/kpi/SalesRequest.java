@@ -1,10 +1,10 @@
 package fourschlag.services.data.requests.kpi;
 
-import fourschlag.entities.accessors.sales.ActualSalesAccessor;
-import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
-import fourschlag.entities.tables.kpi.KpiEntity;
-import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
-import fourschlag.entities.tables.kpi.sales.SalesEntity;
+import fourschlag.entities.mysqlAccessors.ActualSalesAccessor;
+import fourschlag.entities.mysqlAccessors.ForecastSalesAccessor;
+import fourschlag.entities.mysqlTables.ActualSalesEntity;
+import fourschlag.entities.mysqlTables.ForecastSalesEntity;
+import fourschlag.entities.mysqlTables.KpiEntity;
 import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.data.requests.ExchangeRateRequest;
@@ -50,8 +50,8 @@ public class SalesRequest extends KpiRequest {
         this.salesType = salesType;
 
         /* Create needed accessors to be able to do queries */
-        actualAccessor = getManager().createAccessor(ActualSalesAccessor.class);
-        forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
+        actualAccessor = new ActualSalesAccessor();
+        forecastAccessor = new ForecastSalesAccessor();
     }
 
     /**
@@ -60,9 +60,9 @@ public class SalesRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected SalesEntity getActualData(Period tempPlanPeriod) {
+    protected KpiEntity getActualData(Period tempPlanPeriod) {
         /* Send query to the database with data source BW B */
-        SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
+        ActualSalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
                 salesType.getType(), DataSource.BW_B.toString());
 
         /* IF result is empty THEN query again with data source BW A */
@@ -86,9 +86,9 @@ public class SalesRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
+    protected KpiEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
         /* Request data from forecast sales */
-        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+        KpiEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
         /* IF result is null THEN retry query with currentPeriod - 1 */
         if (queryResult == null) {
@@ -107,7 +107,7 @@ public class SalesRequest extends KpiRequest {
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
         /* Request data from forecast sales */
-        SalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
+        ForecastSalesEntity cm1 = forecastAccessor.getCm1(productMainGroup, currentPeriod.getPeriod(),
                 tempPlanPeriod.getPeriod(), region, salesType.toString());
 
         /* IF result is null THEN return 0
@@ -137,7 +137,7 @@ public class SalesRequest extends KpiRequest {
      * @return SalesEntity that contains the query result
      */
     @Override
-    protected SalesEntity getBudgetData(Period tempPlanPeriod) {
+    protected KpiEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getSalesKpis(productMainGroup, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
                 region, salesType.toString(), EntryType.BUDGET.toString());
     }
@@ -150,7 +150,7 @@ public class SalesRequest extends KpiRequest {
      */
     @Override
     protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
-        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+        ForecastSalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
         return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
@@ -162,7 +162,7 @@ public class SalesRequest extends KpiRequest {
      */
     @Override
     protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
-        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+        ForecastSalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
         return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
@@ -176,7 +176,11 @@ public class SalesRequest extends KpiRequest {
     @Override
     protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
         /* Parse the query result to a SalesEntity Instance */
-        SalesEntity queryResult = (SalesEntity) result;
+        if(result.getClass().isInstance(ActualSalesEntity.class)) {
+            ActualSalesEntity queryResult = (ActualSalesEntity) result;
+        } else {
+            ForecastSalesEntity queryResult = (ForecastSalesEntity) result;
+        }
 
         /* Prepare the ValidatedRequest object. One of the parameters is the validated result without topdown values */
         ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());

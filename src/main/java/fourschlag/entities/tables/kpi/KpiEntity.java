@@ -1,8 +1,8 @@
 package fourschlag.entities.tables.kpi;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Transient;
 
+import javax.persistence.Column;
+import javax.persistence.Transient;
 import java.util.UUID;
 
 /**

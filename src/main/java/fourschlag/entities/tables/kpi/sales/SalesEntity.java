@@ -1,10 +1,8 @@
 package fourschlag.entities.tables.kpi.sales;
 
-
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
 import fourschlag.entities.tables.kpi.KpiEntity;
 
+import javax.persistence.Column;
 import java.util.UUID;
 
 /**
@@ -12,8 +10,6 @@ import java.util.UUID;
  */
 public class SalesEntity extends KpiEntity {
 
-
-    @PartitionKey
     @Column(name = "product_main_group")
     private String productMainGroup;
 
