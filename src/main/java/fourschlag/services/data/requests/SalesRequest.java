@@ -6,6 +6,9 @@ import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
 import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
 import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.tables.kpi.sales.SalesEntity;
+import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.Period;
+import fourschlag.entities.types.SalesType;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.*;
@@ -63,17 +66,17 @@ public class SalesRequest extends Request {
      *
      * @return specific entities which are present inside forecast_sales
      */
-    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, int period, String salesType, String entryType, int planPeriodFrom, int planPeriodTo) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo).all();
+    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
     }
 
     /**
-     * Gets a specific ForecastSalesEntity filtered by joined primary keys
+     * Gets a specific ForecastSalesEntity filtered by joinedString primary keys
      *
      * @return single entity of ForecastSalesEntity
      */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, int period, String salesType, int planPeriod, String entryType) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType).one();
+    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, Period planPeriod, EntryType entryType) {
+        return forecastAccessor.getForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), planPeriod.getPeriod(), entryType.getType()).one();
     }
 
     public Map<String, Set<String>> getPmgAndRegions() {
