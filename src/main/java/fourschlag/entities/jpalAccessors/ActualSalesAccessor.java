@@ -15,23 +15,25 @@ public class ActualSalesAccessor extends Accessor {
             String dataSource) {
 
         Query query = getEntityManager().createQuery(
-                "select e.salesVolumes, e.netSales, e.cm1, e.currency from ActualSalesEntity e " +
+                "select * from ActualSalesEntity e " +
                         "where e.primaryKey.productMainGroup = '" + productMainGroup + "' " +
                         "and e.primaryKey.period = " + period + " " +
                         "and e.primaryKey.region = '" + region + "' " +
                         "and e.primaryKey.salesType = '" + salesType + "' " +
-                        "and e.primaryKey.dataSource = '" + dataSource + "'");
+                        "and e.primaryKey.dataSource = '" + dataSource + "'", ActualSalesEntity.class);
 
         return (ActualSalesEntity) query.getSingleResult();
     }
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManager().createQuery("select distinct NEW ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) from ActualSalesEntity e", ActualSalesEntity.class);
+        Query query = getEntityManager().createQuery(
+                "select distinct NEW ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
+                        "from ActualSalesEntity e", ActualSalesEntity.class);
 
         return query.getResultList();
     }
 
     public static void main(String[] args) {
-        List<ActualSalesEntity> list = new ActualSalesAccessor().getDistinctPmgAndRegions();
+        ActualSalesEntity entity = new ActualSalesAccessor().getSalesKPIs("Beck's Gold", 201601, "Asia", "3rd_party", "BW B");
     }
 }
