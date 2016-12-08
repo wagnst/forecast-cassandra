@@ -2,6 +2,7 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ActualFixedCostsEntity;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -26,7 +27,12 @@ public class ActualFixedCostsAccessor extends Accessor {
         query.setParameter("subregion", subregion);
         query.setParameter("period", period);
 
-        return (ActualFixedCostsEntity) query.getSingleResult();
+        try {
+            return (ActualFixedCostsEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+
     }
 
     public List<ActualFixedCostsEntity> getDistinctSbuAndSubregions() {

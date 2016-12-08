@@ -2,6 +2,7 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -32,7 +33,11 @@ public class ForecastSalesAccessor extends Accessor {
         query.setParameter("salesType", salesType);
         query.setParameter("entryType", entryType);
 
-        return (ForecastSalesEntity) query.getSingleResult();
+        try {
+            return (ForecastSalesEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public ForecastSalesEntity getCm1(
@@ -58,7 +63,11 @@ public class ForecastSalesAccessor extends Accessor {
         query.setParameter("region", region);
         query.setParameter("salesType", salesType);
 
-        return (ForecastSalesEntity) query.getSingleResult();
+        try {
+            return (ForecastSalesEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public List<ForecastSalesEntity> getDistinctPmgAndRegions() {

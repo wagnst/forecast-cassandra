@@ -2,6 +2,7 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ActualSalesEntity;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class ActualSalesAccessor extends Accessor {
         query.setParameter("salesType", salesType);
         query.setParameter("dataSource", salesType);
 
-        return (ActualSalesEntity) query.getSingleResult();
+        try {
+            return (ActualSalesEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {

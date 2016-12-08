@@ -2,6 +2,7 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 public class ExchangeRateAccessor extends Accessor{
@@ -20,6 +21,10 @@ public class ExchangeRateAccessor extends Accessor{
         query.setParameter("fromCurrency", fromCurrency);
         query.setParameter("toCurrency", toCurrency);
 
-        return (ExchangeRateEntity) query.getSingleResult();
+        try {
+            return (ExchangeRateEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 }

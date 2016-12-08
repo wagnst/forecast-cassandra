@@ -94,6 +94,26 @@ public class ForecastWS {
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
+    public static void main(String[] args) {
+        SalesService salesService = new SalesService();
+        FixedCostsService fixedCostsService = new FixedCostsService();
+
+        /* Get all Sales KPIs and save them to a stream */
+        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(Period.getPeriodByYear(2016), new Period(201606), Currency.DOLLAR);
+        /* Also save the Fixed Costs KPIs to a stream */
+        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(Period.getPeriodByYear(2016), new Period(201606), Currency.DOLLAR);
+
+        /* Combine both streams to one */
+        List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
+                /* Sort the whole stream */
+                .sorted(new OutputDataTypeComparator())
+                /* Convert the stream to a List */
+                .collect(Collectors.toList());
+
+        System.out.println("Finished");
+        System.out.println(resultList.size());
+    }
+
     /**
      * This method collects only sales dependent forecast KPI's in
      * the different service classes

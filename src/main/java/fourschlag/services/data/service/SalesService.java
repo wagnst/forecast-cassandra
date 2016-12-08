@@ -43,12 +43,13 @@ public class SalesService extends Service {
         Map<String, Set<String>> productAndRegions = new SalesRequest().getPmgAndRegionsFromSales();
 
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
-        resultStream = productAndRegions.keySet().stream().parallel()
+        resultStream = productAndRegions.keySet().stream()
                 .flatMap(product -> productAndRegions.get(product).stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
                                 .flatMap(salesType -> new SalesKpiRequest(product, planPeriod, currentPeriod, region,
                                         salesType, exchangeRates, orgAndRegionRequest).calculateKpis())));
 
+        System.out.println("Finished with sales");
         /* Finally the result stream will be returned */
         return resultStream;
     }

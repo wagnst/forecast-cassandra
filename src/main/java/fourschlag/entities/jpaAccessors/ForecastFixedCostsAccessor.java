@@ -2,6 +2,7 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ForecastFixedCostsEntity;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -33,7 +34,11 @@ public class ForecastFixedCostsAccessor extends Accessor {
         query.setParameter("planPeriod", planPeriod);
         query.setParameter("entryType", entryType);
 
-        return (ForecastFixedCostsEntity) query.getSingleResult();
+        try {
+            return (ForecastFixedCostsEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public List<ForecastFixedCostsEntity> getDistinctSbuAndSubregions() {
