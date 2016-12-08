@@ -40,7 +40,7 @@ public class ForecastSalesWS {
      * @return all entries from forecast_sales
      */
     @GET
-    @Path("")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastSales() {
         return Response.ok(salesService.getForecastSales()).build();
@@ -63,11 +63,11 @@ public class ForecastSalesWS {
             @PathParam("planPeriod") int planPeriodInt,
             @PathParam("entryType") String entryType) {
 
-        if (validatePeriod(period) && validateSalesType(salesType) && validatPlanPeriod(planPeriodInt) && validateEntryType(entryType)) {
+        if (validatePeriod(period) && validateSalesType(salesType) && validatePeriod(planPeriodInt) && validateEntryType(entryType)) {
             Period currentPeriod = new Period(period);
             Period planPeriod = new Period(planPeriodInt);
             return Response.ok(salesService.getForecastSales(productMainGroup, region, currentPeriod,
-                    SalesType.valueOf(salesType.toUpperCase()), planPeriod, EntryType.valueOf(entryType.toUpperCase()))).build();
+                    SalesType.getSalesTypeByString(salesType), planPeriod, EntryType.getEntryTypeByString(entryType))).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
@@ -90,11 +90,11 @@ public class ForecastSalesWS {
             @PathParam("entryType") String entryType,
             @PathParam("planYear") int planYear) {
 
-        if (validatePeriod(period) && validateSalesType(salesType) && validateEntryType(entryType)) {
-            Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+        if (validatePeriod(period) && validateSalesType(salesType) && validateEntryType(entryType) && validatePlanYear(planYear)) {
+            Period planPeriodTo = Period.getPeriodByYear(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
             return Response.ok(salesService.getForecastSales(productMainGroup, region, new Period(period),
-                    SalesType.valueOf(salesType.toUpperCase()), EntryType.valueOf(entryType.toUpperCase()),
-                    new Period(planYear), planPeriodTo)).build();
+                    SalesType.getSalesTypeByString(salesType), EntryType.getEntryTypeByString(entryType),
+                    Period.getPeriodByYear(planYear), planPeriodTo)).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
@@ -107,7 +107,7 @@ public class ForecastSalesWS {
      * @return HTTP Response OK or BAD_REQUEST
      */
     @POST
-    @Path("")
+    @Path("/")
     public Response createForecastSales(
             @FormParam("topdown_adjust_sales_volumes") double topdownAdjustSalesVolumes,
             @FormParam("topdown_adjust_net_sales") double topdownAdjustNetSales,

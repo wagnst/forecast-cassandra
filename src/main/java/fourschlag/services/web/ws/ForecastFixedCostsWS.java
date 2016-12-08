@@ -40,7 +40,7 @@ public class ForecastFixedCostsWS {
      * @return all entries from forecast_fixed_costs
      */
     @GET
-    @Path("")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastFixedCosts() {
         return Response.ok(fixedCostsService.getForecastFixedCosts()).build();
@@ -68,13 +68,13 @@ public class ForecastFixedCostsWS {
             @PathParam("entryType") String entryType,
             @PathParam("planPeriod") int planPeriodInt) {
 
-        if (validatePeriod(period) && validateEntryType(entryType) && validatPlanPeriod(planPeriodInt)) {
+        if (validatePeriod(period) && validateEntryType(entryType) && validatePeriod(planPeriodInt)) {
             Period currentPeriod = new Period(period);
             Period planPeriod = new Period(planPeriodInt);
 
             /* TODO: Test if EntryType.valueOf() works properly */
             return Response.ok(fixedCostsService.getForecastFixedCosts(sbu, subregion, currentPeriod,
-                    EntryType.valueOf(entryType.toUpperCase()), planPeriod)).build();
+                    EntryType.getEntryTypeByString(entryType), planPeriod)).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
@@ -102,11 +102,11 @@ public class ForecastFixedCostsWS {
             @PathParam("entryType") String entryType,
             @PathParam("planYear") int planYear) {
 
-        if (validatePeriod(period) && validateEntryType(entryType)) {
-            Period planPeriodTo = new Period(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+        if (validatePeriod(period) && validateEntryType(entryType) && validatePlanYear(planYear)) {
+            Period planPeriodTo = Period.getPeriodByYear(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
 
             return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(period),
-                    EntryType.valueOf(entryType.toUpperCase()), new Period(planYear), planPeriodTo)).build();
+                    EntryType.getEntryTypeByString(entryType), Period.getPeriodByYear(planYear), planPeriodTo)).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
@@ -131,9 +131,9 @@ public class ForecastFixedCostsWS {
             @PathParam("planYear") int planYear) {
 
         //TODO: Validate something here
-        if (true) {
+        if (validatePlanYear(planYear)) {
             return Response.ok(fixedCostsService.getForecastFixedCosts(subregion, sbu, new Period(planYear),
-                    EntryType.BUDGET, new Period(planYear), null)).build();
+                    EntryType.BUDGET, Period.getPeriodByYear(planYear), null)).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }
@@ -146,7 +146,7 @@ public class ForecastFixedCostsWS {
      * @return HTTP Response OK or BAD_REQUEST
      */
     @POST
-    @Path("")
+    @Path("/")
     public Response createForecastFixedCosts(
             @FormParam("sbu") String sbu,
             @FormParam("subregion") String subregion,

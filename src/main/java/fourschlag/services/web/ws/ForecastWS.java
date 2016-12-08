@@ -57,7 +57,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/{currency}/{planyear}/{period}")
+    @Path("/period/{period}/planyear/{planyear}/currency/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKPIs(
             @PathParam("currency") String currency,
@@ -66,7 +66,7 @@ public class ForecastWS {
 
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        if (validateCurrency(currency) && validatePeriod(period)) {
+        if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
             Period currentPeriod = new Period(period);
@@ -104,7 +104,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/{currency}/{planyear}/{period}/sales")
+    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/sales")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSalesKPIs(
             @PathParam("currency") String currency,
@@ -113,7 +113,7 @@ public class ForecastWS {
 
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        if (validateCurrency(currency) && validatePeriod(period)) {
+        if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
             Period currentPeriod = new Period(period);
             Period planPeriod = Period.getPeriodByYear(planYear);
@@ -143,7 +143,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/{currency}/{planyear}/{period}/fixedcosts")
+    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/fixedcosts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFixedCostsKPIs(
             @PathParam("currency") String currency,
@@ -152,7 +152,7 @@ public class ForecastWS {
 
         //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
-        if (validateCurrency(currency) && validatePeriod(period)) {
+        if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
             Period currentPeriod = new Period(period);
             Period planPeriod = Period.getPeriodByYear(planYear);

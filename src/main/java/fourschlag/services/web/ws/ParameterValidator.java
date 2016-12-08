@@ -20,24 +20,24 @@ public class ParameterValidator {
         return true;
     }
 
-    public static boolean validateSalesType(String salesType) {
-        if (SalesType.getSalesTypeByString(salesType).equals(null)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean validatPlanPeriod(int planPeriod) {
+    public static boolean validatePlanYear(int year) {
         try {
-            Period currentPlanPeriod = new Period(planPeriod);
+            Period currentPlanYear = Period.getPeriodByYear(year);
         } catch (IllegalArgumentException ex) {
             return false;
         }
         return true;
     }
 
+    public static boolean validateSalesType(String salesType) {
+        if (SalesType.getSalesTypeByString(salesType) == null) {
+            return false;
+        }
+        return true;
+    }
+
     public static boolean validateEntryType(String entryType) {
-        if (EntryType.getEntryTypeByString(entryType).equals(null)) {
+        if (EntryType.getEntryTypeByString(entryType) == null) {
             return false;
         }
         return true;
