@@ -4,7 +4,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 public class Accessor {
-    private static EntityManager entityManager = Persistence.createEntityManagerFactory("fourschlag")
+    private static final String PERSISTENCE_UNIT_NAME = "fourschlag";
+
+    private static EntityManager entityManager = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME)
             .createEntityManager();
 
     public static EntityManager getEntityManager() {
