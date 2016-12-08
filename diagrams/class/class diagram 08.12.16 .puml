@@ -36,8 +36,8 @@ package fourschlag {
 
 
         package fourschlag.entities.tables{
-            package fourschlag.entities.tables.kpis {
-                package fixedcost {
+            package fourschlag.entities.tables.kpi {
+                package fourschlag.entities.tables.kpi.fixedcosts {
                     Class ActualFixedCostsEntity
 
                     Class FixedCostsEntity
@@ -50,7 +50,7 @@ package fourschlag {
                 }
 
 
-            package fourschlag.entities.tables.sale{
+            package fourschlag.entities.tables.sales{
                 Class ActualSalesEntity
                 Class ForecastSalesEntity
                 Class SalesEntity
@@ -131,11 +131,11 @@ package fourschlag {
 
             package fourschlag.services.data.requests {
                 package fourschlag.services.data.requests.kpi {
-                    Class FixedCostsRequest
+                    Class FixedCostsKpiRequest
 
                     Abstract Class KpiRequest
 
-                    Class SalesRequest
+                    Class SalesKpiRequest
 
                 }
 
@@ -143,6 +143,8 @@ package fourschlag {
                     +double : getExchangeRate()
                     +String : getToCurrency()
                 }
+
+                Class FixedCostsRequest
 
                 Class OrgStructureAndRegionRequest {
                     +Set<String> : getRegionsAsSetFromSales()
@@ -154,10 +156,16 @@ package fourschlag {
                     +MappingManager : getManager()
                 }
 
+                Class SalesRequest
+
                     ' inherits for Request
                     Request <|-- KpiRequest
                     Request <|-- ExchangeRateRequest
+                    Request <|-- FixedCostsRequest
                     Request <|-- OrgStructureAndRegionRequest
+                    Request <|-- SalesRequest
+                    KpiRequest <|-- FixedCostsKpiRequest
+                    KpiRequest <|-- SalesKpiRequest
 
 
                 ' ExchangeRateRequest gets data from ExchangeRateAccessor
