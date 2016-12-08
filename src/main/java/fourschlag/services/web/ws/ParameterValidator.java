@@ -30,7 +30,7 @@ public class ParameterValidator {
     }
 
     public static boolean validateSalesType(String salesType) {
-        if (SalesType.getSalesTypeByString(salesType).equals(null)) {
+        if (SalesType.getSalesTypeByString(salesType) == null) {
             return false;
         }
         return true;
