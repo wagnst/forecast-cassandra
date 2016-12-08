@@ -32,10 +32,21 @@ package fourschlag {
             Interface OrgStructureAccessor
 
             Interface RegionAccessor
+
+            ' create usages from Accessors to different Entities
+            ActualSalesAccessor *-- ActualSalesEntity : use
+            ActualFixedCostsAccessor *-- ActualFixedCostsEntity : use
+
+            ForecastSalesAccessor *-- ForecastSalesEntity : use
+            ForecastFixedCostsAccessor *-- ForecastFixedCostsEntity : use
+
+            ExchangeRateAccessor *-- ExchangeRateEntity : use
+            OrgStructureAccessor *-- OrgStructureEntity : use
+            RegionAccessor *-- RegionEntity : use
         }
 
 
-        package fourschlag.entities.tables{
+        package fourschlag.entities.tables {
             package fourschlag.entities.tables.kpi {
                 package fourschlag.entities.tables.kpi.fixedcosts {
                     Class ActualFixedCostsEntity
@@ -50,14 +61,14 @@ package fourschlag {
                 }
 
 
-            package fourschlag.entities.tables.kpi.sales{
-                Class ActualSalesEntity
-                Class ForecastSalesEntity
-                Class SalesEntity
+                package fourschlag.entities.tables.kpi.sales {
+                    Class ActualSalesEntity
+                    Class ForecastSalesEntity
+                    Class SalesEntity
 
-                ' inheritances from SalesEntity
-                SalesEntity <|-- ActualSalesEntity
-                SalesEntity <|-- ForecastSalesEntity
+                    ' inheritances from SalesEntity
+                    SalesEntity <|-- ActualSalesEntity
+                    SalesEntity <|-- ForecastSalesEntity
 
                 }
 
@@ -95,13 +106,7 @@ package fourschlag {
 
             Class OutputDataType
 
-            Class Period {
-                + {static} Period : getPeriodByYear()
-                + Period : increment()
-                + Period : getFirstPeriodOfYear()
-                + int : getZeroMonthPeriod()
-                + int : getPreviousPeriod()
-            }
+            Class Period
 
             Enum SalesType
 
@@ -116,16 +121,7 @@ package fourschlag {
 
             ' inheritances from Period
             Period <|-- ZeroMonthPeriod
-
-             ' create usages from Accessors to different Entities
-                    ActualSalesAccessor *-- ActualSalesEntity : use
-                    ExchangeRateAccessor *-- ExchangeRateEntity : use
-                    ForecastSalesAccessor *-- ForecastSalesEntity : use
-                    OrgStructureAccessor *-- OrgStructureEntity : use
-                    RegionAccessor *-- RegionEntity : use
-
         }
-
     }
  package fourschlag.services {
 
@@ -142,10 +138,12 @@ package fourschlag {
 
                 Class ExchangeRateRequest {
                     +double : getExchangeRate()
-                    +String : getToCurrency()
                 }
 
+                ' TODO: wichtige Methode hier eintragen
                 Class FixedCostsRequest
+
+                Class SalesRequest
 
                 Class OrgStructureAndRegionRequest {
                     +Set<String> : getRegionsAsSetFromSales()
@@ -157,17 +155,14 @@ package fourschlag {
                     +MappingManager : getManager()
                 }
 
-                Class SalesRequest
-
-                    ' inherits for Request
-                    Request <|-- KpiRequest
-                    Request <|-- ExchangeRateRequest
-                    Request <|-- FixedCostsRequest
-                    Request <|-- OrgStructureAndRegionRequest
-                    Request <|-- SalesRequest
-                    KpiRequest <|-- FixedCostsKpiRequest
-                    KpiRequest <|-- SalesKpiRequest
-
+                ' inherits for Request
+                Request <|-- KpiRequest
+                Request <|-- ExchangeRateRequest
+                Request <|-- FixedCostsRequest
+                Request <|-- OrgStructureAndRegionRequest
+                Request <|-- SalesRequest
+                KpiRequest <|-- FixedCostsKpiRequest
+                KpiRequest <|-- SalesKpiRequest
 
                 ExchangeRateRequest *-- ExchangeRateAccessor : use
                 KpiRequests *-- KeyPerformanceIndicators : use
@@ -177,6 +172,8 @@ package fourschlag {
                 SalesRequest *-- ForecastSalesAccessor : use
                 SalesRequest *-- ExchangeRateRequest : use
                 SalesRequest *-- KeyPerformanceIndicators : use
+
+                ' TODO: insert usage from FixedCostsRequest
             }
 
             package fourschlag.services.data.service {
@@ -185,6 +182,7 @@ package fourschlag {
                 }
 
                 Class SalesService {
+                ' TODO: auf Stream anpassen! vgl mit FixedCosts
                     +List<OutputDataType> : getSalesKPIs()
                 }
 
@@ -193,37 +191,29 @@ package fourschlag {
                     +{static}int : getNumberOfMonths()
                 }
 
+                Service <|-- SalesService
+                Service <|-- FixedCostsService
 
-                  Service <|-- SalesService
-                  Service <|-- FixedCostsService
+                FixedCostsService *-- fourschlag.entities.types : use
+                FixedCostsService *-- fourschlag.services.data.requests : use
+                FixedCostsService *-- fourschlag.entities.tables.kpi.sales.ForecastFixedCostsEntity : use
 
-
-                  FixedCostsService *-- fourschlag.entities.types : use
-                  FixedCostsService *-- fourschlag.services.data.requests :use
-
-                  SalesService *-- fourschlag.entities.types :use
-                  SalesService *-- fourschlag.services.data.requests :use
-                  SalesService *-- fourschlag.entities.tables.kpi.sales.ForecastSalesEntity : use
-
+                SalesService *-- fourschlag.entities.types : use
+                SalesService *-- fourschlag.services.data.requests : use
+                SalesService *-- fourschlag.entities.tables.kpi.sales.ForecastSalesEntity : use
             }
         }
 
         package fourschlag.services.db {
             Class CassandraConnection
 
-            Enum ClusterEndpoints {
-                +String : getAddress()
-            }
+            Enum ClusterEndpoints
 
             Class ConnectionPool {
                 + getConnection()
-                + removeConnection()
             }
 
-            Enum KeyspaceNames {
-                +String : getKeyspace()
-            }
-
+            Enum KeyspaceNames
 
             ' internal uses of CassandaConnection
             fourschlag.services.db.CassandraConnection *-- KeyspaceNames : use
@@ -236,6 +226,7 @@ package fourschlag {
 
         package fourschlag.services.web {
             package fourschlag.services.web.ws {
+            'TODO: methoden bei den Webservices hinzufügen
                 Class ForecastFixedCostsWS
 
                 Class ForecastSalesWS
@@ -244,17 +235,8 @@ package fourschlag {
                     +Response : getSalesKPIs()
                 }
 
-                Class ParameterValidator{
-                    +{static}boolean : validatePeriod()
-                    +{static}boolean : validateSalesType()
-                    +{static}boolean : validatPlanPeriod()
-                    +{static}boolean : validateEntryType()
-                    +{static}boolean : validateCurrency()
-                }
+                Class ParameterValidator
             }
-
-
-            ApplicationService -- ForecastWS
 
             ' WS uses SalesService to get the KPI data
             ForecastWS *-- fourschlag.entities.types :use
@@ -268,9 +250,7 @@ package fourschlag {
 
             ForecastSalesWS *-- fourschlag.entities.types : use
             ForecastSalesWS *-- fourschlag.services.db : use
-            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterValidator : use
-
-            ParameterValidator *-- fourschlag.entities.types : use
+            ForecastSalesWS *-- fourschlag.services.web.ws.ParameterValidator : use
         }
     }
 }
