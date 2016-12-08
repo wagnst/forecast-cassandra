@@ -14,8 +14,10 @@ import java.util.stream.Stream;
 
 public class JsonDiff {
     public static void main(String[] args) {
+        if (args.length != 2) {
+            throw new IllegalArgumentException();
+        }
         /* Get both JSON Files and put all entries into a Set to remove all duplicates */
-
         Stream<OutputDataType> ourJson;
         Stream<OutputDataType> spJson;
         try {
@@ -29,14 +31,7 @@ public class JsonDiff {
 
         Set<CompareObject> ourSet;
         Set<CompareObject> spSet;
-        boolean withKpi = true;
-        if (args.length == 1) {
-            if (args[0].equals("false")) {
-                withKpi = false;
-            }
-        }
-
-        if (withKpi) {
+        if (args[0].equals("true")) {
             ourSet = asSetWithKpi(ourJson);
             spSet = asSetWithKpi(spJson);
         } else {
@@ -49,15 +44,29 @@ public class JsonDiff {
         List<CompareObject> spList = getSortedList(spSet);
 
         List<CompareObject> noDuplicates = new ArrayList<>();
-        /* For each object in their List check
-         * IF our List does not contain it
-         * THEN add it to our result list
-         */
-        for (CompareObject param : spList) {
-            if (!ourList.contains(param)) {
-                noDuplicates.add(param);
+
+        if (args[1].equals("true")) {
+            /* For each object in their List check
+             * IF our List does not contain it
+             * THEN add it to our result list
+             */
+            for (CompareObject param : spList) {
+                if (!ourList.contains(param)) {
+                    noDuplicates.add(param);
+                }
+            }
+        } else {
+            /* For each object in our List check
+             * IF their List does not contain it
+             * THEN add it to our result list
+             */
+            for (CompareObject param : ourList) {
+                if (!spList.contains(param)) {
+                    noDuplicates.add(param);
+                }
             }
         }
+
 
         if (noDuplicates.isEmpty()) {
             System.out.println("Your JSON contains all the combinations that are part of the SP JSON!");
@@ -90,7 +99,7 @@ public class JsonDiff {
                 .collect(Collectors.toList());
     }
 
-    private static Stream<OutputDataType> getJsonFromFile(File json) throws IOException{
+    private static Stream<OutputDataType> getJsonFromFile(File json) throws IOException {
         ObjectMapper om = new ObjectMapper();
         OutputDataType[] spEntries = om.readValue(json, OutputDataType[].class);
 
