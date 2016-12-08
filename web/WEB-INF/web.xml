@@ -4,7 +4,8 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-<!--    <display-name>FourSchlag WebService</display-name>
+<!--
+    <display-name>FourSchlag WebService</display-name>
     <servlet>
         <servlet-name>fourschlag-servlet</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer

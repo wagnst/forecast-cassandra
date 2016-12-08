@@ -4,11 +4,11 @@
 
 
 
-window.addEventListener('load', function(){
+window.addEventListener('load', function () {
 
     var table = $('#KpiTable').DataTable({
         "ajax": {
-            "url":"test.json",
+            "url": "test.json",
             "dataSrc": ""
         },
         "info": false,
@@ -47,57 +47,62 @@ window.addEventListener('load', function(){
             {"data": "BJ4"},
             {"data": "Edit"}
         ],
-        "columnDefs": [ {
+        "columnDefs": [{
             "data": null,
             "targets": -1,
             "defaultContent": "<button>Click!</button>"
-        } ]
+        }]
     });
-    
+
     const startbutton = document.getElementById('startbutton');
 
-    $('#KpiTable tbody').on( 'click', 'button', function () {
-        var data = table.row( $(this).parents('tr') ).data();
+    $('#KpiTable tbody').on('click', 'button', function () {
+        var data = table.row($(this).parents('tr')).data();
         const endpointScheme = 'http://';
         const planYear = document.getElementById('datepicker_planYear').value;
         const backend = document.getElementById('backendServer').value;
         const currency = document.getElementById('currency').value;
         const period = document.getElementById('datepicker_period').value;
-        const endpointPath = '/fourschlag/api/';
-        if (data.FC_TYPE == 'sales'){
+        const keyspace = document.getElementById('keyspace').value;
+        const endpointPath = '/fourschlag/api/' + keyspace + '/' ;
+        if (data.FC_TYPE == 'sales') {
             table
                 .clear()
                 .draw();
-            console.log(data.FC_TYPE + ' ich bin sales')
+            console.log(data.FC_TYPE + ' ich bin sales');
             var urlsales = endpointScheme + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
-            + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE  + '/entry_type/' + data.ENTRY_TYPE + ''
-            table.ajax.url( urlsales ).load();
+                + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                '/plan_year/' + planYear;
+            table.ajax.url(urlsales).load();
         }
-        if (data.FC_TYPE == 'fixed costs'){
+        if (data.FC_TYPE == 'fixed costs') {
             table
                 .clear()
                 .draw();
-            console.log(data.FC_TYPE + ' ich bin fixed costs')
-            var urlfixedcosts =
-            table.ajax.url( urlfixedcosts ).load();
+            console.log(data.FC_TYPE + ' ich bin fixed costs');
+            var urlfixedcosts = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                '/plan_year/' + planYear;
+                table.ajax.url(urlfixedcosts).load();
         }
-    } );
+    });
 
-    startbutton.addEventListener('click', function(){
-        const endpointScheme = 'http://'
+    startbutton.addEventListener('click', function () {
+        const endpointScheme = 'http://';
         const planYear = document.getElementById('datepicker_planYear').value;
         const backend = document.getElementById('backendServer').value;
         const kpiType = document.getElementById('kpiType').value;
         const currency = document.getElementById('currency').value;
         const period = document.getElementById('datepicker_period').value;
-        const endpointPath = '/fourschlag/api/forecast/';
-        if (kpiType == 'all'){
+        const keyspace = document.getElementById('keyspace').value;
+        const endpointPath = '/fourschlag/api/' + keyspace + '/forecast/';
+        if (kpiType == 'all') {
             var urlall = endpointScheme + backend + endpointPath + currency + '/' + planYear + '/' + period + '/';
-            table.ajax.url( urlall ).load();
+            table.ajax.url(urlall).load();
         }
-        if(kpiType == 'sales' || kpiType == 'fixedcosts') {
+        if (kpiType == 'sales' || kpiType == 'fixedcosts') {
             var urlother = endpointScheme + backend + endpointPath + currency + '/' + planYear + '/' + period + '/' + kpiType;
-            table.ajax.url( urlother ).load();
+            table.ajax.url(urlother).load();
         }
 
     }, false);
