@@ -1,5 +1,7 @@
 @startuml
 
+scale 0.75
+
 node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
 
     package "fourschlag.war" <<package>>{

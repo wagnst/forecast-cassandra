@@ -55,7 +55,7 @@ public class ForecastSalesWS {
     @GET
     @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/plan_period/{planPeriod}/entry_type/{entryType}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOneForecastFixedCost(
+    public Response getOneForecastsales(
             @PathParam("productMainGroup") String productMainGroup,
             @PathParam("region") String region,
             @PathParam("period") int period,
@@ -82,7 +82,7 @@ public class ForecastSalesWS {
     @GET
     @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/entry_type/{entryType}/plan_year/{planYear}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getForecastFixedCost(
+    public Response getForecastSales(
             @PathParam("productMainGroup") String productMainGroup,
             @PathParam("region") String region,
             @PathParam("period") int period,
