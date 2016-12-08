@@ -11,7 +11,7 @@ public class ExchangeRateAccessor extends Accessor{
             String fromCurrency,
             String toCurrency) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select e from ExchangeRateEntity e " +
                         "where e.primaryKey.period = :period " +
                         "and e.primaryKey.fromCurrency = :fromCurrency " +

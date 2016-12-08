@@ -15,7 +15,7 @@ public class ActualSalesAccessor extends Accessor {
             String salesType,
             String dataSource) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select new ActualSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.currency) from ActualSalesEntity e " +
                         "where e.primaryKey.productMainGroup = :productMainGroup " +
                         "and e.primaryKey.period = :period " +
@@ -27,7 +27,7 @@ public class ActualSalesAccessor extends Accessor {
         query.setParameter("period", period);
         query.setParameter("region", region);
         query.setParameter("salesType", salesType);
-        query.setParameter("dataSource", salesType);
+        query.setParameter("dataSource", dataSource);
 
         try {
             return (ActualSalesEntity) query.getSingleResult();
@@ -37,7 +37,7 @@ public class ActualSalesAccessor extends Accessor {
     }
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select distinct new ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ActualSalesEntity e", ActualSalesEntity.class);
 

@@ -15,7 +15,7 @@ public class ForecastSalesAccessor extends Accessor {
             String salesType,
             String entryType) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select new ForecastSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.topdownAdjustSalesVolumes," +
                         " e.topdownAdjustNetSales, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
@@ -47,7 +47,7 @@ public class ForecastSalesAccessor extends Accessor {
             String region,
             String salesType) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select new ForecastSalesEntity(e.cm1, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
                         "where e.primaryKey.productMainGroup = :productMainGroup " +
@@ -71,7 +71,7 @@ public class ForecastSalesAccessor extends Accessor {
     }
 
     public List<ForecastSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select distinct new ForecastSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ForecastSalesEntity e", ForecastSalesEntity.class);
 

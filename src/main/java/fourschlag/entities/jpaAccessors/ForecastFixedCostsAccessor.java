@@ -15,7 +15,7 @@ public class ForecastFixedCostsAccessor extends Accessor {
             int planPeriod,
             String entryType) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select new ForecastFixedCostsEntity(e.fixPreManCost, e.shipCost, e.sellCost, e.diffActPreManCost, " +
                         "e.idleEquipCost, e.rdCost, e.adminCostBu, e.adminCostOd, e.adminCostCompany, e.otherOpCostBu," +
                         " e.otherOpCostOd, e.otherOpCostCompany, e.specItems, e.provisions, e.currencyGains," +
@@ -42,7 +42,7 @@ public class ForecastFixedCostsAccessor extends Accessor {
     }
 
     public List<ForecastFixedCostsEntity> getDistinctSbuAndSubregions() {
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select distinct new ForecastFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ForecastFixedCostsEntity e", ForecastFixedCostsEntity.class);
 

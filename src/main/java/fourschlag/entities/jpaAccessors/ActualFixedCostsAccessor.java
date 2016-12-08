@@ -13,7 +13,7 @@ public class ActualFixedCostsAccessor extends Accessor {
             String subregion,
             int period) {
 
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select new ActualFixedCostsEntity(e.fixPreManCost, e.shipCost, e.sellCost, e.diffActPreManCost, " +
                         "e.idleEquipCost, e.rdCost, e.adminCostBu, e.adminCostOd, e.adminCostCompany, e.otherOpCostBu," +
                         " e.otherOpCostOd, e.otherOpCostCompany, e.specItems, e.provisions, e.currencyGains," +
@@ -36,7 +36,7 @@ public class ActualFixedCostsAccessor extends Accessor {
     }
 
     public List<ActualFixedCostsEntity> getDistinctSbuAndSubregions() {
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select distinct new ActualFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ActualFixedCostsEntity e", ActualFixedCostsEntity.class);
 

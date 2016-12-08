@@ -7,7 +7,7 @@ import java.util.List;
 
 public class OrgStructureAccessor extends Accessor {
     public List<OrgStructureEntity> getProductsAndSbus() {
-        Query query = getEntityManager().createQuery(
+        Query query = getEntityManagerFactory().createEntityManager().createQuery(
                 "select e from OrgStructureEntity e", OrgStructureEntity.class);
 
         return query.getResultList();
