@@ -200,7 +200,7 @@ package fourschlag {
 
             }
 
-        package fourschlag.services.data.db {
+        package fourschlag.services.db {
             Enum KeyspaceNames {
                 +String : getKeyspace()
             }
@@ -224,8 +224,8 @@ package fourschlag {
             Service *-- CassandraConnection : use
         }
 
-        package fourschlag.services.data.web {
-            package fourschlag.services.data.web.ws {
+        package fourschlag.services.web {
+            package fourschlag.services.web.ws {
                 Class ForecastWS {
                     +Response : getSalesKPIs()
                 }
