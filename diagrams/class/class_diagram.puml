@@ -218,10 +218,6 @@ package fourschlag {
             ' internal uses of CassandaConnection
             fourschlag.services.db.CassandraConnection *-- KeyspaceNames : use
             fourschlag.services.db.CassandraConnection *-- ClusterEndpoints : use
-            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
-
-            ' open database connection
-            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
         }
 
         package fourschlag.services.web {
