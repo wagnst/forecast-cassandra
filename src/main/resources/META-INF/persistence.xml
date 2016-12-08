@@ -11,7 +11,7 @@
         <class>fourschlag.entities.jpaTables.ExchangeRateEntity</class>
         <class>fourschlag.entities.jpaTables.RegionEntity</class>
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3307/original_version?serverTimezone=UTC"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://141.19.144.62:3306/original_version?serverTimezone=UTC"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
             <property name="hibernate.connection.username" value="root"/>
             <property name="hibernate.connection.password" value="fourschlag"/>

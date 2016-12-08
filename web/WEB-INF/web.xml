@@ -25,6 +25,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>fourschlag-servlet</servlet-name>
-        <url-pattern>/fourschlag/*</url-pattern>
+        <url-pattern>/fourschlag_mysql/*</url-pattern>
     </servlet-mapping>
 </web-app>

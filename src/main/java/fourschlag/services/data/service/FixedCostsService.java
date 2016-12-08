@@ -42,7 +42,7 @@ public class FixedCostsService extends Service {
         Map<String, Set<String>> sbuAndSubregions = new FixedCostsRequest().getSubregionsAndSbuFromFixedCosts();
 
         /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsKpiRequest is created */
-        resultStream = sbuAndSubregions.keySet().stream()
+        resultStream = sbuAndSubregions.keySet().stream().parallel()
                 .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
                         .flatMap(subregion -> new FixedCostsKpiRequest(sbu, planPeriod, currentPeriod, subregion,
                                 exchangeRates, orgAndRegionRequest).calculateKpis()));
