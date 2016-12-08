@@ -1,0 +1,245 @@
+@startuml
+/' For available options see
+http://plantuml.com/component-diagram
+http://plantuml.com/class-diagram '/
+
+title
+ <b>Class diagram of <u>FourSchlag</u> project</b>
+ <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
+ <i>Version:</i> <b>DRAFT</b>, 29th Nov 2016
+ <i>Author:</i> Mei Yuan
+end title
+
+left to right direction
+
+package fourschlag {
+    package fourschlag.entities {
+        package fourschlag.entities.accessors {
+            package fourschlag.entities.accessors.fixedcosts {
+                Interface ActualFixedCostsAccessor
+
+                Interface ForecastFixedCostsAccessor
+            }
+
+            package fourschlag.entities.accessors.sales {
+                Interface ActualSalesAccessor
+
+                Interface ForecastSalesAccessor
+            }
+
+            Interface ExchangeRateAccessor
+
+            Interface OrgStructureAccessor
+
+            Interface RegionAccessor
+        }
+
+
+        package fourschlag.entities.tables{
+            package fourschlag.entities.tables.kpis {
+                package fixedcost {
+                    Class ActualFixedCostsEntity
+
+                    Class FixedCostsEntity
+
+                    Class ForecastFixedCostsEntity
+
+                    ' inheritances from FixedCostsEntity
+                    FixedCostsEntity <|-- ActualFixedCostsEntity
+                    FixedCostsEntity <|-- ForecastFixedCostsEntity
+                }
+
+
+            package fourschlag.entities.tables.sale{
+                Class ActualSalesEntity
+                Class ForecastSalesEntity
+                Class SalesEntity
+
+                ' inheritances from SalesEntity
+                SalesEntity <|-- ActualSalesEntity
+                SalesEntity <|-- ForecastSalesEntity
+
+                }
+
+                Class KpiEntity
+
+                ' inheritances from KpiEntity
+                KpiEntity <|-- FixedCostsEntity
+                KpiEntity <|-- SalesEntity
+            }
+
+
+            Class ExchangeRateEntity
+
+            Class OrgStructureEntity
+
+            Class RegionEntity
+
+        }
+
+
+        package fourschlag.entities.types {
+            package fourschlag.entities.types.comparators {
+                Class OutputDataTypeComparator {
+                    + int: compare()
+                }
+            }
+
+            Enum Currency
+
+            Enum DataSource
+
+            Enum EntryType
+
+            Enum KeyPerformanceIndicators
+
+            Class OutputDataType
+
+            Class Period {
+                + {static} Period : getPeriodByYear()
+                + Period : increment()
+                + Period : getFirstPeriodOfYear()
+                + int : getZeroMonthPeriod()
+                + int : getPreviousPeriod()
+            }
+
+            Enum SalesType
+
+            Class ValidatedResult
+
+            Class ValidatedResultTopdown
+
+            Class ZeroMonthPeriod
+
+            ' inheritances from ValidatedResult
+            ValidatedResult <|-- ValidatedResultTopdown
+
+            ' inheritances from Period
+            Period <|-- ZeroMonthPeriod
+
+             ' create usages from Accessors to different Entities
+                    ActualSalesAccessor *-- ActualSalesEntity : use
+                    ExchangeRateAccessor *-- ExchangeRateEntity : use
+                    ForecastSalesAccessor *-- ForecastSalesEntity : use
+                    OrgStructureAccessor *-- OrgStructureEntity : use
+                    RegionAccessor *-- RegionEntity : use
+
+        }
+
+    }
+ package fourschlag.services {
+
+            package fourschlag.services.data.requests {
+                package fourschlag.services.data.requests.kpi {
+                    Class FixedCostsRequest
+
+                    Abstract Class KpiRequest
+
+                    Class SalesRequest
+
+                }
+
+                Class ExchangeRateRequest {
+                    +double : getExchangeRate()
+                    +String : getToCurrency()
+                }
+
+                Class OrgStructureAndRegionRequest {
+                    +Set<String> : getRegionsAsSetFromSales()
+                    +Set<String> : getProductMainGroupsAsSetFromSales()
+                }
+
+                Abstract Class Request {
+                    +Session : getSession()
+                    +MappingManager : getManager()
+                }
+
+                    ' inherits for Request
+                    Request <|-- KpiRequest
+                    Request <|-- ExchangeRateRequest
+                    Request <|-- OrgStructureAndRegionRequest
+
+
+                ' ExchangeRateRequest gets data from ExchangeRateAccessor
+                ExchangeRateRequest *-- ExchangeRateAccessor : use
+
+                ' KpiRequests uses KPI class
+                KpiRequests *-- KeyPerformanceIndicators : use
+
+                ' usages from SalesRequest
+                SalesRequest *-- ActualSalesAccessor : use
+                SalesRequest *-- ForecastSalesAccessor : use
+                SalesRequest *-- ExchangeRateRequest : use
+                SalesRequest *-- KeyPerformanceIndicators : use
+            }
+
+            package fourschlag.services.data.service {
+                Class FixedCostsService {
+                    +Stream<OutputDataType> : getFixedCostsKpis()
+                }
+
+                Class SalesService {
+                    +List<OutputDataType> : getSalesKPIs()
+                }
+
+                Abstract Class Service {
+                    +CassandraConnection : getConnection()
+                    +{static}int : getNumberOfMonths()
+                }
+
+
+                  Service <|-- SalesService
+                  Service <|-- FixedCostsService
+                  Service *-- services.db.CassandraConnection : use
+
+                  FixedCostsService *-- entities.types : use
+                  FixedCostsService *-- services.data.requests :use
+
+                  SalesService *-- entities.types :use
+                  SalesService *-- services.data.requests :use
+
+            }
+
+        package fourschlag.services.db {
+            Enum KeyspaceNames {
+                +String : getKeyspace()
+            }
+
+            Enum ClusterEndpoints {
+                +String : getAddress()
+            }
+
+            Class CassandraConnection {
+                +{static}CassandraConnection : getInstance()
+                +Session : getSession()
+                +MappingManager : getManager()
+                +void : closeConnection()
+            }
+
+            ' internal uses of CassandaConnection
+            CassandraConnection *-- KeyspaceNames : use
+            CassandraConnection *-- ClusterEndpoints : use
+
+            ' open database connection
+            Service *-- CassandraConnection : use
+        }
+
+        package fourschlag.services.web {
+            package fourschlag.services.web.ws {
+                Class ForecastWS {
+                    +Response : getSalesKPIs()
+                }
+            }
+
+            Class ApplicationService<? extends Application>
+
+            ApplicationService -- ForecastWS
+
+            ' WS uses SalesService to get the KPI data
+            ForecastWS *-- entities.types :use
+            ForecastWS *-- services.data.services : use
+            ForecastWS *-- services.db.CassandraConnection : use
+        }
+    }
+}
+@enduml
