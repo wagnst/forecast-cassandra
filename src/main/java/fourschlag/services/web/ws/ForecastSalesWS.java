@@ -1,7 +1,6 @@
 package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.EntryType;
-import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.data.service.SalesService;
@@ -14,7 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static fourschlag.services.web.ws.ParameterValidator.*;
+import static fourschlag.services.web.ws.ParameterUtil.*;
 
 /**
  * ForecastSalesWS offers web service to get KPIs from a database
@@ -43,7 +42,7 @@ public class ForecastSalesWS {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getForecastSales() {
-        return Response.ok(salesService.getForecastSales()).build();
+        return Response.ok(salesService.getAllForecastSales()).build();
     }
 
     /**
@@ -55,7 +54,7 @@ public class ForecastSalesWS {
     @GET
     @Path("/product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/plan_period/{planPeriod}/entry_type/{entryType}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOneForecastsales(
+    public Response getOneForecastSales(
             @PathParam("productMainGroup") String productMainGroup,
             @PathParam("region") String region,
             @PathParam("period") int period,
@@ -66,7 +65,7 @@ public class ForecastSalesWS {
         if (validatePeriod(period) && validateSalesType(salesType) && validatePeriod(planPeriodInt) && validateEntryType(entryType)) {
             Period currentPeriod = new Period(period);
             Period planPeriod = new Period(planPeriodInt);
-            return Response.ok(salesService.getForecastSales(productMainGroup, region, currentPeriod,
+            return Response.ok(salesService.getSpecificForecastSales(productMainGroup, region, currentPeriod,
                     SalesType.getSalesTypeByString(salesType), planPeriod, EntryType.getEntryTypeByString(entryType))).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
@@ -91,10 +90,50 @@ public class ForecastSalesWS {
             @PathParam("planYear") int planYear) {
 
         if (validatePeriod(period) && validateSalesType(salesType) && validateEntryType(entryType) && validatePlanYear(planYear)) {
-            Period planPeriodTo = Period.getPeriodByYear(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
-            return Response.ok(salesService.getForecastSales(productMainGroup, region, new Period(period),
+
+            Period currentPeriod = new Period(period);
+            Period planPeriodFrom = Period.getPeriodByYear(planYear);
+            Period planPeriodTo = ParameterUtil.calculateToPeriod(planPeriodFrom);
+
+            return Response.ok(salesService.getMultipleForecastSales(productMainGroup, region, currentPeriod,
                     SalesType.getSalesTypeByString(salesType), EntryType.getEntryTypeByString(entryType),
-                    Period.getPeriodByYear(planYear), planPeriodTo)).build();
+                    planPeriodFrom, planPeriodTo)).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+        }
+    }
+
+    /**
+     * Method returns multiple entries from table forecast_sales
+     * as a valid WebService. Just taking care of budget values
+     *
+     * @param productMainGroup  parameter for sbu
+     * @param region parameter for subregion
+     * @param salesType parameter for Sales Type
+     * @param planYear  parameter for planYear from
+     *
+     * @return multiple entries of forecast_fixed_costs
+     */
+    @GET
+    @Path("/product_main_group/{productMainGroup}/region/{region}/sales_type/{salesType}/entry_type/budget/plan_year/{planYear}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBudgetForecastSales(
+            @PathParam("productMainGroup") String productMainGroup,
+            @PathParam("region") String region,
+            @PathParam("salesType") String salesType,
+            @PathParam("planYear") int planYear) {
+
+        //TODO: Validate something here
+        if (validatePlanYear(planYear)) {
+            Period planPeriodFrom = Period.getPeriodByYear(planYear);
+            Period planPeriodTo = ParameterUtil.calculateToPeriod(planPeriodFrom);
+
+            return Response.ok(salesService.getBudgetForecastSales(
+                    productMainGroup,
+                    region,
+                    SalesType.getSalesTypeByString(salesType),
+                    planPeriodFrom,
+                    planPeriodTo)).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
         }

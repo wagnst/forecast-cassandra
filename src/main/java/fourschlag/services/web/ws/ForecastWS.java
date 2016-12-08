@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static fourschlag.services.web.ws.ParameterValidator.*;
+import static fourschlag.services.web.ws.ParameterUtil.*;
 
 /**
  * ForecastWS offers web service to get KPIs from a database

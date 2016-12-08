@@ -68,7 +68,7 @@ public class FixedCostsService extends Service {
     /**
      * @return a list of all ForecastFixedCostsEntities
      */
-    public List<ForecastFixedCostsEntity> getForecastFixedCosts() {
+    public List<ForecastFixedCostsEntity> getAllForecastFixedCosts() {
         return new FixedCostsRequest(getConnection()).getForecastFixedCosts();
     }
 
@@ -88,15 +88,27 @@ public class FixedCostsService extends Service {
      *
      * @return a list of specific ForecastFixedCostsEntities
      */
-    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
-        return new FixedCostsRequest(getConnection()).getForecastFixedCosts(subregion, sbu, period, entryType, planPeriodFrom, planPeriodTo);
+    public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,
+                                                                        EntryType entryType, Period planPeriodFrom,
+                                                                        Period planPeriodTo) {
+
+        return new FixedCostsRequest(getConnection()).getMultipleForecastFixedCosts(subregion, sbu, period, entryType,
+                planPeriodFrom, planPeriodTo);
     }
 
     /**
      * @return a specific ForecastFixedCostsEntity
      */
-    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
-        return new FixedCostsRequest(getConnection()).getForecastFixedCosts(sbu, subregion, period, entryType, planPeriod);
+    public ForecastFixedCostsEntity getSpecificForecastFixedCosts(String sbu, String subregion, Period period,
+                                                                  EntryType entryType, Period planPeriod) {
+
+        return new FixedCostsRequest(getConnection()).getSpecificForecastFixedCosts(sbu, subregion, period,
+                entryType, planPeriod);
+    }
+
+    public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String sbu, String subregion, Period planPeriodFrom, Period planPeriodTo) {
+
+        return new FixedCostsRequest(getConnection()).getBudgetForecastFixedCosts(sbu, subregion, planPeriodFrom, planPeriodTo);
     }
 
     /**

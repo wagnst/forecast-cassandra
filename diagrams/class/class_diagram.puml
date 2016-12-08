@@ -238,15 +238,15 @@ package fourschlag {
             ForecastWS *-- fourschlag.entities.types :use
             ForecastWS *-- fourschlag.services.data.service : use
             ForecastWS *-- fourschlag.services.db.CassandraConnection : use
-            ForecastWS *-- fourschlag.services.web.ws.ParameterValidator : use
+            ForecastWS *-- fourschlag.services.web.ws.ParameterUtil : use
 
             ForecastFixedCostsWS *-- fourschlag.entities.types : use
             ForecastFixedCostsWS *-- fourschlag.services.db : use
-            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterValidator : use
+            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterUtil : use
 
             ForecastSalesWS *-- fourschlag.entities.types : use
             ForecastSalesWS *-- fourschlag.services.db : use
-            ForecastSalesWS *-- fourschlag.services.web.ws.ParameterValidator : use
+            ForecastSalesWS *-- fourschlag.services.web.ws.ParameterUtil : use
         }
     }
 }
