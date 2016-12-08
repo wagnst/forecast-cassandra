@@ -50,7 +50,7 @@ package fourschlag {
                 }
 
 
-            package fourschlag.entities.tables.sales{
+            package fourschlag.entities.tables.kpi.sales{
                 Class ActualSalesEntity
                 Class ForecastSalesEntity
                 Class SalesEntity
@@ -129,6 +129,7 @@ package fourschlag {
     }
  package fourschlag.services {
 
+        package fourschlag.services.data {
             package fourschlag.services.data.requests {
                 package fourschlag.services.data.requests.kpi {
                     Class FixedCostsKpiRequest
@@ -168,10 +169,7 @@ package fourschlag {
                     KpiRequest <|-- SalesKpiRequest
 
 
-                ' ExchangeRateRequest gets data from ExchangeRateAccessor
                 ExchangeRateRequest *-- ExchangeRateAccessor : use
-
-                ' KpiRequests uses KPI class
                 KpiRequests *-- KeyPerformanceIndicators : use
 
                 ' usages from SalesRequest
@@ -198,55 +196,81 @@ package fourschlag {
 
                   Service <|-- SalesService
                   Service <|-- FixedCostsService
-                  Service *-- services.db.CassandraConnection : use
 
-                  FixedCostsService *-- entities.types : use
-                  FixedCostsService *-- services.data.requests :use
 
-                  SalesService *-- entities.types :use
-                  SalesService *-- services.data.requests :use
+                  FixedCostsService *-- fourschlag.entities.types : use
+                  FixedCostsService *-- fourschlag.services.data.requests :use
+
+                  SalesService *-- fourschlag.entities.types :use
+                  SalesService *-- fourschlag.services.data.requests :use
+                  SalesService *-- fourschlag.entities.tables.kpi.sales.ForecastSalesEntity : use
 
             }
+        }
 
         package fourschlag.services.db {
-            Enum KeyspaceNames {
-                +String : getKeyspace()
-            }
+            Class CassandraConnection
 
             Enum ClusterEndpoints {
                 +String : getAddress()
             }
 
-            Class CassandraConnection {
-                +{static}CassandraConnection : getInstance()
-                +Session : getSession()
-                +MappingManager : getManager()
-                +void : closeConnection()
+            Class ConnectionPool {
+                + getConnection()
+                + removeConnection()
             }
 
+            Enum KeyspaceNames {
+                +String : getKeyspace()
+            }
+
+
             ' internal uses of CassandaConnection
-            CassandraConnection *-- KeyspaceNames : use
-            CassandraConnection *-- ClusterEndpoints : use
+            fourschlag.services.db.CassandraConnection *-- KeyspaceNames : use
+            fourschlag.services.db.CassandraConnection *-- ClusterEndpoints : use
+            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
 
             ' open database connection
-            Service *-- CassandraConnection : use
+            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
         }
 
         package fourschlag.services.web {
             package fourschlag.services.web.ws {
+                Class ForecastFixedCostsWS
+
+                Class ForecastSalesWS
+
                 Class ForecastWS {
                     +Response : getSalesKPIs()
                 }
+
+                Class ParameterValidator{
+                    +{static}boolean : validatePeriod()
+                    +{static}boolean : validateSalesType()
+                    +{static}boolean : validatPlanPeriod()
+                    +{static}boolean : validateEntryType()
+                    +{static}boolean : validateCurrency()
+                }
             }
 
-            Class ApplicationService<? extends Application>
 
             ApplicationService -- ForecastWS
 
             ' WS uses SalesService to get the KPI data
-            ForecastWS *-- entities.types :use
-            ForecastWS *-- services.data.services : use
-            ForecastWS *-- services.db.CassandraConnection : use
+            ForecastWS *-- fourschlag.entities.types :use
+            ForecastWS *-- fourschlag.services.data.service : use
+            ForecastWS *-- fourschlag.services.db.CassandraConnection : use
+            ForecastWS *-- fourschlag.services.web.ws.ParameterValidator : use
+
+            ForecastFixedCostsWS *-- fourschlag.entities.types : use
+            ForecastFixedCostsWS *-- fourschlag.services.db : use
+            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterValidator : use
+
+            ForecastSalesWS *-- fourschlag.entities.types : use
+            ForecastSalesWS *-- fourschlag.services.db : use
+            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterValidator : use
+
+            ParameterValidator *-- fourschlag.entities.types : use
         }
     }
 }
