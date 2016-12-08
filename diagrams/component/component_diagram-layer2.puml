@@ -1,0 +1,14 @@
+@startuml
+
+
+node "Laufzeitumgebung" {
+
+[entities]--[services]
+[services] -- [Datastax Java Client Driver]
+HTTP-[services]:JAX_RS
+Java - [Datastax Java Client Driver]
+
+
+}
+
+@enduml

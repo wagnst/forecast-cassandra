@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+skinparam packageStyle rect
+skinparam monochrome true
+scale 1.5
+
+actor Admin
+actor Controller
+actor SalesManager as "Sales Manager"
+
+
+rectangle  "Anwendung" as Anwendung {
+	(Daten abfragen)
+	(Daten exportieren)
+	(Daten manipulieren)
+	(Daten importieren)
+}
+
+Admin -right- (Daten importieren)
+Admin -right- (Daten manipulieren)
+Admin -right- (Daten abfragen)
+Admin -right- (Daten exportieren)
+
+SalesManager -left- (Daten importieren)
+SalesManager -left- (Daten manipulieren)
+
+Controller -left- (Daten abfragen)
+Controller -left- (Daten exportieren)
+
+
+@enduml

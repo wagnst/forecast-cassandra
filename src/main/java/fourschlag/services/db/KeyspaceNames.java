@@ -5,11 +5,18 @@ package fourschlag.services.db;
  */
 public enum KeyspaceNames {
 
-    ORIGINAL_VERSION("original_version"),
+    HUNDRED_THOUSAND("original_version"),
+    THREE_HUNDRED_THOUSAND("fourschlag_300k"),
+    NINE_HUNDRED_THOUSAND("fourschlag_900k"),
     DEMO("demo");
 
     private final String keyspace;
 
+    /**
+     * Constructor
+     *
+     * @param keyspace name of the keyspace in the database
+     */
     KeyspaceNames(final String keyspace) {
         this.keyspace = keyspace;
     }

@@ -1,0 +1,15 @@
+@startuml
+
+node "Fourschlag System" {
+
+[Laufzeitumgebung] - HTTP:JAX_RS
+Java - [Laufzeitumgebung]:DatastaxJavaClientDriver
+CQL - [Datenbank Cassandra]: cqlsh
+[Datenbank Cassandra] - Java:DatastaxJavaClientDriver
+
+
+
+}
+
+
+@enduml

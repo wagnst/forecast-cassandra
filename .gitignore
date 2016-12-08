@@ -51,6 +51,7 @@ fabric.properties
 /target/
 
 ## python
-
+importer/documentation
 *.csv
 *.xlsx
+importer/daten

@@ -1,182 +1,128 @@
 package fourschlag.services.data.requests;
 
-import fourschlag.entities.accessors.ActualFixedCostsAccessor;
-import fourschlag.entities.accessors.ForecastFixedCostsAccessor;
-import fourschlag.entities.tables.Entity;
-import fourschlag.entities.tables.FixedCostsEntity;
-import fourschlag.entities.tables.ForecastFixedCostsEntity;
-import fourschlag.entities.types.*;
-import fourschlag.entities.types.KeyPerformanceIndicators;
+import com.datastax.driver.mapping.Result;
+import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
+import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
+import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
+import fourschlag.entities.types.EntryType;
+import fourschlag.entities.types.Period;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
-import static fourschlag.entities.types.KeyPerformanceIndicators.*;
+public class FixedCostsRequest extends Request {
 
-public class FixedCostsRequest extends KpiRequest {
-    private final String subregion;
     private final ActualFixedCostsAccessor actualAccessor;
     private final ForecastFixedCostsAccessor forecastAccessor;
+    private Map<String, Set<String>> sbuMap;
 
-    private static final String FC_TYPE = "fixed costs";
-
-    public FixedCostsRequest(CassandraConnection connection, String sbu, int planYear, Period currentPeriod,
-                             String subregion, ExchangeRateRequest exchangeRates,
-                             OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planYear, currentPeriod, exchangeRates, FC_TYPE);
-        this.subregion = subregion;
-
-        /* TODO: get Region with orgAndRegionRequest */
-
+    public FixedCostsRequest(CassandraConnection connection) {
+        super(connection);
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
-    /**
-     * Queries KPIs from the actual sales table
-     *
-     * @return SalesEntity Object with query result
-     */
-    @Override
-    protected FixedCostsEntity getActualData(Period tempPlanPeriod) {
-        /* Send query to the database */
-        return actualAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod());
-    }
-
-    @Override
-    protected FixedCostsEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
-        FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
-                tempPlanPeriod.getPeriod(), entryType.toString());
-        if (queryResult == null) {
-            queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPreviousPeriod(),
-                    tempPlanPeriod.getPeriod(), entryType.toString());
+    public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
+                                         double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
+                                         double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
+                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
+                                         int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
+                                         String userId, String entryTs) {
+        try {
+            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period, planPeriod, entryType) != null) {
+                // update an existing record
+                forecastAccessor.updateForecastFixedCosts(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
+                        planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
+            } else {
+                forecastAccessor.setForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
+                        planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
+            }
+        } catch (Exception e) {
+            //TODO: implement better exception to be catched
+            return false;
         }
-        return queryResult;
-    }
 
-    @Override
-    protected FixedCostsEntity getBudgetData(Period tempPlanPeriod) {
-        return forecastAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
-                EntryType.BUDGET.toString());
+        return true;
     }
 
     /**
-     * Private method that calculates the BJ values for all KPIs but one specific period (--> zero month period)
+     * Gets all ForecastFixedCostsEntities with no filter applied
      *
-     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     * @return all entities which are present inside forecast_fixed_costs
      */
-    @Override
-    protected ValidatedResultTopdown calculateBjTopdown(Period zeroMonthPeriod) {
-        FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
-                zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
-
-        return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
+    public List<ForecastFixedCostsEntity> getForecastFixedCosts() {
+        return forecastAccessor.getAllForecastFixedCosts().all();
     }
 
-    @Override
-    protected ValidatedResult calculateBj(Period zeroMonthPeriod) {
-        FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
-                zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
-
-        return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
+    /**
+     * Gets a specific ForecastFixedCostsEntity filtered by joined primary keys
+     *
+     * @return single entity of ForeCastFixedCostsEntity
+     */
+    public ForecastFixedCostsEntity getSpecificForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
+        return forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType.getType());
     }
 
-    @Override
-    protected ValidatedResultTopdown validateTopdownQueryResult(Entity result, Period tempPlanPeriod) {
-        FixedCostsEntity queryResult = (FixedCostsEntity) result;
-        /* Prepare the kpi variables */
-        ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());
+    /**
+     * Gets specific ForecastFixedCostsEntites filtered by senseful drill down
+     * parameters
+     *
+     * @return a list of entities which are present inside forecast_fixed_costs
+     */
+    public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,
+                                                                        EntryType entryType, Period planPeriodFrom,
+                                                                        Period planPeriodTo) {
 
-        Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
-        Map<KeyPerformanceIndicators, Double> topdownMap = validatedResult.getTopdownResult();
+        return forecastAccessor.getMultipleForecastFixedCosts(subregion, sbu, period.getPeriod(),
+                entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
+    }
 
-        if(queryResult != null) {
-            if (queryResult.getClass().isInstance(ForecastFixedCostsEntity.class)) {
-                ForecastFixedCostsEntity fcEntity = (ForecastFixedCostsEntity) queryResult;
-                double topdownFixCosts = fcEntity.getTopdownAdjustFixCosts();
-                for (KeyPerformanceIndicators kpi : topdownMap.keySet()) {
-                    topdownMap.put(kpi, topdownFixCosts);
-                }
-            }
+    public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
+                                                                      Period planPeriodTo) {
+        List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
+        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+            resultList.add(forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, planPeriodFrom.getPeriod(),
+                    planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
+            //increment period to fetch all months
+            planPeriodFrom.increment();
+        }
+        return resultList;
+    }
 
-            /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
-            if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
+    //TODO: implement method for non-forecast related tables
 
-                for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
-                    topdownMap.put(kpi, topdownMap.get(kpi) * exchangeRate);
-                }
-            }
+    public Map<String, Set<String>> getSubregionsAndSbu() {
+        if (sbuMap == null) {
+            querySubregionsAndSbu();
+        }
+        return sbuMap;
+    }
+
+    private void querySubregionsAndSbu() {
+        Result<ActualFixedCostsEntity> entitiesFromActual = actualAccessor.getDistinctSbuAndSubregions();
+        Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastAccessor.getDistinctSbuAndSubregions();
+        sbuMap = new HashMap<>();
+
+        for (ActualFixedCostsEntity entity : entitiesFromActual) {
+            addToSbuMap(entity);
         }
 
-        return validatedResult;
-    }
-
-    @Override
-    protected ValidatedResult validateQueryResult(Entity result, Period tempPlanPeriod) {
-        FixedCostsEntity queryResult = (FixedCostsEntity) result;
-
-        ValidatedResult validatedResult = new ValidatedResult(kpiArray);
-
-        Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
-
-        /* IF the result of the query is not empty THEN get the values from the query result */
-        if (queryResult != null) {
-            kpiMap.put(FIX_PRE_MAN_COST, queryResult.getFixPreManCost());
-            kpiMap.put(SHIP_COST, queryResult.getShipCost());
-            kpiMap.put(SELL_COST, queryResult.getSellCost());
-            kpiMap.put(DIFF_ACT_PRE_MAN_COST, queryResult.getDiffActPreManCost());
-            kpiMap.put(IDLE_EQUIP_COST, queryResult.getIdleEquipCost());
-
-            /* TODO: Check alternative with saving each kpi to a double variable first, instead of getting them all from the map */
-            double fixCostBetweenCm1Cm2 = kpiMap.get(FIX_PRE_MAN_COST) + kpiMap.get(SHIP_COST) +
-                    kpiMap.get(SELL_COST) + kpiMap.get(DIFF_ACT_PRE_MAN_COST) + kpiMap.get(IDLE_EQUIP_COST);
-
-            kpiMap.put(FIX_COST_BETWEEN_CM1_CM2, fixCostBetweenCm1Cm2);
-            kpiMap.put(RD_COST, queryResult.getRdCost());
-            kpiMap.put(ADMIN_COST_BU, queryResult.getAdminCostBu());
-            kpiMap.put(ADMIN_COST_OD, queryResult.getAdminCostOd());
-            kpiMap.put(ADMIN_COST_COMPANY, queryResult.getAdminCostCompany());
-            kpiMap.put(OTHER_OP_COST_BU, queryResult.getOtherOpCostBu());
-            kpiMap.put(OTHER_OP_COST_OD, queryResult.getOtherOpCostOd());
-            kpiMap.put(OTHER_OP_COST_COMPANY, queryResult.getOtherOpCostCompany());
-            kpiMap.put(SPEC_ITEMS, queryResult.getSpecItems());
-            kpiMap.put(PROVISIONS, queryResult.getProvisions());
-            kpiMap.put(CURRENCY_GAINS, queryResult.getCurrencyGains());
-            kpiMap.put(VAL_ADJUST_INVENTORIES, queryResult.getValAdjustInventories());
-            kpiMap.put(OTHER_FIX_COST, queryResult.getOtherFixCost());
-
-            double fixCostBelowCm2 = kpiMap.get(RD_COST) + kpiMap.get(ADMIN_COST_BU) +
-                    kpiMap.get(ADMIN_COST_OD) + kpiMap.get(ADMIN_COST_COMPANY) + kpiMap.get(OTHER_OP_COST_BU) +
-                    kpiMap.get(OTHER_OP_COST_OD) + kpiMap.get(OTHER_OP_COST_COMPANY) + kpiMap.get(SPEC_ITEMS) +
-                    kpiMap.get(PROVISIONS) + kpiMap.get(CURRENCY_GAINS) + kpiMap.get(VAL_ADJUST_INVENTORIES) +
-                    kpiMap.get(OTHER_FIX_COST);
-
-            kpiMap.put(FIX_COST_BELOW_CM2, fixCostBelowCm2);
-            kpiMap.put(TOTAL_FIX_COST, fixCostBetweenCm1Cm2 + fixCostBelowCm2);
-            kpiMap.put(DEPRECATION, queryResult.getDepreciation());
-            kpiMap.put(CAP_COST, queryResult.getCapCost());
-            kpiMap.put(EQUITY_INCOME, queryResult.getEquityIncome());
-
-            /* IF the currency of the KPIs is not the desired one THEN get the exchange rate and convert them */
-            if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
-                double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
-
-                for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
-                    kpiMap.put(kpi, kpiMap.get(kpi) * exchangeRate);
-                }
-            }
+        for (ForecastFixedCostsEntity entity : entitiesFromForecast) {
+            addToSbuMap(entity);
         }
-
-        return validatedResult;
     }
 
-    @Override
-    protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
-                                                  LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
-        /* TODO: why do we need the sales type in fixed costs */
-        return new OutputDataType(kpi, sbu, sbu, region , subregion, SalesType.THIRD_PARTY.toString(),
-                entryType.toString(), exchangeRates.getToCurrency(), monthlyValues, bjValues);
+    private void addToSbuMap(FixedCostsEntity entity) {
+        if (sbuMap.containsKey(entity.getSbu())) {
+            sbuMap.get(entity.getSbu()).add(entity.getSubregion());
+        } else {
+            sbuMap.put(entity.getSbu(), new HashSet<String>() {{
+                add(entity.getSubregion());
+            }});
+        }
     }
 }

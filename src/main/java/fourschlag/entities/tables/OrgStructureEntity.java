@@ -3,18 +3,26 @@ package fourschlag.entities.tables;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * Provides the data from the OrgStructure table
+ */
 
 @Table(name = "org_structure")
 public class OrgStructureEntity {
 
     @PartitionKey
     @Column(name = "product_main_group")
+    @JsonProperty("PRODUCT_MAIN_GROUP")
     private String productMainGroup;
 
     @Column(name = "sbu")
+    @JsonProperty("SBU")
     private String sbu;
 
     @Column(name = "bu")
+    @JsonProperty("BU")
     private String bu;
 
     public OrgStructureEntity() {
@@ -26,18 +34,41 @@ public class OrgStructureEntity {
         this.bu = bu;
     }
 
+    /**
+     * Getter for the ProductMainGroup
+     *
+     * @return ProductMainGroup that is currently used
+     */
     public String getProductMainGroup() {
         return productMainGroup;
     }
 
+    /**
+     * Getter for the SBU
+     *
+     * @return SBU that is currently used
+     */
     public String getSbu() {
         return sbu;
     }
 
+    /**
+     * Getter for the Bu
+     *
+     * @return Bu that is currenty used
+     */
     public String getBu() {
         return bu;
     }
 
+    /**
+     * equals-method to compare OrgStructureEntities
+     *
+     * @param o generic Object to compare with
+     *
+     * @return true, if input object equals currently used object false, if
+     * input object does not equal currently used object
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,11 +78,17 @@ public class OrgStructureEntity {
 
         if (productMainGroup != null ? !productMainGroup.equals(that.productMainGroup) : that.productMainGroup != null)
             return false;
-        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null) return false;
+        if (sbu != null ? !sbu.equals(that.sbu) : that.sbu != null)
+            return false;
         return bu != null ? bu.equals(that.bu) : that.bu == null;
 
     }
 
+    /**
+     * method to generate hashcode out of the ProductMainGroup
+     *
+     * @return integer value of the hashcode
+     */
     @Override
     public int hashCode() {
         int result = productMainGroup != null ? productMainGroup.hashCode() : 0;

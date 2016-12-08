@@ -1,0 +1,11 @@
+@startuml
+
+
+node "Cassandra" {
+
+[CQL-Shell] - CQL:cqlsh
+Java - [CQL-Shell]
+
+
+}
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+ left to right direction
+ skinparam packageStyle rect
+ skinparam monochrome true
+ scale 1.5
+
+ rectangle (Systemgrenze) {
+ 	node "DB System" as DBSystem
+ 	node "Test-Anwendung" as TestAnwendung
+ }
+
+ node "SP-Anwendung" as SPAnwendung
+
+ actor Controller
+ actor "Sales Manager" as SalesManager
+ actor Admin
+
+ note left of Admin : kann alle Funktionen im System
+
+ Admin -up-> DBSystem : Daten importieren
+ Admin -up-> DBSystem : Daten manipulieren
+ Admin -up-> DBSystem : Daten abfragen
+ Admin -up-> DBSystem : Daten manipulieren
+
+
+
+ Controller --> SPAnwendung : Daten abfragen
+ Controller --> SPAnwendung : Daten exportieren
+
+ SalesManager -down-> SPAnwendung : Daten importieren
+ SalesManager -up-> SPAnwendung : Daten manipulieren
+
+ DBSystem --> SPAnwendung : REST Antwort
+ DBSystem <-- SPAnwendung : REST Anfrage
+
+ DBSystem -up-> TestAnwendung : REST Antwort
+ DBSystem <-up- TestAnwendung : REST Anfrage
+
+ @enduml
