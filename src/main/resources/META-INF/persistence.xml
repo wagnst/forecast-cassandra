@@ -2,7 +2,7 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
 
     <persistence-unit name="fourschlag">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
         <class>fourschlag.entities.jpaTables.ActualSalesEntity</class>
         <class>fourschlag.entities.jpaTables.ForecastSalesEntity</class>
         <class>fourschlag.entities.jpaTables.ActualFixedCostsEntity</class>
@@ -11,14 +11,10 @@
         <class>fourschlag.entities.jpaTables.ExchangeRateEntity</class>
         <class>fourschlag.entities.jpaTables.RegionEntity</class>
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://141.19.144.62:3306/original_version?serverTimezone=UTC"/>
-            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="root"/>
-            <property name="hibernate.connection.password" value="fourschlag"/>
-            <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hbm2ddl.auto" value="update"/>
+            <property name="javax.persistence.jdbc.url" value="cassandra://141.19.145.142:9042"/>
+            <property name="javax.persistence.jdbc.driver" value="org.apache.cassandra.cql.jdbc.CassandraDriver"/>
+            <property name="javax.persistence.jdbc.user" value="demo"/>
+            <property name="javax.persistence.jdbc.password" value="demo"/>
         </properties>
     </persistence-unit>
 </persistence>

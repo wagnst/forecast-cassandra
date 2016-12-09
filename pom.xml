@@ -85,7 +85,32 @@
             <version>3.1.2</version>
         </dependency>
 
-        <!-- MySQL -->
+        <!-- JPA -->
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-cassandra</artifactId>
+            <version>5.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-api-jpa</artifactId>
+            <version>5.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.datanucleus</groupId>
+            <artifactId>datanucleus-jpa</artifactId>
+            <version>2.1.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache-extras.cassandra-jdbc</groupId>
+            <artifactId>cassandra-jdbc</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
