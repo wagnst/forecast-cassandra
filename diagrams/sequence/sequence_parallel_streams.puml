@@ -1,6 +1,5 @@
 @startuml
 
-scale 0.75
 
 participant  ":ForecastWS"
 participant  ":SalesService"
@@ -14,11 +13,11 @@ participant  ":KpiRequest"
 
 ":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
 ":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
-":ExchangeRateRequest" --> ":SalesService" : ExchangeRateRequest
+":ExchangeRateRequest" --> ":SalesService" : new ExchangeRateRequest
 ":SalesService" ->  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
-":OrgStructureAndRegionRequest" --> ":SalesService" : OrgStructureAndRegionRequest
+":OrgStructureAndRegionRequest" --> ":SalesService" : new OrgStructureAndRegionRequest
 ":SalesService" ->  ":SalesRequest" : new SalesRequest(getConnection())
-":SalesRequest" --> ":SalesService" : SalesRequest
+":SalesRequest" --> ":SalesService" : new SalesRequest
 ":SalesRequest" -> ":SalesRequest" : getPmgAndRegions()
 ":SalesRequest" --> ":SalesRequest" : Map<String, Set<String>>
 ":SalesService" -> ":KpiRequest" : calculateKpis()
