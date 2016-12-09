@@ -9,7 +9,7 @@ participant  ":SalesRequest"
 participant  ":FixedCostsService"
 participant  ":Stream"
 participant  ":KpiRequest"
-
+participant  ":Map"
 
 ":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
 ":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
@@ -20,9 +20,14 @@ participant  ":KpiRequest"
 ":SalesRequest" --> ":SalesService" : new SalesRequest
 ":SalesRequest" -> ":SalesRequest" : getPmgAndRegions()
 ":SalesRequest" --> ":SalesRequest" : Map<String, Set<String>>
-":SalesService" -> ":KpiRequest" : calculateKpis()
-":KpiRequest"  --> ":SalesService" : Stream<OutputDataType>
-
+par
+    ":SalesService" -> ":SalesRequest": stream().parallel()
+    loop
+        ":SalesRequest" -> ":KpiRequest" : calculateKpis()
+        ":KpiRequest"  --> ":SalesRequest" : Stream<OutputDataType>
+    end
+    ":SalesRequest" --> ":SalesService" : Stream<OutputDataType>
+end
 
 
 
