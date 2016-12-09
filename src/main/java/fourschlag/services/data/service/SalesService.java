@@ -68,22 +68,36 @@ public class SalesService extends Service {
     /**
      * @return a list of all ForecastSalesEntities
      */
-    public List<ForecastSalesEntity> getForecastSales() {
-        return new SalesRequest(getConnection()).getForecastSales();
+    public List<ForecastSalesEntity> getAllForecastSales() {
+        return new SalesRequest(getConnection()).getAllForecastSales();
+    }
+
+
+    /**
+     * @return a specific ForecastSalesEntity
+     */
+    public ForecastSalesEntity getSpecificForecastSales(String productMainGroup, String region, Period period,
+                                                        SalesType salesType, Period planPeriod, EntryType entryType) {
+        return new SalesRequest(getConnection()).getSpecificForecastSales(productMainGroup, region, period, salesType,
+                planPeriod, entryType);
     }
 
     /**
      * @return a list of specific ForecastSalesEntities
      */
-    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
-        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, entryType, planPeriodFrom, planPeriodTo);
+    public List<ForecastSalesEntity> getMultipleForecastSales(String productMainGroup, String region, Period period,
+                                                              SalesType salesType, EntryType entryType, Period planPeriodFrom,
+                                                              Period planPeriodTo) {
+
+        return new SalesRequest(getConnection()).getMultipleForecastSales(productMainGroup, region, period, salesType,
+                entryType, planPeriodFrom, planPeriodTo);
     }
 
-    /**
-     * @return a specific ForecastSalesEntity
-     */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, Period planPeriod, EntryType entryType) {
-        return new SalesRequest(getConnection()).getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
+    public List<ForecastSalesEntity> getBudgetForecastSales(String productMainGroup, String region, SalesType salesType,
+                                                            Period planPeriodFrom, Period planPeriodTo) {
+
+        return new SalesRequest(getConnection()).getBudgetForecastSales(productMainGroup, region, salesType,
+                planPeriodFrom, planPeriodTo);
     }
 
     /**

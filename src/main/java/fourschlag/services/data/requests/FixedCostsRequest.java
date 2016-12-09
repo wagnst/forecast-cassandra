@@ -7,7 +7,6 @@ import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.EntryType;
-import fourschlag.entities.types.OutputDataType;
 import fourschlag.entities.types.Period;
 import fourschlag.services.db.CassandraConnection;
 
@@ -32,9 +31,9 @@ public class FixedCostsRequest extends Request {
                                          int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
                                          String userId, String entryTs) {
         try {
-            if (forecastAccessor.getForecastFixedCost(sbu, subregion, period, planPeriod, entryType) != null) {
+            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period, planPeriod, entryType) != null) {
                 // update an existing record
-                forecastAccessor.updateForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
+                forecastAccessor.updateForecastFixedCosts(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                         otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
                         planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
             } else {
@@ -64,8 +63,8 @@ public class FixedCostsRequest extends Request {
      *
      * @return single entity of ForeCastFixedCostsEntity
      */
-    public ForecastFixedCostsEntity getForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
-        return forecastAccessor.getForecastFixedCost(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType.getType()).one();
+    public ForecastFixedCostsEntity getSpecificForecastFixedCosts(String sbu, String subregion, Period period, EntryType entryType, Period planPeriod) {
+        return forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType.getType());
     }
 
     /**
@@ -74,23 +73,23 @@ public class FixedCostsRequest extends Request {
      *
      * @return a list of entities which are present inside forecast_fixed_costs
      */
-    public List<ForecastFixedCostsEntity> getForecastFixedCosts(String subregion, String sbu, Period period, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
+    public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,
+                                                                        EntryType entryType, Period planPeriodFrom,
+                                                                        Period planPeriodTo) {
+
+        return forecastAccessor.getMultipleForecastFixedCosts(subregion, sbu, period.getPeriod(),
+                entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
+    }
+
+    public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
+                                                                      Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
-
-        if (entryType == EntryType.BUDGET) {
-            /* in case we have budget as entry type we need to query all months seperately and append to list */
-            for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
-                //simply use planPeriodFrom as planPeriod instead of writing a new method
-                resultList.addAll(forecastAccessor.getForecastFixedCost(sbu, subregion, planPeriodFrom.getPeriod(), entryType.getType()).all());
-                //increment period to fetch all months
-                planPeriodFrom.increment();
-            }
-        } else {
-            /* all other entry types */
-            resultList.addAll(forecastAccessor.getForecastFixedCost(subregion, sbu, period.getPeriod(),
-                    entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all());
+        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+            resultList.add(forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, planPeriodFrom.getPeriod(),
+                    planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
+            //increment period to fetch all months
+            planPeriodFrom.increment();
         }
-
         return resultList;
     }
 

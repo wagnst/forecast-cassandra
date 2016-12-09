@@ -32,7 +32,7 @@ public class SalesRequest extends Request {
                                     int periodYear, int periodMonth, String currency, String userId, String entryTs) {
 
         try {
-            if (forecastAccessor.getForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType) != null) {
+            if (forecastAccessor.getSpecificForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType) != null) {
                 // update an existing record
                 forecastAccessor.updateForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
                         planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
@@ -57,17 +57,8 @@ public class SalesRequest extends Request {
      *
      * @return all entities which are present inside forecast_sales
      */
-    public List<ForecastSalesEntity> getForecastSales() {
+    public List<ForecastSalesEntity> getAllForecastSales() {
         return forecastAccessor.getAllForecastSales().all();
-    }
-
-    /**
-     * Gets a specific list of ForecastSalesEnteties with filter applied
-     *
-     * @return specific entities which are present inside forecast_sales
-     */
-    public List<ForecastSalesEntity> getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
     }
 
     /**
@@ -75,8 +66,28 @@ public class SalesRequest extends Request {
      *
      * @return single entity of ForecastSalesEntity
      */
-    public ForecastSalesEntity getForecastSales(String productMainGroup, String region, Period period, SalesType salesType, Period planPeriod, EntryType entryType) {
-        return forecastAccessor.getForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), planPeriod.getPeriod(), entryType.getType()).one();
+    public ForecastSalesEntity getSpecificForecastSales(String productMainGroup, String region, Period period, SalesType salesType, Period planPeriod, EntryType entryType) {
+        return forecastAccessor.getSpecificForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), planPeriod.getPeriod(), entryType.getType());
+    }
+
+    /**
+     * Gets a specific list of ForecastSalesEnteties with filter applied
+     *
+     * @return specific entities which are present inside forecast_sales
+     */
+    public List<ForecastSalesEntity> getMultipleForecastSales(String productMainGroup, String region, Period period, SalesType salesType, EntryType entryType, Period planPeriodFrom, Period planPeriodTo) {
+        return forecastAccessor.getMultipleForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
+    }
+
+    public List<ForecastSalesEntity> getBudgetForecastSales(String productMainGroup, String region, SalesType salesType, Period planPeriodFrom, Period planPeriodTo) {
+        List<ForecastSalesEntity> resultList = new ArrayList<>();
+        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+            resultList.add(forecastAccessor.getSpecificForecastSales(productMainGroup, region, planPeriodFrom.getPeriod(),
+                    salesType.getType(), planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
+            //increment period to fetch all months
+            planPeriodFrom.increment();
+        }
+        return resultList;
     }
 
     public Map<String, Set<String>> getPmgAndRegions() {

@@ -1,16 +1,13 @@
 package fourschlag.services.web.ws;
 
-import fourschlag.entities.types.Currency;
-import fourschlag.entities.types.EntryType;
-import fourschlag.entities.types.Period;
-import fourschlag.entities.types.SalesType;
+import fourschlag.entities.types.*;
 
 /**
- * ParameterValidator tries to validate different HTTP arguments
+ * ParameterUtil tries to validate different HTTP arguments
  * and depending on success returns boolean.
  * It can be called from a static context.
  */
-public class ParameterValidator {
+public class ParameterUtil {
     public static boolean validatePeriod(int period) {
         try {
             Period currentPeriod = new Period(period);
@@ -50,5 +47,13 @@ public class ParameterValidator {
             return false;
         }
         return true;
+    }
+
+    public static Period calculateToPeriod(int planYear) {
+        return Period.getPeriodByYear(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+    }
+
+    public static Period calculateToPeriod(Period fromPeriod) {
+        return new Period(fromPeriod).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
     }
 }
