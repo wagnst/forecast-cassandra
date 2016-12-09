@@ -7,9 +7,7 @@ participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
 participant  ":SalesRequest"
 participant  ":FixedCostsService"
-participant  ":Stream"
 participant  ":KpiRequest"
-participant  ":Map"
 
 ":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
 ":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
