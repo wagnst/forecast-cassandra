@@ -4,39 +4,57 @@ scale 0.75
 
 participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
+participant  ":Map"
+participant  ":SalesRequest"
 participant  ":CassandraConnection"
 participant  ":keySet"
 participant  ":Collection"
 participant  ":BaseStream"
-participant  ":Stream"
 participant  ":Arrays"
-participant  ":SalesRequest"
+participant  ":Stream"
+participant  ":SalesKpiRequest"
 participant  ":KpiRequest"
 
 ":ExchangeRateRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
-":OrgStructureAndRegionRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
-":CassandraConnection" --[#FF00CB]> ":OrgStructureAndRegionRequest" : Connection
 ":CassandraConnection" --[#FF00CB]> ":ExchangeRateRequest" : Connection
 ":ExchangeRateRequest" -[#0000FF]> ":ExchangeRateRequest" : new ExchangeRateRequest()
 ":ExchangeRateRequest" --[#FF00CB]> ":ExchangeRateRequest" : new ExchangeRateRequest
 
-":OrgStructureAndRegionRequest" -[#0000FF]> ":OrgStructureAndRegionRequest" : getPmgAndRegionsFromSales()
-":OrgStructureAndRegionRequest" --[#FF00CB]> ":OrgStructureAndRegionRequest" : PmgAndRegionsFromSales
-":OrgStructureAndRegionRequest" -[#0000FF]> ":keySet" : keySet()
-":keySet" -[#0000FF]> ":Collection" : stream()
-
-":Collection" -[#0000FF]> ":BaseStream" : parallel()
-":BaseStream" -[#0000FF]> ":Stream" : flatMap()
-":Stream" -[#0000FF]> ":Arrays" : stream()
-":Arrays" -[#0000FF]> ":SalesRequest" : flatMap()
+":OrgStructureAndRegionRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
+":CassandraConnection" --[#FF00CB]> ":OrgStructureAndRegionRequest" : Connection
+":OrgStructureAndRegionRequest" -[#0000FF]> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest()
+":OrgStructureAndRegionRequest" --[#FF00CB]> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest
 
 ":SalesRequest" -[#0000FF]> ":SalesRequest" : new SalesRequest()
+":SalesRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
+":CassandraConnection" --[#FF00CB]> ":SalesRequest" : Connection
 ":SalesRequest" --[#FF00CB]> ":SalesRequest" : new SalesRequest
-":SalesRequest" -[#0000FF]> ":KpiRequest" : calculateKpis()
-":KpiRequest" --[#FF00CB]> ":SalesRequest" : salesType
-":SalesRequest" --[#FF00CB]> ":Arrays" : salesType
-":Arrays" --[#FF00CB]> ":BaseStream" : region
-":BaseStream" --[#FF00CB]> ":OrgStructureAndRegionRequest" : product
+
+":Map" -[#0000FF]> ":SalesRequest" : getPmgAndRegions()
+":SalesRequest" --[#FF00CB]> ":Map" : ProduktMap
+
+
+":Map" -[#0000FF]> ":Map"  : keySet()
+":Map" -[#0000FF]> ":Collection" : stream()
+":Collection" -[#0000FF]> ":BaseStream" : parallel()
+":BaseStream" -[#0000FF]> ":Stream" : flatMap()
+
+
+":Map" -[#0000FF]> ":Collection" : stream()
+":Collection" -[#0000FF]> ":Stream" : flatMap()
+":Arrays" -[#0000FF]> ":Stream" : flatMap()
+":Stream"  -[#0000FF]> ":SalesKpiRequest" : calculateKpis()
+
+":SalesKpiRequest" -[#0000FF]> ":SalesKpiRequest" : new SalesRequest()
+":SalesKpiRequest" -[#FF00CB]-> ":SalesKpiRequest" : new SalesRequest
+":SalesKpiRequest" -[#FF00CB]-> ":Stream" : Stream(salesType)
+
+":Stream" --[#FF00CB]> ":Arrays" : Stream(salesType)
+
+
+":Arrays" --[#FF00CB]> ":Stream" : Stream(region)
+":Stream" --[#FF00CB]> ":Map" : Stream(product)
+
 
 
 
