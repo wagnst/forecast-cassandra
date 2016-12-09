@@ -33,16 +33,7 @@ package fourschlag {
 
             Interface RegionAccessor
 
-            ' create usages from Accessors to different Entities
-            ActualSalesAccessor *-- ActualSalesEntity : use
-            ActualFixedCostsAccessor *-- ActualFixedCostsEntity : use
 
-            ForecastSalesAccessor *-- ForecastSalesEntity : use
-            ForecastFixedCostsAccessor *-- ForecastFixedCostsEntity : use
-
-            ExchangeRateAccessor *-- ExchangeRateEntity : use
-            OrgStructureAccessor *-- OrgStructureEntity : use
-            RegionAccessor *-- RegionEntity : use
         }
 
 
@@ -141,7 +132,13 @@ package fourschlag {
                 }
 
                 ' TODO: wichtige Methode hier eintragen
-                Class FixedCostsRequest
+                Class FixedCostsRequest {
+                    + boolean : setForecastFixedCosts()
+                    + List<ForecastFixedCostsEntity> : getForecastFixedCosts()
+                    + ForecastFixedCostsEntity : getForecastFixedCosts()
+                    + List<ForecastFixedCostsEntity> : getForecastFixedCosts()
+                    + Map<String, Set<String>> : getSubregionsAndSbu()
+                }
 
                 Class SalesRequest
 
@@ -164,16 +161,6 @@ package fourschlag {
                 KpiRequest <|-- FixedCostsKpiRequest
                 KpiRequest <|-- SalesKpiRequest
 
-                ExchangeRateRequest *-- ExchangeRateAccessor : use
-                KpiRequests *-- KeyPerformanceIndicators : use
-
-                ' usages from SalesRequest
-                SalesRequest *-- ActualSalesAccessor : use
-                SalesRequest *-- ForecastSalesAccessor : use
-                SalesRequest *-- ExchangeRateRequest : use
-                SalesRequest *-- KeyPerformanceIndicators : use
-
-                ' TODO: insert usage from FixedCostsRequest
             }
 
             package fourschlag.services.data.service {
@@ -194,13 +181,7 @@ package fourschlag {
                 Service <|-- SalesService
                 Service <|-- FixedCostsService
 
-                FixedCostsService *-- fourschlag.entities.types : use
-                FixedCostsService *-- fourschlag.services.data.requests : use
-                FixedCostsService *-- fourschlag.entities.tables.kpi.sales.ForecastFixedCostsEntity : use
 
-                SalesService *-- fourschlag.entities.types : use
-                SalesService *-- fourschlag.services.data.requests : use
-                SalesService *-- fourschlag.entities.tables.kpi.sales.ForecastSalesEntity : use
             }
         }
 
@@ -218,6 +199,10 @@ package fourschlag {
             ' internal uses of CassandaConnection
             fourschlag.services.db.CassandraConnection *-- KeyspaceNames : use
             fourschlag.services.db.CassandraConnection *-- ClusterEndpoints : use
+            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
+
+            ' open database connection
+            fourschlag.services.data.service.Service *-- fourschlag.services.db.CassandraConnection : use
         }
 
         package fourschlag.services.web {
@@ -238,15 +223,15 @@ package fourschlag {
             ForecastWS *-- fourschlag.entities.types :use
             ForecastWS *-- fourschlag.services.data.service : use
             ForecastWS *-- fourschlag.services.db.CassandraConnection : use
-            ForecastWS *-- fourschlag.services.web.ws.ParameterUtil : use
+            ForecastWS *-- fourschlag.services.web.ws.ParameterValidator : use
 
             ForecastFixedCostsWS *-- fourschlag.entities.types : use
             ForecastFixedCostsWS *-- fourschlag.services.db : use
-            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterUtil : use
+            ForecastFixedCostsWS *-- fourschlag.services.web.ws.ParameterValidator : use
 
             ForecastSalesWS *-- fourschlag.entities.types : use
             ForecastSalesWS *-- fourschlag.services.db : use
-            ForecastSalesWS *-- fourschlag.services.web.ws.ParameterUtil : use
+            ForecastSalesWS *-- fourschlag.services.web.ws.ParameterValidator : use
         }
     }
 }
