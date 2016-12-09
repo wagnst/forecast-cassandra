@@ -1,8 +1,10 @@
 package fourschlag.services.data.requests.kpi;
 
+import com.datastax.driver.mapping.Result;
 import fourschlag.entities.accessors.sales.ActualSalesAccessor;
 import fourschlag.entities.accessors.sales.ForecastSalesAccessor;
 import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.sales.ActualSalesEntity;
 import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.tables.kpi.sales.SalesEntity;
 import fourschlag.entities.types.*;
@@ -11,6 +13,7 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -62,24 +65,28 @@ public class SalesKpiRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected SalesEntity getActualData(Period tempPlanPeriod) {
+    protected Map<Integer, ActualSalesEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
         /* Send query to the database with data source BW B */
-        SalesEntity queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
-                salesType.getType(), DataSource.BW_B.toString());
+        Result<ActualSalesEntity> queryResult = actualAccessor.getMultipleSalesKpis(productMainGroup, region,
+                salesType.getType(), DataSource.BW_B.toString(), tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
 
-        /* IF result is empty THEN query again with data source BW A */
-        if (queryResult == null) {
-            queryResult = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriod.getPeriod(), region,
-                    salesType.getType(), DataSource.BW_A.toString());
+        Map<Integer, ActualSalesEntity> returnMap = new HashMap<>();
+        for (ActualSalesEntity entity : queryResult) {
+            if (entity == null) {
+                entity = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriodFrom.getPeriod(), region,
+                        salesType.getType(), DataSource.BW_A.toString());
             /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result because BW A
              * has no cm1 values
              */
-            if (queryResult != null) {
+                if (entity != null) {
                 /* The CM1 value is directly written in the query result */
-                queryResult.setCm1(getForecastCm1(tempPlanPeriod, queryResult.getCurrency()));
+                    entity.setCm1(getForecastCm1(tempPlanPeriodFrom, entity.getCurrency()));
+                }
             }
+            returnMap.put(entity.getPeriod(), entity);
         }
-        return queryResult;
+        /* IF result is empty THEN query again with data source BW A */
+        return returnMap;
     }
 
     /**
@@ -88,15 +95,19 @@ public class SalesKpiRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected SalesEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
+    protected SalesEntity getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo, EntryType entryType) {
         /* Request data from forecast sales */
-        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
-                tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
-        /* IF result is null THEN retry query with currentPeriod - 1 */
-        if (queryResult == null) {
-            queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
-                    tempPlanPeriod.getPeriod(), region, salesType.toString(), entryType.toString());
+        Result<ForecastSalesEntity> queryResult = forecastAccessor.getMultipleForecastSales(productMainGroup, region,
+                currentPeriod.getPeriod(), salesType.toString(), entryType.toString(), tempPlanPeriodFrom.getPeriod(),
+                tempPlanPeriodTo.getPeriod());
+        for (ForecastSalesEntity entity : queryResult) {
+            /* IF result is null THEN retry query with currentPeriod - 1 */
+            if (entity == null) {
+                entity = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
+                        tempPlanPeriodFrom.getPeriod(), region, salesType.toString(), entryType.toString());
+            }
         }
+
         return queryResult;
     }
 
@@ -105,7 +116,6 @@ public class SalesKpiRequest extends KpiRequest {
      *
      * @param tempPlanPeriod period of the desired cm1 value
      * @param toCurrency     desired return currency
-     *
      * @return cm1 value as double
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
@@ -138,7 +148,6 @@ public class SalesKpiRequest extends KpiRequest {
      * period
      *
      * @param tempPlanPeriod Desired period for the budget KPIs
-     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -151,7 +160,6 @@ public class SalesKpiRequest extends KpiRequest {
      * Calculates the budgetyear
      *
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
-     *
      * @return SalesEntity that contains the query result
      */
     @Override
@@ -164,7 +172,6 @@ public class SalesKpiRequest extends KpiRequest {
 
     /**
      * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
-     *
      * @return
      */
     @Override
@@ -178,7 +185,6 @@ public class SalesKpiRequest extends KpiRequest {
     /**
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
-     *
      * @return
      */
     @Override
@@ -221,7 +227,6 @@ public class SalesKpiRequest extends KpiRequest {
     /**
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
-     *
      * @return
      */
     @Override
@@ -281,7 +286,6 @@ public class SalesKpiRequest extends KpiRequest {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
-     *
      * @return
      */
     @Override

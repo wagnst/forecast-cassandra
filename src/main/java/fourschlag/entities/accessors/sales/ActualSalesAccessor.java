@@ -24,4 +24,14 @@ public interface ActualSalesAccessor {
     /*CQL-Query to get the ActualSales Product Main Group and region*/
     @Query("SELECT DISTINCT product_main_group, region FROM actual_sales;")
     Result<ActualSalesEntity> getDistinctPmgAndRegions();
+
+
+    @Query("SELECT sales_volumes, net_sales, cm1, period, currency FROM actual_sales WHERE product_main_group = :product_main_group AND region = :region AND sales_type = :sales_type AND data_source = :data_source AND period >= :periodFrom AND period <= periodTo")
+    Result<ActualSalesEntity> getMultipleSalesKpis(
+            @Param("product_main_group") String productMainGroup,
+            @Param("region") String region,
+            @Param("sales_type") String salesType,
+            @Param("data_source") String dataSource,
+            @Param("period") int periodFrom,
+            @Param("periodTo") int periodTo);
 }

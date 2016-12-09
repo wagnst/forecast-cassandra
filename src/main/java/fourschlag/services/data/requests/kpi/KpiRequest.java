@@ -165,6 +165,8 @@ public abstract class KpiRequest extends Request {
         final Map<KeyPerformanceIndicators, LinkedList<Double>> tempTopdownBjValues = new HashMap<>(bjValues);
 
         ValidatedResultTopdown kpisForSpecificMonth;
+
+
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = calculateActualForecastKpisForSpecificMonths(tempPlanPeriod);
