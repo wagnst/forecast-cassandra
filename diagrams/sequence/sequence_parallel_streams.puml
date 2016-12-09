@@ -2,58 +2,31 @@
 
 scale 0.75
 
+participant  ":ForecastWS"
+participant  ":SalesService"
 participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
-participant  ":Map"
 participant  ":SalesRequest"
-participant  ":CassandraConnection"
-participant  ":keySet"
-participant  ":Collection"
-participant  ":BaseStream"
-participant  ":Arrays"
+participant  ":FixedCostsService"
 participant  ":Stream"
-participant  ":SalesKpiRequest"
 participant  ":KpiRequest"
 
-":ExchangeRateRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
-":CassandraConnection" --[#FF00CB]> ":ExchangeRateRequest" : Connection
-":ExchangeRateRequest" -[#0000FF]> ":ExchangeRateRequest" : new ExchangeRateRequest()
-":ExchangeRateRequest" --[#FF00CB]> ":ExchangeRateRequest" : new ExchangeRateRequest
 
-":OrgStructureAndRegionRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
-":CassandraConnection" --[#FF00CB]> ":OrgStructureAndRegionRequest" : Connection
-":OrgStructureAndRegionRequest" -[#0000FF]> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest()
-":OrgStructureAndRegionRequest" --[#FF00CB]> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest
-
-":SalesRequest" -[#0000FF]> ":SalesRequest" : new SalesRequest()
-":SalesRequest" -[#0000FF]> ":CassandraConnection" : getConnection()
-":CassandraConnection" --[#FF00CB]> ":SalesRequest" : Connection
-":SalesRequest" --[#FF00CB]> ":SalesRequest" : new SalesRequest
-
-":Map" -[#0000FF]> ":SalesRequest" : getPmgAndRegions()
-":SalesRequest" --[#FF00CB]> ":Map" : ProduktMap
+":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
+":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
+":ExchangeRateRequest" --> ":SalesService" : ExchangeRateRequest
+":SalesService" ->  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
+":OrgStructureAndRegionRequest" --> ":SalesService" : OrgStructureAndRegionRequest
+":SalesService" ->  ":SalesRequest" : new SalesRequest(getConnection())
+":SalesRequest" --> ":SalesService" : SalesRequest
+":SalesRequest" -> ":SalesRequest" : getPmgAndRegions()
+":SalesRequest" --> ":SalesRequest" : Map<String, Set<String>>
+":SalesService" -> ":KpiRequest" : calculateKpis()
+":KpiRequest"  --> ":SalesService" : Stream<OutputDataType>
 
 
-":Map" -[#0000FF]> ":Map"  : keySet()
-":Map" -[#0000FF]> ":Collection" : stream()
-":Collection" -[#0000FF]> ":BaseStream" : parallel()
-":BaseStream" -[#0000FF]> ":Stream" : flatMap()
 
 
-":Map" -[#0000FF]> ":Collection" : stream()
-":Collection" -[#0000FF]> ":Stream" : flatMap()
-":Arrays" -[#0000FF]> ":Stream" : flatMap()
-":Stream"  -[#0000FF]> ":SalesKpiRequest" : calculateKpis()
-
-":SalesKpiRequest" -[#0000FF]> ":SalesKpiRequest" : new SalesRequest()
-":SalesKpiRequest" -[#FF00CB]-> ":SalesKpiRequest" : new SalesRequest
-":SalesKpiRequest" -[#FF00CB]-> ":Stream" : Stream(salesType)
-
-":Stream" --[#FF00CB]> ":Arrays" : Stream(salesType)
-
-
-":Arrays" --[#FF00CB]> ":Stream" : Stream(region)
-":Stream" --[#FF00CB]> ":Map" : Stream(product)
 
 
 
