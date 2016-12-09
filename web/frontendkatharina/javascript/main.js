@@ -2,7 +2,8 @@
  * Created by katharinaspinner on 05.12.16.
  */
 
-
+const endpointPath = '/fourschlag/api/' + keyspace + '/' ;
+const endpointScheme = 'http://';
 
 window.addEventListener('load', function () {
 
@@ -58,44 +59,67 @@ window.addEventListener('load', function () {
 
     $('#KpiTable tbody').on('click', 'button', function () {
         var data = table.row($(this).parents('tr')).data();
-        const endpointScheme = 'http://';
         const planYear = document.getElementById('datepicker_planYear').value;
         const backend = document.getElementById('backendServer').value;
         const currency = document.getElementById('currency').value;
         const period = document.getElementById('datepicker_period').value;
         const keyspace = document.getElementById('keyspace').value;
-        const endpointPath = '/fourschlag/api/' + keyspace + '/' ;
-        if (data.FC_TYPE == 'sales') {
-            table
-                .clear()
-                .draw();
-            console.log(data.FC_TYPE + ' ich bin sales');
-            var urlsales = endpointScheme + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
-                + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
-                '/plan_year/' + planYear;
-            table.ajax.url(urlsales).load();
+
+        if (data.ENTRY_TYPE == 'budget'){
+            if (data.FC_TYPE == 'sales') {
+                table
+                    .clear()
+                    .draw();
+                console.log(data.FC_TYPE + ' ich bin sales');
+                var urlbudgetsales = endpointScheme + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                    '/plan_year/' + planYear;
+                table.ajax.url(urlbudgetsales).load();
+            }
+            if (data.FC_TYPE == 'fixed costs') {
+                table
+                    .clear()
+                    .draw();
+                console.log(data.FC_TYPE + ' ich bin fixed costs');
+                var urlbudgetfixedcosts = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                    '/plan_year/' + planYear;
+                table.ajax.url(urlbudgetfixedcosts).load();
+            }
         }
-        if (data.FC_TYPE == 'fixed costs') {
-            table
-                .clear()
-                .draw();
-            console.log(data.FC_TYPE + ' ich bin fixed costs');
-            var urlfixedcosts = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
-                + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
-                '/plan_year/' + planYear;
+        else {
+            if (data.FC_TYPE == 'sales') {
+                table
+                    .clear()
+                    .draw();
+                console.log(data.FC_TYPE + ' ich bin sales');
+                var urlsales = endpointScheme + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                    '/plan_year/' + planYear;
+                table.ajax.url(urlsales).load();
+            }
+            if (data.FC_TYPE == 'fixed costs') {
+                table
+                    .clear()
+                    .draw();
+                console.log(data.FC_TYPE + ' ich bin fixed costs');
+                var urlfixedcosts = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                    '/plan_year/' + planYear;
                 table.ajax.url(urlfixedcosts).load();
+            }
         }
     });
 
     startbutton.addEventListener('click', function () {
-        const endpointScheme = 'http://';
+
         const planYear = document.getElementById('datepicker_planYear').value;
         const backend = document.getElementById('backendServer').value;
         const kpiType = document.getElementById('kpiType').value;
         const currency = document.getElementById('currency').value;
         const period = document.getElementById('datepicker_period').value;
         const keyspace = document.getElementById('keyspace').value;
-        const endpointPath = '/fourschlag/api/' + keyspace + '/forecast/';
+
         if (kpiType == 'all') {
             var urlall = endpointScheme + backend + endpointPath + currency + '/' + planYear + '/' + period + '/';
             table.ajax.url(urlall).load();
