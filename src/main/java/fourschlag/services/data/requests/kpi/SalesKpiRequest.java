@@ -12,8 +12,8 @@ import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
+import jnr.ffi.annotations.In;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -70,20 +70,22 @@ public class SalesKpiRequest extends KpiRequest {
         Result<ActualSalesEntity> queryResult = actualAccessor.getMultipleSalesKpis(productMainGroup, region,
                 salesType.getType(), DataSource.BW_B.toString(), tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
 
-        Map<Integer, ActualSalesEntity> returnMap = new HashMap<>();
+        Map<Integer, ActualSalesEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
+
         for (ActualSalesEntity entity : queryResult) {
-            if (entity == null) {
-                entity = actualAccessor.getSalesKPIs(productMainGroup, tempPlanPeriodFrom.getPeriod(), region,
-                        salesType.getType(), DataSource.BW_A.toString());
+            returnMap.put(entity.getPeriod(), entity);
+        }
+
+        for (Integer period : returnMap.keySet()) {
+            returnMap.putIfAbsent(period, actualAccessor.getSalesKPIs(productMainGroup, period, region,
+                    salesType.getType(), DataSource.BW_A.toString()));
             /* IF result is NOT empty THEN get cm1 value from forecast data and put it in the query result because BW A
              * has no cm1 values
              */
-                if (entity != null) {
+            if (returnMap.get(period) != null) {
                 /* The CM1 value is directly written in the query result */
-                    entity.setCm1(getForecastCm1(tempPlanPeriodFrom, entity.getCurrency()));
-                }
+                returnMap.get(period).setCm1(getForecastCm1(new Period(period), returnMap.get(period).getCurrency()));
             }
-            returnMap.put(entity.getPeriod(), entity);
         }
         /* IF result is empty THEN query again with data source BW A */
         return returnMap;
@@ -95,20 +97,26 @@ public class SalesKpiRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected SalesEntity getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo, EntryType entryType) {
+    protected Map<Integer, ForecastSalesEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo, EntryType entryType) {
         /* Request data from forecast sales */
         Result<ForecastSalesEntity> queryResult = forecastAccessor.getMultipleForecastSales(productMainGroup, region,
                 currentPeriod.getPeriod(), salesType.toString(), entryType.toString(), tempPlanPeriodFrom.getPeriod(),
                 tempPlanPeriodTo.getPeriod());
+
+        Map<Integer, ForecastSalesEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
+
         for (ForecastSalesEntity entity : queryResult) {
-            /* IF result is null THEN retry query with currentPeriod - 1 */
-            if (entity == null) {
-                entity = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
-                        tempPlanPeriodFrom.getPeriod(), region, salesType.toString(), entryType.toString());
-            }
+            returnMap.put(entity.getPeriod(), entity);
         }
 
-        return queryResult;
+        for (Integer period : returnMap.keySet()) {
+            /* IF result is null THEN retry query with currentPeriod - 1 */
+            returnMap.putIfAbsent(period, forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
+                    period, region, salesType.toString(), entryType.toString()));
+
+        }
+
+        return returnMap;
     }
 
     /**
