@@ -4,14 +4,19 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
+import fourschlag.services.data.requests.kpi.KpiRequest;
 import fourschlag.services.data.requests.kpi.SalesKpiRequest;
 import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.db.CassandraConnection;
+import fourschlag.services.db.ClusterEndpoints;
+import fourschlag.services.db.ConnectionPool;
+import fourschlag.services.db.KeyspaceNames;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +31,16 @@ public class SalesService extends Service {
      */
     public SalesService(CassandraConnection connection) {
         super(connection);
+    }
+
+    public static void main(String[] args) {
+        CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.HUNDRED_THOUSAND, true);
+        KpiRequest request = new SalesKpiRequest(connection,
+                "Beck's Gold", new Period(201601), new Period(201609), "Asia",
+                SalesType.THIRD_PARTY, new ExchangeRateRequest(connection, Currency.DOLLAR), new OrgStructureAndRegionRequest(connection));
+        List<OutputDataType> resultList = request.calculateKpis().collect(Collectors.toList());
+
+        resultList.forEach(e -> System.out.println(e.toString()));
     }
 
     /**

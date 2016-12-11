@@ -1,8 +1,10 @@
 package fourschlag.services.data.requests.kpi;
 
+import com.datastax.driver.mapping.Result;
 import fourschlag.entities.accessors.fixedcosts.ActualFixedCostsAccessor;
 import fourschlag.entities.accessors.fixedcosts.ForecastFixedCostsAccessor;
 import fourschlag.entities.tables.kpi.KpiEntity;
+import fourschlag.entities.tables.kpi.fixedcosts.ActualFixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.FixedCostsEntity;
 import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 import fourschlag.entities.types.*;
@@ -47,29 +49,46 @@ public class FixedCostsKpiRequest extends KpiRequest {
      * @return SalesEntity Object with query result
      */
     @Override
-    protected FixedCostsEntity getActualData(Period tempPlanPeriod) {
+    protected Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
         /* Send query to the database */
-        return actualAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod());
+        Result<ActualFixedCostsEntity> queryResult = actualAccessor.getMultipleFixedCostsKpis
+                (sbu, subregion, tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
+
+        Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
+
+        for (ActualFixedCostsEntity entity : queryResult) {
+            returnMap.put(entity.getPeriod(), entity);
+        }
+
+        return returnMap;
     }
 
     /**
      * Queries KPIs from the forecast fixed costs table
      *
-     * @param tempPlanPeriod planPeriod the forecast data is supposed to be
+     * @param tempPlanPeriodFrom planPeriod the forecast data is supposed to be
      *                       taken from
-     * @param entryType      the type of the data
-     *
      * @return
      */
     @Override
-    protected FixedCostsEntity getForecastData(Period tempPlanPeriod, EntryType entryType) {
-        FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
-                tempPlanPeriod.getPeriod(), entryType.toString());
-        if (queryResult == null) {
-            queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPreviousPeriod(),
-                    tempPlanPeriod.getPeriod(), entryType.toString());
+    protected Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
+        Result<ForecastFixedCostsEntity> queryResult = forecastAccessor.getMultipleForecastFixedCosts
+                (subregion, sbu, currentPeriod.getPeriod(), EntryType.FORECAST.getType(),
+                        tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
+
+        Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
+
+        for (ForecastFixedCostsEntity entity : queryResult) {
+            returnMap.put(entity.getPeriod(), entity);
         }
-        return queryResult;
+
+        for (Integer period : returnMap.keySet()) {
+            /* IF entity is null THEN retry query with currentPeriod - 1 */
+            returnMap.putIfAbsent(period, forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPreviousPeriod(),
+                    tempPlanPeriodFrom.getPeriod(), EntryType.FORECAST.getType()));
+        }
+
+        return returnMap;
     }
 
     /**

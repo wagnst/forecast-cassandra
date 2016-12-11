@@ -13,7 +13,6 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -104,20 +103,20 @@ public class SalesKpiRequest extends KpiRequest {
                 currentPeriod.getPeriod(), salesType.toString(), EntryType.FORECAST.getType(), tempPlanPeriodFrom.getPeriod(),
                 tempPlanPeriodTo.getPeriod());
 
-        Map<Integer, KpiEntity> queryResultMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
+        Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
 
         for (ForecastSalesEntity entity : queryResult) {
-            queryResultMap.put(entity.getPeriod(), entity);
+            returnMap.put(entity.getPeriod(), entity);
         }
 
-        for (Integer period : queryResultMap.keySet()) {
-            /* IF result is null THEN retry query with currentPeriod - 1 */
-            queryResultMap.putIfAbsent(period, forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
+        for (Integer period : returnMap.keySet()) {
+            /* IF entity is null THEN retry query with currentPeriod - 1 */
+            returnMap.putIfAbsent(period, forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPreviousPeriod(),
                     period, region, salesType.toString(), EntryType.FORECAST.getType()));
 
         }
 
-        return queryResultMap;
+        return returnMap;
     }
 
     /**
@@ -168,52 +167,29 @@ public class SalesKpiRequest extends KpiRequest {
     /**
      * Calculates the budgetyear
      *
-     * @param zeroMonthPeriodFrom ZeroMonthPeriod of the desired budget year
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
      * @return SalesEntity that contains the query result
      */
     @Override
-    protected Map<Integer, ValidatedResult> calculateBj(ZeroMonthPeriod zeroMonthPeriodFrom, ZeroMonthPeriod zeroMonthPeriodTo) {
-        Map<Integer, ForecastSalesEntity> queryResultMap = new PeriodMap<>(zeroMonthPeriodFrom, zeroMonthPeriodTo);
+    protected ValidatedResult calculateBj(ZeroMonthPeriod zeroMonthPeriod) {
+        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+                zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
-        Result<ForecastSalesEntity> queryResult = forecastAccessor.getMultipleForecastSales(productMainGroup, region,
-                currentPeriod.getPeriod(), salesType.toString(), EntryType.BUDGET.getType(),
-                zeroMonthPeriodFrom.getPeriod(), zeroMonthPeriodTo.getPeriod());
-
-        for (ForecastSalesEntity entity : queryResult) {
-            queryResultMap.put(entity.getPeriod(), entity);
-        }
-
-        Map<Integer, ValidatedResult> returnMap = new LinkedHashMap<Integer, ValidatedResult>(){{
-            for (Integer period : queryResultMap.keySet()) {
-                put(period, validateQueryResult(queryResultMap.get(period), new Period(zeroMonthPeriodFrom)));
-            }
-        }};
-        return returnMap;
+        return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
     /**
-     * @param zeroMonthPeriodFrom ZeroMonthPeriod of the desired budget year
+     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
+     *
      * @return
      */
     @Override
-    protected Map<Integer, ValidatedResultTopdown> calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriodFrom, ZeroMonthPeriod zeroMonthPeriodTo) {
-        Map<Integer, ForecastSalesEntity> queryResultMap = new PeriodMap<>(zeroMonthPeriodFrom, zeroMonthPeriodTo);
+    protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
+        SalesEntity queryResult = forecastAccessor.getSalesKpis(productMainGroup, currentPeriod.getPeriod(),
+                zeroMonthPeriod.getPeriod(), region, salesType.toString(), EntryType.BUDGET.getType());
 
-        Result<ForecastSalesEntity> queryResult = forecastAccessor.getMultipleForecastSales(productMainGroup, region,
-                currentPeriod.getPeriod(), salesType.toString(), EntryType.BUDGET.getType(),
-                zeroMonthPeriodFrom.getPeriod(), zeroMonthPeriodTo.getPeriod());
-
-        for (ForecastSalesEntity entity : queryResult) {
-            queryResultMap.put(entity.getPeriod(), entity);
-        }
-
-        Map<Integer, ValidatedResultTopdown> returnMap = new LinkedHashMap<Integer, ValidatedResultTopdown>(){{
-            for (Integer period : queryResultMap.keySet()) {
-                put(period, validateTopdownQueryResult(queryResultMap.get(period), new Period(zeroMonthPeriodFrom)));
-            }
-        }};
-
-        return returnMap;
+        return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
     /**
