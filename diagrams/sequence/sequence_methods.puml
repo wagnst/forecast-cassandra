@@ -7,9 +7,10 @@ participant  ":FixedCostsService"
 participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
 participant  ":SalesRequest"
+participant  ":FixedCostsRequest"
 participant  ":KpiRequest"
 participant  ":Stream"
-participant  ":FixedCostsRequest"
+
 
 
 ":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
