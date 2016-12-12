@@ -17,9 +17,6 @@ import java.util.stream.Stream;
  * to store the KPIs.
  */
 public abstract class KpiRequest extends Request {
-
-    private final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
-    private final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
     protected String sbu;
     protected String region;
     protected Period currentPeriod;
@@ -60,9 +57,6 @@ public abstract class KpiRequest extends Request {
         this.exchangeRates = exchangeRates;
 
         this.kpiArray = filterKpiArray(fcType);
-
-        fillMap(monthlyKpiValues);
-        fillMap(bjValues);
     }
 
     /**
@@ -112,8 +106,10 @@ public abstract class KpiRequest extends Request {
         Period tempPlanPeriod = new Period(planPeriod);
 
         /* Prepare maps that will store the monthly values */
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        fillMap(monthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        fillMap(bjValues);
 
         /*Prepare ValidatedResult object */
         ValidatedResult kpisForSpecificMonth;
@@ -124,7 +120,7 @@ public abstract class KpiRequest extends Request {
 
             /* The values from the validated result are written into their corresponding location in the monthly map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
+                monthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
             }
 
             /* increment the plan period */
@@ -136,7 +132,7 @@ public abstract class KpiRequest extends Request {
         for (int i = 0; i < OutputDataType.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBj(bjPeriod);
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
+                bjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
             }
             /* Jump to the next zeroMonthPeriod */
             bjPeriod.increment();
@@ -144,7 +140,7 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result stream */
         resultStream = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, EntryType.BUDGET, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, EntryType.BUDGET, monthlyKpiValues.get(kpi), bjValues.get(kpi)));
 
         return resultStream;
     }
@@ -159,10 +155,16 @@ public abstract class KpiRequest extends Request {
 
         Period tempPlanPeriod = new Period(planPeriod);
 
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyTopdownValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempTopdownBjValues = new HashMap<>(bjValues);
+        /* Prepare maps that will store the monthly values */
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        fillMap(monthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyTopdownValues = new HashMap<>();
+        fillMap(monthlyTopdownValues);
+
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        fillMap(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> topdownBjValues = new HashMap<>();
+        fillMap(topdownBjValues);
 
         ValidatedResultTopdown kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
@@ -171,8 +173,8 @@ public abstract class KpiRequest extends Request {
 
             /* Add all KPI values to the monthly KPI value map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempMonthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
-                tempMonthlyTopdownValues.get(kpi).add(kpisForSpecificMonth.getTopdownResult().get(kpi));
+                monthlyKpiValues.get(kpi).add(kpisForSpecificMonth.getKpiResult().get(kpi));
+                monthlyTopdownValues.get(kpi).add(kpisForSpecificMonth.getTopdownResult().get(kpi));
             }
 
             tempPlanPeriod.increment();
@@ -184,8 +186,8 @@ public abstract class KpiRequest extends Request {
             bjValuesForSpecificMonth = calculateBjTopdown(bjPeriod);
 
             for (KeyPerformanceIndicators kpi : kpiArray) {
-                tempBjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
-                tempTopdownBjValues.get(kpi).add(bjValuesForSpecificMonth.getTopdownResult().get(kpi));
+                bjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
+                topdownBjValues.get(kpi).add(bjValuesForSpecificMonth.getTopdownResult().get(kpi));
             }
             /* Jump to the next zeroMonthPeriod */
             bjPeriod.increment();
@@ -193,10 +195,10 @@ public abstract class KpiRequest extends Request {
 
         /* All the values are put together in OutputDataType objects and are added to the result stream */
         resultStream = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, EntryType.ACTUAL_FORECAST, tempMonthlyKpiValues.get(kpi), tempBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, EntryType.ACTUAL_FORECAST, monthlyKpiValues.get(kpi), bjValues.get(kpi)));
 
         resultStreamTopdown = Arrays.stream(kpiArray)
-                .map(kpi -> createOutputDataType(kpi, EntryType.TOPDOWN, tempMonthlyTopdownValues.get(kpi), tempTopdownBjValues.get(kpi)));
+                .map(kpi -> createOutputDataType(kpi, EntryType.TOPDOWN, monthlyTopdownValues.get(kpi), topdownBjValues.get(kpi)));
 
         return Stream.concat(resultStream, resultStreamTopdown);
     }
