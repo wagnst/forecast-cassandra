@@ -10,9 +10,9 @@ node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
         '   artifact "FourschlagTest.jmx" <<artifact>>
         '}
 
-        package "libs" <<package>>{
+        artifact "pom.xml" <<artifact>>{
 
-            package "Webservice Drivers" <<package>>{
+            artifact "Webservice Drivers" <<artifact>>{
                 artifact "jackson-jaxrs-base" <<artifact>>
                 artifact "jackson-jaxrs-json-provider" <<artifact>>
                 artifact "jackson-jaxrs-providers" <<artifact>>
@@ -20,7 +20,7 @@ node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
                 artifact "slf4j-api" <<artifact>>
             }
 
-            package "Cassandra Drivers" <<package>>{
+            artifact "Cassandra Drivers" <<artifact>>{
                 artifact "cassandra-driver-core" <<artifact>>
                 artifact "cassandra-driver-extras" <<artifact>>
                 artifact "cassandra-driver-mapping" <<artifact>>
