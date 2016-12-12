@@ -1,46 +1,63 @@
 @startuml
 
-
+hide footbox
 participant  ":ForecastWS"
 participant  ":SalesService"
 participant  ":FixedCostsService"
 participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
 participant  ":SalesRequest"
+participant  ":FixedCostsRequest"
 participant  ":KpiRequest"
+participant  ":Stream"
 
-":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
-":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
-":ExchangeRateRequest" --> ":SalesService" : new ExchangeRateRequest
-":SalesService" ->  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
-":OrgStructureAndRegionRequest" --> ":SalesService" : new OrgStructureAndRegionRequest
-":SalesService" ->  ":SalesRequest" : new SalesRequest(getConnection())
-":SalesRequest" --> ":SalesService" : new SalesRequest
-":SalesService" -> ":SalesRequest" : getPmgAndRegions()
-":SalesRequest" --> ":SalesService" : Map<String, Set<String>>
+
+
+":ForecastWS" -[#0000FF]> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
+":SalesService" -[#0000FF]> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
+":ExchangeRateRequest" --[#FF00FF]> ":SalesService" : new ExchangeRateRequest
+":SalesService" -[#0000FF]> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
+":OrgStructureAndRegionRequest" --[#FF00FF]> ":SalesService" : new OrgStructureAndRegionRequest
+":SalesService" -[#0000FF]> ":SalesRequest" : new SalesRequest(getConnection())
+":SalesRequest" --[#FF00FF]> ":SalesService" : new SalesRequest
+":SalesService" -[#0000FF]> ":SalesRequest" : getPmgAndRegions()
+":SalesRequest" --[#FF00FF]> ":SalesService" : Map<String, Set<String>>
 par
-    ":SalesService" -> ":SalesRequest": stream().parallel()
+    ":SalesService" -[#0000FF]> ":SalesRequest": stream().parallel()
     loop
-        ":SalesRequest" -> ":KpiRequest" : calculateKpis()
-        ":KpiRequest"  --> ":SalesRequest" : Stream<OutputDataType>
+        ":SalesRequest" -[#0000FF]> ":KpiRequest" : calculateKpis()
+        ":KpiRequest"  --[#FF00FF]> ":SalesRequest" : Stream<OutputDataType>
     end
-    ":SalesRequest" --> ":SalesService" : Stream<OutputDataType>
+    ":SalesRequest" --[#FF00FF]> ":SalesService" : Stream<OutputDataType>
 end
-
-":SalesService" --> ":ForecastWS" : Stream<OutputDataType>
-
+":SalesService" --[#FF00FF]> ":ForecastWS" : Stream<salesKpis>
 
 
-":ForecastWS" -> ":FixedCostsService" : getFixedCostsKpis(planPeriod, currentPeriod, curr)
-":FixedCostsService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
-":ExchangeRateRequest" --> ":FixedCostsService" : new ExchangeRateRequest
-":FixedCostsService" ->  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
-":OrgStructureAndRegionRequest" --> ":FixedCostsService" : new OrgStructureAndRegionRequest
-":FixedCostsService" -> ":FixedCostsRequest" : FixedCostsRequest(getConnection())
-":FixedCostsRequest" --> ":FixedCostsService" : new FixedCostsRequest
-":FixedCostsService" -> ":FixedCostsRequest" : getSubregionsAndSbu()
+
+":ForecastWS" -[#0000FF]> ":FixedCostsService" : getFixedCostsKpis(planPeriod, currentPeriod, curr)
+":FixedCostsService" -[#0000FF]> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
+":ExchangeRateRequest" --[#FF00FF]> ":FixedCostsService" : new ExchangeRateRequest
+":FixedCostsService" -[#0000FF]>  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
+":OrgStructureAndRegionRequest" --[#FF00FF]> ":FixedCostsService" : new OrgStructureAndRegionRequest
+":FixedCostsService" -[#0000FF]> ":FixedCostsRequest" : FixedCostsRequest(getConnection())
+":FixedCostsRequest" --[#FF00FF]> ":FixedCostsService" : new FixedCostsRequest
+":FixedCostsService" -[#0000FF]> ":FixedCostsRequest" : getSubregionsAndSbu()
+":FixedCostsRequest" --[#FF00FF]> ":FixedCostsService" : Map<String, Set<String>>
+par
+    ":FixedCostsService" -[#0000FF]> ":FixedCostsRequest": stream().parallel()
+    loop
+        ":FixedCostsRequest" -[#0000FF]> ":KpiRequest" : calculateKpis()
+        ":KpiRequest"  --[#FF00FF]> ":FixedCostsRequest" : Stream<OutputDataType>
+    end
+    ":FixedCostsRequest" --[#FF00FF]> ":FixedCostsService" : Stream<OutputDataType>
+end
+":FixedCostsService" --[#FF00FF]> ":ForecastWS" : Stream<fixedCostsKpis>
 
 
+":ForecastWS" -[#0000FF]> ":Stream" : concat(salesKpis, fixedCostsKpis)
+":Stream" -[#0000FF]> ":Stream" : sorted()
+":Stream" -[#0000FF]> ":Stream" : collect()
+":Stream" --[#FF00FF]> ":ForecastWS" : List<OutputDataType>
 
 
 
