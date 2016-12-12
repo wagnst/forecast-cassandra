@@ -72,14 +72,14 @@ public class FixedCostsKpiRequest extends KpiRequest {
      */
     @Override
     protected Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
-        Result<ForecastFixedCostsEntity> queryResult = forecastAccessor.getMultipleForecastFixedCosts
+        Result<ForecastFixedCostsEntity> queryResult = forecastAccessor.getMultipleFixedCostsKpis
                 (subregion, sbu, currentPeriod.getPeriod(), EntryType.FORECAST.getType(),
                         tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
 
         Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
 
         for (ForecastFixedCostsEntity entity : queryResult) {
-            returnMap.put(entity.getPeriod(), entity);
+            returnMap.put(entity.getPlanPeriod(), entity);
         }
 
         for (Integer period : returnMap.keySet()) {
