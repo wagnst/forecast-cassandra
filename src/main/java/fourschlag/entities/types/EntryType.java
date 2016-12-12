@@ -8,7 +8,7 @@ package fourschlag.entities.types;
 public enum EntryType {
     ACTUAL("actual"),
     FORECAST("forecast"),
-    ACTUAL_FORECAST("actual_forecast"),
+    ACTUAL_FORECAST("actual/forecast"),
     BUDGET("budget"),
     TOPDOWN("topdown");
 
