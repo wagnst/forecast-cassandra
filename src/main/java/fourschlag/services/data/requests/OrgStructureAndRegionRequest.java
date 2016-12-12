@@ -80,17 +80,21 @@ public class OrgStructureAndRegionRequest extends Request {
 
     public boolean checkSalesParams(String productMainGroup, String region) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesByPmg(productMainGroup).all();
+        if (orgEntities.isEmpty()) {
+            return false;
+        }
         List<RegionEntity> regionEntities = regionAccessor.getEntitiesByRegion(region).all();
 
-        /* Checks if one of the lists is empty. That would mean that either the PMG or the Region is not valid */
-        return (!(orgEntities.isEmpty() || regionEntities.isEmpty()));
+        return (!regionEntities.isEmpty());
     }
 
     public boolean checkFixedCostsParams(String sbu, String subregion) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesBySbu(sbu).all();
+        if (orgEntities.isEmpty()) {
+            return false;
+        }
         List<RegionEntity> regionEntities = regionAccessor.getEntitiesBySubregion(subregion).all();
 
-        /* Checks if one of the lists is empty. That would mean that either the SBU or the Subregion is not valid */
-        return (!(orgEntities.isEmpty() || regionEntities.isEmpty()));
+        return (!regionEntities.isEmpty());
     }
 }
