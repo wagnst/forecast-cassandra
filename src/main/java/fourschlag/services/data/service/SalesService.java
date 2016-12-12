@@ -4,8 +4,8 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.kpi.SalesKpiRequest;
 import fourschlag.services.data.requests.SalesRequest;
+import fourschlag.services.data.requests.kpi.SalesKpiRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
