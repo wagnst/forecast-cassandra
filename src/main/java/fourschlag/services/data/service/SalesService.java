@@ -4,8 +4,8 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
-import fourschlag.services.data.requests.kpi.SalesKpiRequest;
 import fourschlag.services.data.requests.SalesRequest;
+import fourschlag.services.data.requests.kpi.SalesKpiRequest;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.Arrays;
@@ -109,6 +109,13 @@ public class SalesService extends Service {
                                     int planQuarter, int planMonth, String entryType, String status, String usercomment, String productMainGroup, String salesType,
                                     double salesVolumes, double netSales, double cm1, int period, String region,
                                     int periodYear, int periodMonth, String currency, String userId, String entryTs) {
+
+        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
+
+        if (!request.checkSalesParams(productMainGroup, region)) {
+            /* Maybe throw exception that tells the user which params are invalid */
+            return false;
+        }
         return new SalesRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
                 planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
     }

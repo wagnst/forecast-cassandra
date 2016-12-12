@@ -1,23 +1,23 @@
 @startuml
 
 hide footbox
-title Sequenzdiagramm: Overall Picture
+'title Sequenzdiagramm: Overall Picture
 
-participant Client
-participant Environment
-participant Database
+participant ":Client"
+participant ":Environment"
+participant ":Database"
 
-Client -> Environment: HTTP Request
+":Client" -[#0000FF]> ":Environment": HTTP Request
 
 alt if request not valid
-Environment -> Client: refuse
+":Environment" --[#FF00FF]> ":Client": refuse
 else else
-Environment -> Environment: parse request
+":Environment" -[#0000FF]> ":Environment": parse request
 end
 
-Environment --> Database: send request
-Database -> Database: work on
-Database -> Environment: iterable of results
-Environment -> Client: HTTP response(JSON)
+":Environment" -[#0000FF]> ":Database": send request
+":Database" -[#0000FF]> ":Database": work on
+":Database" --[#FF00FF]> ":Environment": iterable of results
+":Environment" --[#FF00FF]> ":Client": HTTP response(JSON)
 
 @enduml

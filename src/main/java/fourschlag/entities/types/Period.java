@@ -97,11 +97,27 @@ public class Period {
         return this;
     }
 
+    public Period immutableIncrement() {
+        if (this.month < 12) {
+            return new Period(year, month);
+        } else {
+            return new Period(year + 1, 1);
+        }
+    }
+
     public Period incrementMultipleTimes(int multiplier) {
         for (int i = 0; i < multiplier; i++) {
             increment();
         }
         return this;
+    }
+
+    public Period immutableIncrementMultipleTimes(int multiplier) {
+        Period tempPeriod = this;
+        for (int i = 0; i < multiplier; i++) {
+            tempPeriod = immutableIncrement();
+        }
+        return tempPeriod;
     }
 
     /**
