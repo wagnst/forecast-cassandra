@@ -8,13 +8,16 @@ participant  ":ExchangeRateRequest"
 participant  ":OrgStructureAndRegionRequest"
 participant  ":SalesRequest"
 participant  ":KpiRequest"
+participant  ":Stream"
+participant  ":FixedCostsRequest"
+
 
 ":ForecastWS" -> ":SalesService" : getSalesKPIs(planPeriod, currentPeriod, curr)
 ":SalesService" -> ":ExchangeRateRequest" : new ExchangeRateRequest(getConnection(), toCurrency)
 ":ExchangeRateRequest" --> ":SalesService" : new ExchangeRateRequest
-":SalesService" ->  ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
+":SalesService" -> ":OrgStructureAndRegionRequest" : new OrgStructureAndRegionRequest(getConnection())
 ":OrgStructureAndRegionRequest" --> ":SalesService" : new OrgStructureAndRegionRequest
-":SalesService" ->  ":SalesRequest" : new SalesRequest(getConnection())
+":SalesService" -> ":SalesRequest" : new SalesRequest(getConnection())
 ":SalesRequest" --> ":SalesService" : new SalesRequest
 ":SalesService" -> ":SalesRequest" : getPmgAndRegions()
 ":SalesRequest" --> ":SalesService" : Map<String, Set<String>>
@@ -26,8 +29,7 @@ par
     end
     ":SalesRequest" --> ":SalesService" : Stream<OutputDataType>
 end
-
-":SalesService" --> ":ForecastWS" : Stream<OutputDataType>
+":SalesService" --> ":ForecastWS" : Stream<salesKpis>
 
 
 
@@ -39,8 +41,22 @@ end
 ":FixedCostsService" -> ":FixedCostsRequest" : FixedCostsRequest(getConnection())
 ":FixedCostsRequest" --> ":FixedCostsService" : new FixedCostsRequest
 ":FixedCostsService" -> ":FixedCostsRequest" : getSubregionsAndSbu()
+":FixedCostsRequest" --> ":FixedCostsService" : Map<String, Set<String>>
+par
+    ":FixedCostsService" -> ":FixedCostsRequest": stream().parallel()
+    loop
+        ":FixedCostsRequest" -> ":KpiRequest" : calculateKpis()
+        ":KpiRequest"  --> ":FixedCostsRequest" : Stream<OutputDataType>
+    end
+    ":FixedCostsRequest" --> ":FixedCostsService" : Stream<OutputDataType>
+end
+":FixedCostsService" --> ":ForecastWS" : Stream<fixedCostsKpis>
 
 
+":ForecastWS" -> ":Stream" : concat(salesKpis, fixedCostsKpis)
+":Stream" -> ":Stream" : sorted()
+":Stream" -> ":Stream" : collect()
+":Stream" --> ":ForecastWS" : List<OutputDataType>
 
 
 
