@@ -23,6 +23,17 @@ public interface ForecastFixedCostsAccessor {
             @Param("entry_type") String entryType
     );
 
+    /*CQL-Query to get drill-down relevant source data*/
+    @Query("SELECT fix_pre_man_cost, ship_cost, sell_cost, diff_act_pre_man_cost, idle_equip_cost, rd_cost, admin_cost_bu, admin_cost_od, admin_cost_company, other_op_cost_bu, other_op_cost_od, other_op_cost_company, spec_items, provisions, currency_gains, val_adjust_inventories, other_fix_cost, depreciation, cap_cost, equity_income, topdown_adjust_fix_costs, currency, plan_period FROM forecast_fixed_costs WHERE subregion = :subregion AND sbu = :sbu AND period = :period AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
+    Result<ForecastFixedCostsEntity> getMultipleFixedCostsKpis(
+            @Param("subregion") String subregion,
+            @Param("sbu") String sbu,
+            @Param("period") int period,
+            @Param("entry_type") String entryType,
+            @Param("plan_period_from") int planPeriodFrom,
+            @Param("plan_period_to") int planPeriodTo
+    );
+
     /*CQL-Query to get the ForecastFixedCosts sbu and subregion*/
     @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
     Result<ForecastFixedCostsEntity> getDistinctSbuAndSubregions();

@@ -8,6 +8,7 @@ import fourschlag.entities.tables.RegionEntity;
 import fourschlag.services.db.CassandraConnection;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +38,6 @@ public class OrgStructureAndRegionRequest extends Request {
      *
      * @param productMainGroup product main group for which the sbu is supposed
      *                         to be found
-     *
      * @return
      */
     public String getSbu(String productMainGroup) {
@@ -60,7 +60,6 @@ public class OrgStructureAndRegionRequest extends Request {
      * Getter for the region
      *
      * @param subregion
-     *
      * @return
      */
     public String getRegion(String subregion) {
@@ -77,5 +76,25 @@ public class OrgStructureAndRegionRequest extends Request {
             return subregion;
         }
         return returnValue;
+    }
+
+    public boolean checkSalesParams(String productMainGroup, String region) {
+        List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesByPmg(productMainGroup).all();
+        if (orgEntities.isEmpty()) {
+            return false;
+        }
+        List<RegionEntity> regionEntities = regionAccessor.getEntitiesByRegion(region).all();
+
+        return (!regionEntities.isEmpty());
+    }
+
+    public boolean checkFixedCostsParams(String sbu, String subregion) {
+        List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesBySbu(sbu).all();
+        if (orgEntities.isEmpty()) {
+            return false;
+        }
+        List<RegionEntity> regionEntities = regionAccessor.getEntitiesBySubregion(subregion).all();
+
+        return (!regionEntities.isEmpty());
     }
 }

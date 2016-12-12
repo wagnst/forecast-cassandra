@@ -32,6 +32,17 @@ public interface ForecastSalesAccessor {
             @Param("region") String region,
             @Param("sales_type") String salesType);
 
+    @Query("SELECT sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, topdown_adjust_cm1, currency, plan_period FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
+    Result<ForecastSalesEntity> getMultipleSalesKpis(
+            @Param("product_main_group") String productMainGroup,
+            @Param("region") String region,
+            @Param("period") int period,
+            @Param("sales_type") String salesType,
+            @Param("entry_type") String entryType,
+            @Param("plan_period_from") int planPeriodFrom,
+            @Param("plan_period_to") int planPeriodTo
+    );
+
     /*CQL-Query to get the ForecastSales Product Main Group and Region */
     @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales")
     Result<ForecastSalesEntity> getDistinctPmgAndRegions();

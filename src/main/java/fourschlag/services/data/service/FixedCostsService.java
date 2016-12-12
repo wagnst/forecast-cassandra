@@ -122,6 +122,14 @@ public class FixedCostsService extends Service {
                                          double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
                                          int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
                                          String userId, String entryTs) {
+
+        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
+
+        if (!request.checkFixedCostsParams(sbu, subregion)) {
+            /* Maybe throw exception that tells the user which params are invalid */
+            return false;
+        }
+
         return new FixedCostsRequest(getConnection()).setForecastFixedCosts(
                 sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                 otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
