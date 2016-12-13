@@ -146,7 +146,6 @@ public class SalesKpiRequest extends KpiRequest {
             if (cm1.getCurrency().equals(toCurrency)) {
                 return cm1.getCm1();
             } else {
-                /* TODO: Check for better way to convert currency */
                 double exchangeRate = new ExchangeRateRequest(getConnection(), Currency.getCurrencyByAbbreviation(toCurrency))
                         .getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(cm1.getCurrency()));
                 return cm1.getCm1() * exchangeRate;

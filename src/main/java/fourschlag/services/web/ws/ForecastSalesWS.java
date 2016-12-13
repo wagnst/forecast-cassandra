@@ -20,16 +20,13 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
  */
 @Path("/{keyspace}/sales")
 public class ForecastSalesWS {
-
-    /* TODO: connection can be local */
-    private CassandraConnection connection;
     private SalesService salesService;
 
     /**
      * Constructor to initialize the database connection and services
      */
     public ForecastSalesWS(@PathParam("keyspace") String keyspace) {
-        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
         salesService = new SalesService(connection);
     }
 
@@ -122,8 +119,6 @@ public class ForecastSalesWS {
             @PathParam("region") String region,
             @PathParam("salesType") String salesType,
             @PathParam("planYear") int planYear) {
-
-        //TODO: Validate something here
         if (validatePlanYear(planYear)) {
             Period planPeriodFrom = Period.getPeriodByYear(planYear);
             Period planPeriodTo = ParameterUtil.calculateToPeriod(planPeriodFrom);

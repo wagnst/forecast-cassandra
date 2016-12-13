@@ -20,16 +20,13 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
  */
 @Path("/{keyspace}/fixedcosts")
 public class ForecastFixedCostsWS {
-
-    /* TODO: connection can be local */
-    private CassandraConnection connection;
     private FixedCostsService fixedCostsService;
 
     /**
      * Constructor to initialize the database connection and services
      */
     public ForecastFixedCostsWS(@PathParam("keyspace") String keyspace) {
-        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
         fixedCostsService = new FixedCostsService(connection);
     }
 
@@ -132,8 +129,6 @@ public class ForecastFixedCostsWS {
             @PathParam("sbu") String sbu,
             @PathParam("subregion") String subregion,
             @PathParam("planYear") int planYear) {
-
-        //TODO: Validate something here
         if (validatePlanYear(planYear)) {
             Period planPeriodFrom = Period.getPeriodByYear(planYear);
             Period planPeriodTo = ParameterUtil.calculateToPeriod(planPeriodFrom);

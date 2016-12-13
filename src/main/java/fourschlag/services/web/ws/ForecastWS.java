@@ -29,9 +29,6 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
  */
 @Path("/{keyspace}/forecast/")
 public class ForecastWS {
-
-    /* TODO: connection can be local */
-    private CassandraConnection connection;
     private SalesService salesService;
     private FixedCostsService fixedCostsService;
 
@@ -39,13 +36,10 @@ public class ForecastWS {
      * Constructor to initialize the database connection and services
      */
     public ForecastWS(@PathParam("keyspace") String keyspace) {
-        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
         salesService = new SalesService(connection);
         fixedCostsService = new FixedCostsService(connection);
     }
-
-    /* TODO: Maybe close session each time, but not connection */
-    /* TODO: Create Connection pool and remove the connection from this WS */
 
     /**
      * This method collects all to be calculated forecast KPI's in
@@ -63,9 +57,6 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
-
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
@@ -109,9 +100,6 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
-
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
             Period currentPeriod = new Period(period);
@@ -147,8 +135,6 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);

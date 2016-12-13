@@ -66,13 +66,6 @@ public class CassandraConnection {
         cluster.close();
     }
 
-    /* TODO: method need to be fixed */
-    public void closeSession() {
-        session.close();
-    }
-
-    /* TODO: Method to rebuild connection */
-
     /**
      * Getter for the MappingManager, that is needed to create Accessor objects
      *
