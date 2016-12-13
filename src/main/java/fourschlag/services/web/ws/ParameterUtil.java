@@ -8,7 +8,7 @@ import fourschlag.entities.types.*;
  * It can be called from a static context.
  */
 public class ParameterUtil {
-    public static boolean validatePeriod(int period) {
+    static boolean validatePeriod(int period) {
         try {
             new Period(period);
         } catch (IllegalArgumentException ex) {
@@ -17,7 +17,8 @@ public class ParameterUtil {
         return true;
     }
 
-    public static boolean validatePlanYear(int year) {
+
+    static boolean validatePlanYear(int year) {
         try {
             Period.getPeriodByYear(year);
         } catch (IllegalArgumentException ex) {
@@ -26,21 +27,21 @@ public class ParameterUtil {
         return true;
     }
 
-    public static boolean validateSalesType(String salesType) {
+    static boolean validateSalesType(String salesType) {
         if (SalesType.getSalesTypeByString(salesType) == null) {
             return false;
         }
         return true;
     }
 
-    public static boolean validateEntryType(String entryType) {
+    static boolean validateEntryType(String entryType) {
         if (EntryType.getEntryTypeByString(entryType) == null) {
             return false;
         }
         return true;
     }
 
-    public static boolean validateCurrency(String currency) {
+    static boolean validateCurrency(String currency) {
         Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
         if (curr == null) {
@@ -53,7 +54,7 @@ public class ParameterUtil {
         return Period.getPeriodByYear(planYear).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
     }
 
-    public static Period calculateToPeriod(Period fromPeriod) {
+    static Period calculateToPeriod(Period fromPeriod) {
         return new Period(fromPeriod).incrementMultipleTimes(OutputDataType.getNumberOfMonths());
     }
 }

@@ -171,7 +171,7 @@ public abstract class KpiRequest extends Request {
             actualData.remove(currentPeriod.getPeriod());
             forecastData = getForecastData(currentPeriod, tempPlanPeriod);
         } else {
-            forecastData = getForecastData(new Period(currentPeriod).increment(), tempPlanPeriod);
+            forecastData = getForecastData(currentPeriod.immutableIncrement(), tempPlanPeriod);
         }
 
         ValidatedResultTopdown validatedResultTopdown;
