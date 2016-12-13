@@ -223,7 +223,7 @@ package fourschlag {
         }
     }
 
-            fourschlag.services.data.requests o-- fourschlag.entities.accessors
+            fourschlag.services.data.requests o-- fourschlag.entities.accessors : use
             fourschlag.services.data.requests *-- CassandraConnection : use
 }
 @enduml
