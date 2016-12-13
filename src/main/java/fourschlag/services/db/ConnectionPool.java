@@ -20,6 +20,7 @@ public class ConnectionPool {
         return connection;
     }
 
+    /* TODO: method need to be fixed */
     public static void removeConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
         for (CassandraConnection connection : connections) {
             if (connection.getEndpoint() == endpoint) {
