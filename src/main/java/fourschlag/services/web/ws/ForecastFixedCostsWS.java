@@ -194,7 +194,7 @@ public class ForecastFixedCostsWS {
                     sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany,
                     otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts,
                     tempPlanPeriod, status, usercomment, entryType, tempPeriod, region, currency, userId, entryTs)) {
-                return Response.status(Response.Status.OK).build();
+                return Response.status(Response.Status.OK).entity("Request completed. The data has been successfully inserted or updated.").build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();

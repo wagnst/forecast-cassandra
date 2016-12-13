@@ -169,7 +169,7 @@ public class ForecastSalesWS {
             if (salesService.setForecastSales(
                     topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, tempPlanPeriod, entryType,
                     status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, tempPeriod, region, currency, userId, entryTs)) {
-                return Response.status(Response.Status.OK).build();
+                return Response.status(Response.Status.OK).entity("Request completed. The data has been successfully inserted or updated.").build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
