@@ -4,10 +4,8 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.UUID;
-
 /**
- * Extends SalesEntity. Provides the data from the ActualSales table
+ * Class that maps the actual_sales table. Extends SalesEntity.
  */
 
 @Table(name = "actual_sales")
@@ -32,8 +30,8 @@ public class ActualSalesEntity extends SalesEntity {
     public ActualSalesEntity() {
     }
 
-    public ActualSalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1, String productMainGroup, String region, String sbu, String salesType, String dataSource, int period, int periodYear, int periodHalfYear, int periodQuarter, int periodMonth, String currency, String userId, String entryTs) {
-        super(uuid, salesVolumes, netSales, cm1, productMainGroup, region, salesType,
+    public ActualSalesEntity(double salesVolumes, double netSales, double cm1, String productMainGroup, String region, String sbu, String salesType, String dataSource, int period, int periodYear, int periodHalfYear, int periodQuarter, int periodMonth, String currency, String userId, String entryTs) {
+        super(salesVolumes, netSales, cm1, productMainGroup, region, salesType,
                 period, periodYear, periodMonth, currency, userId, entryTs);
         this.sbu = sbu;
         this.dataSource = dataSource;
