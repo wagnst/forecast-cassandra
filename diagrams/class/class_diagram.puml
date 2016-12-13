@@ -216,13 +216,14 @@ package fourschlag {
             .ForecastSalesWS o-- SalesService : use
             .ForecastWS o-- FixedCostsService : use
             .ForecastWS o-- SalesService : use
-            .ForecastWS o-- CassandraConnection : use
-            .ForecastFixedCostsWS o-- CassandraConnection : use
-            .ForecastSalesWS o-- CassandraConnection : use
+            .ForecastWS *-- CassandraConnection : use
+            .ForecastWS o-- OutputDataTypeComparator : use
+            .ForecastFixedCostsWS *-- CassandraConnection : use
+            .ForecastSalesWS *-- CassandraConnection : use
             }
         }
     }
-
+            fourschlag.services.data.service *-- CassandraConnection : use
             fourschlag.services.data.requests o-- fourschlag.entities.accessors : use
             fourschlag.services.data.requests *-- CassandraConnection : use
 }
