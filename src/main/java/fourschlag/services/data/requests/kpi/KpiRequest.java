@@ -6,7 +6,10 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.Request;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -17,8 +20,8 @@ public abstract class KpiRequest extends Request {
     protected String sbu;
     protected String region;
     protected Period currentPeriod;
-    protected ExchangeRateRequest exchangeRates;
-    protected KeyPerformanceIndicators[] kpiArray;
+    ExchangeRateRequest exchangeRates;
+    KeyPerformanceIndicators[] kpiArray;
     private Period planPeriod;
 
     /**
@@ -168,11 +171,11 @@ public abstract class KpiRequest extends Request {
             actualData.remove(currentPeriod.getPeriod());
             forecastData = getForecastData(currentPeriod, tempPlanPeriod);
         } else {
-            forecastData = getForecastData(new Period(currentPeriod).increment(), tempPlanPeriod);
+            forecastData = getForecastData(currentPeriod.immutableIncrement(), tempPlanPeriod);
         }
 
         ValidatedResultTopdown validatedResultTopdown;
-        for(Map<Integer, KpiEntity> kpiEntityMap: Arrays.asList(actualData, forecastData)) {
+        for (Map<Integer, KpiEntity> kpiEntityMap : Arrays.asList(actualData, forecastData)) {
             for (Integer period : kpiEntityMap.keySet()) {
                 validatedResultTopdown = validateTopdownQueryResult(kpiEntityMap.get(period), new Period(period));
                 for (KeyPerformanceIndicators kpi : kpiArray) {
@@ -228,7 +231,7 @@ public abstract class KpiRequest extends Request {
      * method to get the actual data
      *
      * @param tempPlanPeriodFrom planPeriod the actual data is supposed to be taken
-     *                       from
+     *                           from
      * @return the actual data within the desired period.
      */
     protected abstract Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
@@ -237,7 +240,7 @@ public abstract class KpiRequest extends Request {
      * method to get the forecast data
      *
      * @param tempPlanPeriodFrom planPeriod the forecast data is supposed to be
-     *                       taken from
+     *                           taken from
      * @return the forecast data within the desired period
      */
     protected abstract Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);

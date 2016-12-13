@@ -48,7 +48,7 @@ public class ZeroMonthPeriod extends Period {
     public ZeroMonthPeriod immutableIncrementMultipleTimes(int multiplier) {
         ZeroMonthPeriod tempPeriod = this;
         for (int i = 0; i < multiplier; i++) {
-           tempPeriod = immutableIncrement();
+            tempPeriod = immutableIncrement();
         }
         return tempPeriod;
     }

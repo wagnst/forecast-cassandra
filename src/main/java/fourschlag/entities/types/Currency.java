@@ -27,7 +27,6 @@ public enum Currency {
      * method to get the Currency by the current Abbreviation
      *
      * @param abbreviation Actual Abbreviation
-     *
      * @return Currency object
      */
     public static Currency getCurrencyByAbbreviation(String abbreviation) {
@@ -43,7 +42,6 @@ public enum Currency {
      * method ..
      *
      * @param symbol Currencysymbol (€ or $)
-     *
      * @return Currency object
      */
     public static Currency getCurrencyBySymbol(char symbol) {

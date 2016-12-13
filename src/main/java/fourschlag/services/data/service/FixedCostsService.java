@@ -39,7 +39,6 @@ public class FixedCostsService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
-     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -85,7 +84,6 @@ public class FixedCostsService extends Service {
      *                       planPeriodTo
      * @param planPeriodTo   in case we have entry_type eq budget leave ot
      *                       planPeriodTo
-     *
      * @return a list of specific ForecastFixedCostsEntities
      */
     public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,
@@ -119,21 +117,12 @@ public class FixedCostsService extends Service {
     public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
                                          double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
                                          double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
-                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
-                                         int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
+                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, Period planPeriod, String status, String usercomment, String entryType, Period period, String region, String currency,
                                          String userId, String entryTs) {
-
-        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
-
-        if (!request.checkFixedCostsParams(sbu, subregion)) {
-            /* Maybe throw exception that tells the user which params are invalid */
-            return false;
-        }
 
         return new FixedCostsRequest(getConnection()).setForecastFixedCosts(
                 sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
-                otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
-                planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs
+                otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod, status, usercomment, entryType, period, region, currency, userId, entryTs
         );
     }
 }

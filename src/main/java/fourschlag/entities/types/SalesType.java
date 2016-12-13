@@ -31,6 +31,9 @@ public enum SalesType {
      *
      * @return true or false depending of String equals enum
      */
+    /*
+    TODO: method need be to fixed
+     */
     public boolean IsEqualStringandEnum(String str) {
         return this.type.equals(str);
     }
@@ -40,7 +43,6 @@ public enum SalesType {
      * itself
      *
      * @param str String which shall be compared
-     *
      * @return null or the valid enum
      */
     public static SalesType getSalesTypeByString(String str) {
