@@ -39,6 +39,7 @@ public class FixedCostsService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
+     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -84,6 +85,7 @@ public class FixedCostsService extends Service {
      *                       planPeriodTo
      * @param planPeriodTo   in case we have entry_type eq budget leave ot
      *                       planPeriodTo
+     *
      * @return a list of specific ForecastFixedCostsEntities
      */
     public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,
@@ -124,5 +126,16 @@ public class FixedCostsService extends Service {
                 sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                 otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod, status, usercomment, entryType, period, region, currency, userId, entryTs
         );
+    }
+
+    /**
+     * Method can delete an entity from forecast_fixed_costs with its primary
+     * key
+     *
+     * @return boolean if successfull or not
+     */
+    public boolean deleteForecastFixedCosts(String sbu, String subregion, Period period,
+                                            String entryType, Period planPeriod) {
+        return new FixedCostsRequest(getConnection()).deleteForecastFixedCosts(sbu, subregion, period, entryType, planPeriod);
     }
 }

@@ -37,6 +37,7 @@ public class SalesService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
+     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -109,5 +110,15 @@ public class SalesService extends Service {
 
         return new SalesRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod,
                 entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, currency, userId, entryTs);
+    }
+
+    /**
+     * Method can delete an entity from forecast_sales with its primary
+     * key
+     *
+     * @return boolean if successfull or not
+     */
+    public boolean deleteForecastSales(String productMainGroup, String region, Period period, String salesType, Period planPeriod, String entryType) {
+        return new SalesRequest(getConnection()).deleteForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType);
     }
 }

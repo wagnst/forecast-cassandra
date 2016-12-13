@@ -18,7 +18,7 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
  * ForecastFixedCostsWS offers web service to get plain fixed costs data from a
  * database
  */
-@Path("/{keyspace}/fixedcosts")
+@Path("{keyspace}/fixedcosts")
 public class ForecastFixedCostsWS {
     private FixedCostsService fixedCostsService;
 
@@ -52,10 +52,11 @@ public class ForecastFixedCostsWS {
      * @param period        parameter for period
      * @param entryType     parameter for entryType
      * @param planPeriodInt parameter for planPeriod
+     *
      * @return a specific entry of forecast_fixed_costs
      */
     @GET
-    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period/{planPeriod}")
+    @Path("sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period/{planPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOneForecastFixedCost(
             @PathParam("sbu") String sbu,
@@ -84,10 +85,11 @@ public class ForecastFixedCostsWS {
      * @param period    parameter for period
      * @param entryType parameter for entryType
      * @param planYear  parameter for planPeriod from
+     *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET
-    @Path("/sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_year/{planYear}")
+    @Path("sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_year/{planYear}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMultipleForecastFixedCosts(
             @PathParam("sbu") String sbu,
@@ -120,10 +122,11 @@ public class ForecastFixedCostsWS {
      * @param sbu       parameter for sbu
      * @param subregion parameter for subregion
      * @param planYear  parameter for planYear from
+     *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET
-    @Path("/sbu/{sbu}/subregion/{subregion}/entry_type/budget/plan_year/{planYear}/")
+    @Path("sbu/{sbu}/subregion/{subregion}/entry_type/budget/plan_year/{planYear}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBudgetForecastFixedCosts(
             @PathParam("sbu") String sbu,
@@ -195,6 +198,33 @@ public class ForecastFixedCostsWS {
                     otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts,
                     tempPlanPeriod, status, usercomment, entryType, tempPeriod, region, currency, userId, entryTs)) {
                 return Response.status(Response.Status.OK).entity("Request completed. The data has been successfully inserted or updated.").build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+    }
+
+    /**
+     * This method allows data deletion of ForecastFixedCosts related table
+     *
+     * @return HTTP Response OK or BAD_REQUEST
+     */
+    @DELETE
+    @Path("sbu/{sbu}/subregion/{subregion}/period/{period}/entry_type/{entryType}/plan_period/{planPeriod}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteForecastFixedCosts(
+            @PathParam("sbu") String sbu,
+            @PathParam("subregion") String subregion,
+            @PathParam("period") int period,
+            @PathParam("entryType") String entryType,
+            @PathParam("planPeriod") int planPeriod
+    ) {
+        if (validatePeriod(period) && validatePeriod(planPeriod) && validateEntryType(entryType)) {
+
+            Period tempPlanPeriod = new Period(planPeriod);
+            Period tempPeriod = new Period(period);
+
+            if (fixedCostsService.deleteForecastFixedCosts(sbu, subregion, tempPeriod, entryType, tempPlanPeriod)) {
+                return Response.status(Response.Status.OK).entity("Request completed. The data has been successfully removed.").build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();

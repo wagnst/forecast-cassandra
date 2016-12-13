@@ -84,6 +84,27 @@ public class SalesRequest extends Request {
         return forecastAccessor.getMultipleForecastSales(productMainGroup, region, period.getPeriod(), salesType.getType(), entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
     }
 
+    /**
+     * Method can delete an entity from forecast_sales with its primary
+     * key
+     *
+     * @return boolean if successfull or not
+     */
+    public boolean deleteForecastSales(String productMainGroup, String region, Period period, String salesType, Period planPeriod, String entryType) {
+        try {
+            if (forecastAccessor.getSpecificForecastSales(productMainGroup, region, period.getPeriod(), salesType, planPeriod.getPeriod(), entryType) != null) {
+                forecastAccessor.deleteForecastSales(productMainGroup, region, period.getPeriod(), salesType, planPeriod.getPeriod(), entryType);
+            } else {
+                /* no entry like this existing */
+                return false;
+            }
+        } catch (Exception e) {
+            //TODO: implement better expception to be catched
+            return false;
+        }
+        return true;
+    }
+
     public List<ForecastSalesEntity> getBudgetForecastSales(String productMainGroup, String region, SalesType salesType, Period planPeriodFrom, Period planPeriodTo) {
         List<ForecastSalesEntity> resultList = new ArrayList<>();
         while (planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
