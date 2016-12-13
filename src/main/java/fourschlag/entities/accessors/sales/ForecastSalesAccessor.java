@@ -13,7 +13,17 @@ import fourschlag.entities.tables.kpi.sales.ForecastSalesEntity;
 
 @Accessor
 public interface ForecastSalesAccessor {
-    /*CQL-Query to get the ForecastSales data */
+    /**
+     * Queries the table for a specific entry, but selects only fields that are need for KPI calculation
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @param period primary key field period for where clause
+     * @param planPeriod primary key field plan_period for where clause
+     * @param region primary key field region for where clause
+     * @param salesType primary key field sales_type for where clause
+     * @param entryType primary key field entry_type for where clause
+     * @return One database row mapped as ForecastSalesEntity. Is null if no data was found.
+     */
     @Query("SELECT sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = :entry_type")
     ForecastSalesEntity getSalesKpis(
             @Param("product_main_group") String productMainGroup,
@@ -23,7 +33,16 @@ public interface ForecastSalesAccessor {
             @Param("sales_type") String salesType,
             @Param("entry_type") String entryType);
 
-    /*CQL-Query to get the ForecastSales data */
+    /**
+     * Queries the table for a specific entry, but selects only fields the fields cm1, topdown_adjust_cm1 and currency
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @param period primary key field period for where clause
+     * @param planPeriod primary key field plan_period for where clause
+     * @param region primary key field region for where clause
+     * @param salesType primary key field sales_type for where clause
+     * @return One database row mapped as ForecastSalesEntity. Is null if no data was found.
+     */
     @Query("SELECT cm1, topdown_adjust_cm1, currency FROM forecast_sales WHERE product_main_group = :product_main_group AND period = :period AND plan_period = :plan_period AND region = :region AND sales_type = :sales_type AND entry_type = 'forecast'")
     ForecastSalesEntity getCm1(
             @Param("product_main_group") String productMainGroup,
@@ -32,6 +51,19 @@ public interface ForecastSalesAccessor {
             @Param("region") String region,
             @Param("sales_type") String salesType);
 
+    /**
+     * Queries the table for multiple entries, but selects only fields that are need for KPI calculation.
+     * The query is restricted by an EQ relation on the period field.
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @param region primary key field region for where clause
+     * @param period primary key field period for where clause
+     * @param salesType primary key field sales_type for where clause
+     * @param entryType primary key field data_source for where clause
+     * @param planPeriodFrom primary key field plan_period to start with for where clause
+     * @param planPeriodTo primary key field plan_period to end with for where clause
+     * @return Iterable of entities mapped as ForecastSalesEntity. Is empty if no data was found.
+     */
     @Query("SELECT sales_volumes, net_sales, cm1, topdown_adjust_sales_volumes, topdown_adjust_net_sales, topdown_adjust_cm1, currency, plan_period FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
     Result<ForecastSalesEntity> getMultipleSalesKpis(
             @Param("product_main_group") String productMainGroup,
@@ -43,16 +75,33 @@ public interface ForecastSalesAccessor {
             @Param("plan_period_to") int planPeriodTo
     );
 
-    /*CQL-Query to get the ForecastSales Product Main Group and Region */
+    /**
+     * Queries the table for all distinct combinations of PMGs and Regions.
+     *
+     * @return Iterable of entities mapped as ForecastSalesEntity with all combinations
+     */
     @Query("SELECT DISTINCT product_main_group, region FROM forecast_sales")
     Result<ForecastSalesEntity> getDistinctPmgAndRegions();
 
-    /*CQL-Query to get all data from forecast_sales table*/
+    /**
+     * Queries the table for all rows
+     *
+     * @return Iterable of entities mapped as ForecastSalesEntity
+     */
     @Query("SELECT * FROM forecast_sales")
     Result<ForecastSalesEntity> getAllForecastSales();
 
-    /*CQL-Query to get a unique record (depends on primary keys
-        product_main_group,region,period,sales_type,plan_period,entry_type */
+    /**
+     * Queries the table for a specific entry. Selects all fields.
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @param period primary key field period for where clause
+     * @param planPeriod primary key field plan_period for where clause
+     * @param region primary key field region for where clause
+     * @param salesType primary key field sales_type for where clause
+     * @param entryType primary key field entry_type for where clause
+     * @return One database row mapped as ForecastSalesEntity. Is null if no data was found.
+     */
     @Query("SELECT * FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND plan_period = :plan_period AND entry_type = :entry_type")
     ForecastSalesEntity getSpecificForecastSales(
             @Param("product_main_group") String productMainGroup,
@@ -63,6 +112,19 @@ public interface ForecastSalesAccessor {
             @Param("entry_type") String entryType
     );
 
+    /**
+     * Queries the table for multiple entries. Selects all fields.
+     * The query is restricted by an EQ relation on the period field.
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @param region primary key field region for where clause
+     * @param period primary key field period for where clause
+     * @param salesType primary key field sales_type for where clause
+     * @param entryType primary key field data_source for where clause
+     * @param planPeriodFrom primary key field plan_period to start with for where clause
+     * @param planPeriodTo primary key field plan_period to end with for where clause
+     * @return Iterable of entities mapped as ForecastSalesEntity. Is empty if no data was found.
+     */
     @Query("SELECT * FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
     Result<ForecastSalesEntity> getMultipleForecastSales(
             @Param("product_main_group") String productMainGroup,

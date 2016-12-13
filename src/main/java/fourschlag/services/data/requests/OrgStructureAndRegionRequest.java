@@ -64,7 +64,7 @@ public class OrgStructureAndRegionRequest extends Request {
      */
     public String getRegion(String subregion) {
         if (region == null) {
-            Result<RegionEntity> queryResult = regionAccessor.getSubregions();
+            Result<RegionEntity> queryResult = regionAccessor.getAll();
             region = new HashMap<String, String>() {{
                 for (RegionEntity entity : queryResult) {
                     put(entity.getSubregion(), entity.getRegion());
