@@ -168,7 +168,7 @@ package fourschlag {
 
                 Class SalesService {
                 ' TODO: auf Stream anpassen! vgl mit FixedCosts
-                    +List<OutputDataType> : getSalesKPIs()
+                    +Stream<OutputDataType> : getSalesKPIs()
                 }
 
                 Abstract Class Service {
@@ -201,12 +201,25 @@ package fourschlag {
         package fourschlag.services.web {
             package fourschlag.services.web.ws {
             'TODO: methoden bei den Webservices hinzufügen
-                Class ForecastFixedCostsWS
+                Class ForecastFixedCostsWS{
+                    +Response : getForecastFixedCosts()
+                    +Response : getOneForecastFixedCost()
+                    +Response : getMultipleForecastFixedCosts()
+                    +Response : getBudgetForecastFixedCosts()
+                    +Response : createForecastFixedCosts()
+                }
 
-                Class ForecastSalesWS
+                Class ForecastSalesWS{
+                    +Response : getForecastSales()
+                    +Response : getOneForecastSales()
+                    +Response : getBudgetForecastSales()
+                    +Response : createForecastSales()
+                }
 
                 Class ForecastWS {
+                    +Response : getKPIs()
                     +Response : getSalesKPIs()
+                    +Response : getFixedCostsKPIs()
                 }
 
                 Class ParameterValidator
