@@ -1,6 +1,6 @@
 @startuml
 
-scale 0.75
+scale 0.5
 
 node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
 
