@@ -56,8 +56,6 @@ public class SalesRequest extends Request {
 
     }
 
-    //TODO: implement method for non-forecast related tables
-
 
     /**
      * Gets all ForecastSales with no filter applied

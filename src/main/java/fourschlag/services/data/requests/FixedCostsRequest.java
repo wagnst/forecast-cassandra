@@ -101,8 +101,6 @@ public class FixedCostsRequest extends Request {
         return resultList;
     }
 
-    //TODO: implement method for non-forecast related tables
-
     public Map<String, Set<String>> getSubregionsAndSbu() {
         if (sbuMap == null) {
             querySubregionsAndSbu();
