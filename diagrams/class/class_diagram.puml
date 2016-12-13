@@ -94,7 +94,7 @@ package fourschlag {
 
             Class Period
 
-            Class SalesType<E>
+            Enum SalesType
 
             Class ValidatedResult
 
@@ -212,13 +212,13 @@ package fourschlag {
                 Class ParameterValidator
             }
             namespace fourschlag.services.web.ws{
-            .ForecastFixedCostsWS o-- FixedCostsService
-            .ForecastSalesWS o-- SalesService
-            .ForecastWS o-- FixedCostsService
-            .ForecastWS o-- SalesService
-            .ForecastWS o-- CassandraConnection
-            .ForecastFixedCostsWS o-- CassandraConnection
-            .ForecastSalesWS o-- CassandraConnection
+            .ForecastFixedCostsWS o-- FixedCostsService : use
+            .ForecastSalesWS o-- SalesService : use
+            .ForecastWS o-- FixedCostsService : use
+            .ForecastWS o-- SalesService : use
+            .ForecastWS o-- CassandraConnection : use
+            .ForecastFixedCostsWS o-- CassandraConnection : use
+            .ForecastSalesWS o-- CassandraConnection : use
             }
         }
     }
