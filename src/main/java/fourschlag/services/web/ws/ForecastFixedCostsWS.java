@@ -180,27 +180,27 @@ public class ForecastFixedCostsWS {
             @FormParam("equitiy_income") double equitiyIncome,
             @FormParam("topdown_adjust_fix_costs") double topdownAdjustFixCosts,
             @FormParam("plan_period") int planPeriod,
-            @FormParam("plan_year") int planYear,
-            @FormParam("plan_half_year") int planHalfYear,
-            @FormParam("plan_quarter") int planQuarter,
-            @FormParam("plan_month") int planMonth,
             @FormParam("status") String status,
             @FormParam("usercomment") String usercomment,
             @FormParam("entry_type") String entryType,
             @FormParam("period") int period,
             @FormParam("region") String region,
-            @FormParam("period_year") int periodYear,
-            @FormParam("period_month") int periodMonth,
             @FormParam("currency") String currency,
             @FormParam("user_id") String userId,
             @FormParam("entry_ts") String entryTs) {
-        if (fixedCostsService.setForecastFixedCosts(
-                sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany,
-                otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts,
-                planPeriod, planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs)) {
-            return Response.status(Response.Status.OK).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+
+        if (validateCurrency(currency) && validateEntryType(entryType) && validatePeriod(planPeriod) && validatePeriod(period)) {
+
+            Period tempPlanPeriod = new Period(planPeriod);
+            Period tempPeriod = new Period(period);
+
+            if (fixedCostsService.setForecastFixedCosts(
+                    sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany,
+                    otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts,
+                    tempPlanPeriod, status, usercomment, entryType, tempPeriod, region, currency, userId, entryTs)) {
+                return Response.status(Response.Status.OK).build();
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
     }
 }

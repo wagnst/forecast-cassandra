@@ -151,10 +151,6 @@ public class ForecastSalesWS {
             @FormParam("topdown_adjust_net_sales") double topdownAdjustNetSales,
             @FormParam("topdown_adjust_cm1") double topdownAdjustCm1,
             @FormParam("plan_period") int planPeriod,
-            @FormParam("plan_year") int planYear,
-            @FormParam("plan_half_year") int planHalfYear,
-            @FormParam("plan_quarter") int planQuarter,
-            @FormParam("plan_month") int planMonth,
             @FormParam("entry_type") String entryType,
             @FormParam("status") String status,
             @FormParam("usercomment") String usercomment,
@@ -165,17 +161,21 @@ public class ForecastSalesWS {
             @FormParam("cm1") double cm1,
             @FormParam("period") int period,
             @FormParam("region") String region,
-            @FormParam("period_year") int periodYear,
-            @FormParam("period_month") int periodMonth,
             @FormParam("currency") String currency,
             @FormParam("userid") String userId,
             @FormParam("entry_ts") String entryTs) {
-        if (salesService.setForecastSales(
-                topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter, planMonth, entryType,
-                status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs)) {
-            return Response.status(Response.Status.OK).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
+
+        if (validateCurrency(currency) && validateEntryType(entryType) && validatePeriod(planPeriod) && validatePeriod(period)) {
+
+            Period tempPlanPeriod = new Period(planPeriod);
+            Period tempPeriod = new Period(period);
+
+            if (salesService.setForecastSales(
+                    topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, tempPlanPeriod, entryType,
+                    status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, tempPeriod, region, currency, userId, entryTs)) {
+                return Response.status(Response.Status.OK).build();
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request: Parameters are not valid").build();
     }
 }

@@ -26,19 +26,26 @@ public class SalesRequest extends Request {
         forecastAccessor = getManager().createAccessor(ForecastSalesAccessor.class);
     }
 
-    public boolean setForecastSales(double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1, int planPeriod, int planYear, int planHalfYear,
-                                    int planQuarter, int planMonth, String entryType, String status, String usercomment, String productMainGroup, String salesType,
-                                    double salesVolumes, double netSales, double cm1, int period, String region,
-                                    int periodYear, int periodMonth, String currency, String userId, String entryTs) {
+    public boolean setForecastSales(double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1, Period planPeriod,
+                                    String entryType, String status, String usercomment, String productMainGroup, String salesType,
+                                    double salesVolumes, double netSales, double cm1, Period period, String region,
+                                    String currency, String userId, String entryTs) {
+
+        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
+
+        if (!request.checkSalesParams(productMainGroup, region)) {
+            /* Maybe throw exception that tells the user which params are invalid */
+            return false;
+        }
 
         try {
-            if (forecastAccessor.getSpecificForecastSales(productMainGroup, region, period, salesType, planPeriod, entryType) != null) {
+            if (forecastAccessor.getSpecificForecastSales(productMainGroup, region, period.getPeriod(), salesType, planPeriod.getPeriod(), entryType) != null) {
                 // update an existing record
-                forecastAccessor.updateForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
-                        planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
+                forecastAccessor.updateForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod.getPeriod(), planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(),
+                        planPeriod.getMonth(), entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             } else {
-                forecastAccessor.setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
-                        planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
+                forecastAccessor.setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod.getPeriod(), planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(),
+                        planPeriod.getMonth(), entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             }
         } catch (Exception e) {
             //TODO: implement better exception to be catched

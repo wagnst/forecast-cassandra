@@ -10,7 +10,7 @@ import fourschlag.entities.types.*;
 public class ParameterUtil {
     public static boolean validatePeriod(int period) {
         try {
-            Period currentPeriod = new Period(period);
+            new Period(period);
         } catch (IllegalArgumentException ex) {
             return false;
         }
@@ -19,7 +19,7 @@ public class ParameterUtil {
 
     public static boolean validatePlanYear(int year) {
         try {
-            Period currentPlanYear = Period.getPeriodByYear(year);
+            Period.getPeriodByYear(year);
         } catch (IllegalArgumentException ex) {
             return false;
         }
