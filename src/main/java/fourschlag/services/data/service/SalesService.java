@@ -37,7 +37,6 @@ public class SalesService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
-     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -105,18 +104,10 @@ public class SalesService extends Service {
      *
      * @return boolean value if action was successful or not
      */
-    public boolean setForecastSales(double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1, int planPeriod, int planYear, int planHalfYear,
-                                    int planQuarter, int planMonth, String entryType, String status, String usercomment, String productMainGroup, String salesType,
-                                    double salesVolumes, double netSales, double cm1, int period, String region,
-                                    int periodYear, int periodMonth, String currency, String userId, String entryTs) {
+    public boolean setForecastSales(double topdownAdjustSalesVolumes, double topdownAdjustNetSales, double topdownAdjustCm1, Period planPeriod, String entryType, String status, String usercomment, String productMainGroup, String salesType,
+                                    double salesVolumes, double netSales, double cm1, Period period, String region, String currency, String userId, String entryTs) {
 
-        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
-
-        if (!request.checkSalesParams(productMainGroup, region)) {
-            /* Maybe throw exception that tells the user which params are invalid */
-            return false;
-        }
-        return new SalesRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod, planYear, planHalfYear, planQuarter,
-                planMonth, entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, periodYear, periodMonth, currency, userId, entryTs);
+        return new SalesRequest(getConnection()).setForecastSales(topdownAdjustSalesVolumes, topdownAdjustNetSales, topdownAdjustCm1, planPeriod,
+                entryType, status, usercomment, productMainGroup, salesType, salesVolumes, netSales, cm1, period, region, currency, userId, entryTs);
     }
 }

@@ -27,19 +27,27 @@ public class FixedCostsRequest extends Request {
     public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
                                          double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
                                          double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
-                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter,
-                                         int planMonth, String status, String usercomment, String entryType, int period, String region, int periodYear, int periodMonth, String currency,
+                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, Period planPeriod,
+                                         String status, String usercomment, String entryType, Period period, String region, String currency,
                                          String userId, String entryTs) {
+
+        OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
+
+        if (!request.checkFixedCostsParams(sbu, subregion)) {
+            /* Maybe throw exception that tells the user which params are invalid */
+            return false;
+        }
+
         try {
-            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period, planPeriod, entryType) != null) {
+            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType) != null) {
                 // update an existing record
                 forecastAccessor.updateForecastFixedCosts(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
-                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
-                        planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
+                        planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             } else {
                 forecastAccessor.setForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
-                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod,
-                        planYear, planHalfYear, planQuarter, planMonth, status, usercomment, entryType, period, region, periodYear, periodMonth, currency, userId, entryTs);
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
+                        planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             }
         } catch (Exception e) {
             //TODO: implement better exception to be catched
@@ -84,7 +92,7 @@ public class FixedCostsRequest extends Request {
     public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
                                                                       Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
-        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+        while (planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
             resultList.add(forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, planPeriodFrom.getPeriod(),
                     planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
             //increment period to fetch all months

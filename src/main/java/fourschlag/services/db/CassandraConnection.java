@@ -62,10 +62,11 @@ public class CassandraConnection {
     /**
      * Closes the current connection to the database
      */
-    public void closeConnection() {
+    void closeConnection() {
         cluster.close();
     }
 
+    /* TODO: method need to be fixed */
     public void closeSession() {
         session.close();
     }
@@ -81,11 +82,11 @@ public class CassandraConnection {
         return manager;
     }
 
-    public ClusterEndpoints getEndpoint() {
+    ClusterEndpoints getEndpoint() {
         return endpoint;
     }
 
-    public KeyspaceNames getKeyspace() {
+    KeyspaceNames getKeyspace() {
         return keyspace;
     }
 

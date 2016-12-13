@@ -38,6 +38,9 @@ public class ValidatedResultTopdown extends ValidatedResult {
         return topdownResult;
     }
 
+    /*
+    TODO: method need be to fixed
+     */
     public void setTopdownResult(Map<KeyPerformanceIndicators, Double> topdownResult) {
         this.topdownResult = topdownResult;
     }

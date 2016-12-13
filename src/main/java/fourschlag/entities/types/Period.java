@@ -66,7 +66,6 @@ public class Period {
      * method to get the period by year
      *
      * @param year Year that is currently used
-     *
      * @return Period Object whith the ....
      */
     public static Period getPeriodByYear(int year) {
@@ -111,7 +110,9 @@ public class Period {
         }
         return this;
     }
-
+    /*
+    TODO: method need be to fixed
+     */
     public Period immutableIncrementMultipleTimes(int multiplier) {
         Period tempPeriod = this;
         for (int i = 0; i < multiplier; i++) {
@@ -124,6 +125,9 @@ public class Period {
      * method to get the first period of the year
      *
      * @return Period Object ...
+     */
+    /*
+    TODO: method need be to fixed
      */
     public Period getFirstPeriodOfYear() {
         return new Period(year * 100 + 1);
@@ -149,6 +153,26 @@ public class Period {
             return period - 1;
         } else {
             return period - 89;
+        }
+    }
+
+    public int getHalfYear() {
+        if(month <= 6) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public int getQuarter() {
+        if (month <= 3) {
+            return 1;
+        } else if(month <= 6) {
+            return 2;
+        } else if(month <= 9) {
+            return 3;
+        } else {
+            return 4;
         }
     }
 

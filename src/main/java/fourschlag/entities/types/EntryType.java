@@ -8,7 +8,7 @@ package fourschlag.entities.types;
 public enum EntryType {
     ACTUAL("actual"),
     FORECAST("forecast"),
-    ACTUAL_FORECAST("actual_forecast"),
+    ACTUAL_FORECAST("actual/forecast"),
     BUDGET("budget"),
     TOPDOWN("topdown");
 
@@ -25,20 +25,10 @@ public enum EntryType {
     }
 
     /**
-     * Getter for the Type
-     *
-     * @return EntryType that is currently used
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      * Compares a String with the each content of this enum and returns null or
      * itself
      *
      * @param str String which shall be compared
-     *
      * @return null or the valid enum
      */
     public static EntryType getEntryTypeByString(String str) {
@@ -48,6 +38,15 @@ public enum EntryType {
             }
         }
         return null;
+    }
+
+    /**
+     * Getter for the Type
+     *
+     * @return EntryType that is currently used
+     */
+    public String getType() {
+        return type;
     }
 
     /**

@@ -30,6 +30,7 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
 @Path("/{keyspace}/forecast/")
 public class ForecastWS {
 
+    /* TODO: connection can be local */
     private CassandraConnection connection;
     private SalesService salesService;
     private FixedCostsService fixedCostsService;
@@ -53,7 +54,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -100,7 +100,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -139,7 +138,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET

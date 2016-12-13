@@ -8,6 +8,7 @@ public enum KeyspaceNames {
     HUNDRED_THOUSAND("original_version"),
     THREE_HUNDRED_THOUSAND("fourschlag_300k"),
     NINE_HUNDRED_THOUSAND("fourschlag_900k"),
+    TEST("test_database"),
     DEMO("demo");
 
     private final String keyspace;
