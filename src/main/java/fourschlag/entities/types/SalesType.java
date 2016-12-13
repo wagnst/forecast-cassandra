@@ -19,6 +19,25 @@ public enum SalesType {
         this.type = type;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Compares a String to the values of this enum, Source:
+     * http://stackoverflow.com/questions/9858118/whats-the-proper-way-to-compare-a-string-to-an-enum-value
+     *
+     * @param str String to be compared to this enum
+     *
+     * @return true or false depending of String equals enum
+     */
+    /*
+    TODO: method need be to fixed
+     */
+    public boolean IsEqualStringandEnum(String str) {
+        return this.type.equals(str);
+    }
+
     /**
      * Compares a String with the each content of this enum and returns null or
      * itself
@@ -33,21 +52,6 @@ public enum SalesType {
             }
         }
         return null;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Compares a String to the values of this enum, Source:
-     * http://stackoverflow.com/questions/9858118/whats-the-proper-way-to-compare-a-string-to-an-enum-value
-     *
-     * @param str String to be compared to this enum
-     * @return true or false depending of String equals enum
-     */
-    public boolean IsEqualStringandEnum(String str) {
-        return this.type.equals(str);
     }
 
     @Override
