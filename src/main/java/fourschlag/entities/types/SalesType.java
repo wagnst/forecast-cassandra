@@ -1,20 +1,14 @@
 package fourschlag.entities.types;
 
 /**
- * Enum that provides the sales types.
+ * Enum with all known sales types
  */
-
 public enum SalesType {
     THIRD_PARTY("3rd_party"),
     TRANSFER("transfer");
 
     private final String type;
 
-    /**
-     * Constructor for SalesType
-     *
-     * @param type The SalesType which is supposte to be used
-     */
     SalesType(String type) {
         this.type = type;
     }
@@ -30,9 +24,6 @@ public enum SalesType {
      * @param str String to be compared to this enum
      *
      * @return true or false depending of String equals enum
-     */
-    /*
-    TODO: method need be to fixed
      */
     public boolean IsEqualStringandEnum(String str) {
         return this.type.equals(str);

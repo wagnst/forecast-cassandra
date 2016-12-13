@@ -5,9 +5,8 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Provides the data from the ExchangeRates table
+ * Class that maps the exchange_rate table
  */
-
 @Table(name = "exchange_rate")
 public class ExchangeRateEntity {
     @Column(name = "period")

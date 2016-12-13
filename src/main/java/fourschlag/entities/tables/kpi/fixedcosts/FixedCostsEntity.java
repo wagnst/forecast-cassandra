@@ -5,13 +5,9 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fourschlag.entities.tables.kpi.KpiEntity;
 
-import java.util.UUID;
-
 /**
- * Super class FixedCostsEntity. Extends KpiEntity. Provides the data from the
- * FixedCosts table
+ * Super class FixedCostsEntity. Extends KpiEntity.
  */
-
 public class FixedCostsEntity extends KpiEntity {
     @Column(name = "sbu")
     @JsonProperty("SBU")
@@ -105,8 +101,8 @@ public class FixedCostsEntity extends KpiEntity {
     public FixedCostsEntity() {
     }
 
-    public FixedCostsEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome) {
-        super(uuid, period, region, periodYear, periodMonth, currency, userId, entryTs);
+    public FixedCostsEntity(int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome) {
+        super(period, region, periodYear, periodMonth, currency, userId, entryTs);
         this.sbu = sbu;
         this.subregion = subregion;
         this.fixPreManCost = fixPreManCost;

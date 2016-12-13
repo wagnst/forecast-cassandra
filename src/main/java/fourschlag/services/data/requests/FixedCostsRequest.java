@@ -89,6 +89,28 @@ public class FixedCostsRequest extends Request {
                 entryType.getType(), planPeriodFrom.getPeriod(), planPeriodTo.getPeriod()).all();
     }
 
+    /**
+     * Method can delete an entity from forecast_fixed_costs with its primary
+     * key
+     *
+     * @return boolean if successfull or not
+     */
+    public boolean deleteForecastFixedCosts(String sbu, String subregion, Period period,
+                                            String entryType, Period planPeriod) {
+        try {
+            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType) != null) {
+                forecastAccessor.deleteForecastFixedCosts(sbu, subregion, period.getPeriod(), entryType, planPeriod.getPeriod());
+            } else {
+                /* no entry like this existing */
+                return false;
+            }
+        } catch (Exception e) {
+            //TODO: implement better exception to be catched
+            return false;
+        }
+        return true;
+    }
+
     public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
                                                                       Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
@@ -100,8 +122,6 @@ public class FixedCostsRequest extends Request {
         }
         return resultList;
     }
-
-    //TODO: implement method for non-forecast related tables
 
     public Map<String, Set<String>> getSubregionsAndSbu() {
         if (sbuMap == null) {

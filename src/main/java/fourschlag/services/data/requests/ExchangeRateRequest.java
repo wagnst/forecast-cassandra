@@ -71,7 +71,6 @@ public class ExchangeRateRequest extends Request {
                         toCurrency.getAbbreviation());
             }
             if (queryResult == null) {
-                /* TODO: Maybe throw exception if no exchange Rate is available */
                 exchangeRate = 1.0;
             } else {
                 exchangeRate = queryResult.getRate();

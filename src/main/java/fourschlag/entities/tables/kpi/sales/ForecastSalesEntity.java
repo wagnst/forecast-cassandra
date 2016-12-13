@@ -5,10 +5,8 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.UUID;
-
 /**
- * Extends SalesEntity. Provides the data from the ForecastSales table
+ * Class that maps the forecast_sales table. Extends SalesEntity.
  */
 
 @Table(name = "forecast_sales")
@@ -65,8 +63,8 @@ public class ForecastSalesEntity extends SalesEntity {
     }
 
 
-    public ForecastSalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1, int topdownAdjustSalesVolumes, int topdownAdjustNetSales, int topdownAdjustCm1, String productMainGroup, String region, String salesType, String entryType, int period, int periodYear, int periodMonth, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String currency, String status, String usercomment, String userId, String entryTs) {
-        super(uuid, salesVolumes, netSales, cm1, productMainGroup, region, salesType,
+    public ForecastSalesEntity(double salesVolumes, double netSales, double cm1, int topdownAdjustSalesVolumes, int topdownAdjustNetSales, int topdownAdjustCm1, String productMainGroup, String region, String salesType, String entryType, int period, int periodYear, int periodMonth, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String currency, String status, String usercomment, String userId, String entryTs) {
+        super(salesVolumes, netSales, cm1, productMainGroup, region, salesType,
                 period, periodYear, periodMonth, currency, userId, entryTs);
         this.topdownAdjustSalesVolumes = topdownAdjustSalesVolumes;
         this.topdownAdjustNetSales = topdownAdjustNetSales;

@@ -12,14 +12,30 @@ import fourschlag.entities.tables.RegionEntity;
 
 @Accessor
 public interface RegionAccessor {
-    /*CQL_Query to get the region data */
+    /**
+     * Queries the table for all rows
+     *
+     * @return Iterable of entities mapped as RegionEntity
+     */
     @Query("SELECT subregion, region FROM regions;")
-    Result<RegionEntity> getSubregions();
+    Result<RegionEntity> getAll();
 
+    /**
+     * Queries the table for all rows with a specific region
+     *
+     * @param region primary key field region for where clause
+     * @return Iterable of entities mapped as RegionEntity
+     */
     @Query("SELECT * FROM regions WHERE region = :region ALLOW FILTERING")
     Result<RegionEntity> getEntitiesByRegion(
             @Param("region") String region);
 
+    /**
+     * Queries the table for all rows with a specific subregion
+     *
+     * @param subregion primary key field subregion for where clause
+     * @return Iterable of entities mapped as RegionEntity
+     */
     @Query("SELECT * FROM regions WHERE subregion = :subregion ALLOW FILTERING")
     Result<RegionEntity> getEntitiesBySubregion(
             @Param("subregion") String subregion);

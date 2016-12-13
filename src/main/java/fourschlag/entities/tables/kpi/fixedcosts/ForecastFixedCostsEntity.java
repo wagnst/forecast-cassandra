@@ -5,11 +5,8 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.UUID;
-
 /**
- * Extends FixedCostsEntity. Provides the forecast data from the fixed costs
- * table.
+ * Class that maps the forecast_fixed_costs table. Extends FixedCostsEntity.
  */
 
 @Table(name = "forecast_fixed_costs")
@@ -54,8 +51,8 @@ public class ForecastFixedCostsEntity extends FixedCostsEntity {
     public ForecastFixedCostsEntity() {
     }
 
-    public ForecastFixedCostsEntity(UUID uuid, int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String status, String usercomment, String entryType) {
-        super(uuid, period, region, periodYear, periodMonth, currency, userId, entryTs, sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome);
+    public ForecastFixedCostsEntity(int period, String region, int periodYear, int periodMonth, String currency, String userId, String entryTs, String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost, double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd, double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost, double depreciation, double capCost, double equityIncome, double topdownAdjustFixCosts, int planPeriod, int planYear, int planHalfYear, int planQuarter, int planMonth, String status, String usercomment, String entryType) {
+        super(period, region, periodYear, periodMonth, currency, userId, entryTs, sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome);
         this.topdownAdjustFixCosts = topdownAdjustFixCosts;
         this.planPeriod = planPeriod;
         this.planYear = planYear;

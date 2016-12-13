@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public abstract class KpiRequest extends Request {
     protected String sbu;
     protected String region;
-    protected Period currentPeriod;
+    Period currentPeriod;
     ExchangeRateRequest exchangeRates;
     KeyPerformanceIndicators[] kpiArray;
     private Period planPeriod;

@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Extends ValidatedResult. Provides functionality to validate the results.
+ * Extends ValidatedResult. Extends ValidatedResult by an extra map for topdown results.
  */
 public class ValidatedResultTopdown extends ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> topdownResult;
 
     /**
-     * Constructor for ValidatedResultTopdown
+     * Constructor for ValidatedResultTopdown.
      *
-     * @param kpiArray The KPIs to be validated
+     * @param kpiArray the KPIs that will be put in the map
      */
     public ValidatedResultTopdown(KeyPerformanceIndicators[] kpiArray) {
         super(kpiArray);
@@ -20,13 +20,17 @@ public class ValidatedResultTopdown extends ValidatedResult {
     }
 
     /**
-     * Constructor for ValidatedResultTopdown
+     * Constructor for ValidatedResultTopdown when there already is a kpi result map.
      *
-     * @param kpiResult The KPIs to be validated
+     * @param kpiResult already existent Map with kpi results
      */
     public ValidatedResultTopdown(Map<KeyPerformanceIndicators, Double> kpiResult) {
         super(kpiResult);
-        topdownResult = new HashMap<>(getKpiResult());
+        topdownResult = new HashMap<KeyPerformanceIndicators, Double>() {{
+            for (KeyPerformanceIndicators kpi : getKpiResult().keySet()) {
+                put(kpi, 0.0);
+            }
+        }};
     }
 
     /**
@@ -38,10 +42,4 @@ public class ValidatedResultTopdown extends ValidatedResult {
         return topdownResult;
     }
 
-    /*
-    TODO: method need be to fixed
-     */
-    public void setTopdownResult(Map<KeyPerformanceIndicators, Double> topdownResult) {
-        this.topdownResult = topdownResult;
-    }
 }

@@ -13,14 +13,30 @@ import fourschlag.entities.tables.OrgStructureEntity;
 
 @Accessor
 public interface OrgStructureAccessor {
-    /*CQL-Query to get the OrgStructure data */
+    /**
+     * Selects all rows but only the columns product_main_group and sbu
+     *
+     * @return Iterable of entities mapped as OrgStructureEntity
+     */
     @Query("SELECT product_main_group, sbu FROM org_structure;")
     Result<OrgStructureEntity> getProductsAndSbus();
 
+    /**
+     * Queries the table for all rows restricted by a specific sbu
+     *
+     * @param sbu primary key field sbu for where clause
+     * @return Iterable of entities mapped as OrgStructureEntity
+     */
     @Query("SELECT * FROM org_structure WHERE sbu = :sbu ALLOW FILTERING")
     Result<OrgStructureEntity> getEntitiesBySbu(
             @Param("sbu") String sbu);
 
+    /**
+     * Queries the table for all rows restricted by a specific product_main_group
+     *
+     * @param productMainGroup primary key field product_main_group for where clause
+     * @return Iterable of entities mapped as OrgStructureEntity
+     */
     @Query("SELECT * FROM org_structure WHERE product_main_group = :productMainGroup ALLOW FILTERING")
     Result<OrgStructureEntity> getEntitiesByPmg(
             @Param("productMainGroup") String productMainGroup);

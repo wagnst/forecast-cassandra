@@ -6,15 +6,10 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fourschlag.entities.tables.kpi.KpiEntity;
 
-import java.util.UUID;
-
 /**
- * Super class SalesEntity. Extends KpiEntity. Provides the data from the Sales
- * table
+ * Super class SalesEntity. Extends KpiEntity.
  */
 public class SalesEntity extends KpiEntity {
-
-
     @PartitionKey
     @Column(name = "product_main_group")
     @JsonProperty("PRODUCT_MAIN_GROUP")
@@ -39,11 +34,11 @@ public class SalesEntity extends KpiEntity {
     public SalesEntity() {
     }
 
-    public SalesEntity(UUID uuid, double salesVolumes, double netSales, double cm1,
+    public SalesEntity(double salesVolumes, double netSales, double cm1,
                        String productMainGroup, String region, String salesType,
                        int period, int periodYear, int periodMonth,
                        String currency, String userId, String entryTs) {
-        super(uuid, period, region, periodYear, periodMonth, currency, userId, entryTs);
+        super(period, region, periodYear, periodMonth, currency, userId, entryTs);
         this.salesVolumes = salesVolumes;
         this.netSales = netSales;
         this.cm1 = cm1;

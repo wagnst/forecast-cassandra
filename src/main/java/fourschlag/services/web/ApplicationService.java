@@ -1,7 +1,10 @@
 package fourschlag.services.web;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@javax.ws.rs.ApplicationPath("/api")
+@ApplicationPath("api")
 public class ApplicationService extends Application {
+    public ApplicationService() {
+    }
 }

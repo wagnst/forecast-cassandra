@@ -1,7 +1,7 @@
 package fourschlag.entities.types;
 
 /**
- * Enum that provides the KPIs for Sales and Fixed Costs
+ * Enum with all know KeyPerformanceIndicators (KPIs)
  */
 public enum KeyPerformanceIndicators {
     SALES_VOLUME(1, "sales", "Sales Volumes", "mt"),
@@ -41,14 +41,6 @@ public enum KeyPerformanceIndicators {
     private final String fullName;
     private final String unit;
 
-    /**
-     * Constructor for KeyPerformanceIndicators
-     *
-     * @param orderNumber
-     * @param fcType
-     * @param fullName
-     * @param unit
-     */
     KeyPerformanceIndicators(int orderNumber, String fcType, String fullName, String unit) {
         this.orderNumber = orderNumber;
         this.fcType = fcType;
@@ -57,9 +49,35 @@ public enum KeyPerformanceIndicators {
     }
 
     /**
+     * Because all units are stores with euro as the default currency, this method converts the currency in
+     * the unit to a desired currency.
+     *
+     * @param currency Desired currency
+     * @return converted unit with the desired currency
+     */
+    public String convertUnitCurrency(Currency currency) {
+        /* create local copy of the unit attribute because we can't change the class variable */
+        String unit = this.unit;
+        /* IF desired currency equals EURO THEN return the unit as it is because it is already with euro */
+        if (currency == Currency.EURO) {
+            return unit;
+        }
+        /* ELSE IF the unit as it is now does not contain a currency symbol
+         * THEN return it as it is because we don't have to change anything here
+         */
+        else if (unit.indexOf(Currency.EURO.getSymbol()) == -1) {
+            return unit;
+        }
+        /* ELSE replace the euro symbol with the symbol of the desired currency */
+        else {
+            return unit.replace(Currency.EURO.getSymbol(), currency.getSymbol());
+        }
+    }
+
+    /**
      * Getter for the OrderNumber
      *
-     * @return OrderNumber that is currently used
+     * @return OrderNumber
      */
     public int getOrderNumber() {
         return orderNumber;
@@ -68,7 +86,7 @@ public enum KeyPerformanceIndicators {
     /**
      * Getter for the FcType
      *
-     * @return FcType that is currently used
+     * @return FcType
      */
     public String getFcType() {
         return fcType;
@@ -77,7 +95,7 @@ public enum KeyPerformanceIndicators {
     /**
      * Getter for the FullName
      *
-     * @return FullName of the KPI currently used
+     * @return FullName
      */
     public String getFullName() {
         return fullName;
@@ -86,7 +104,7 @@ public enum KeyPerformanceIndicators {
     /**
      * Getter for the Unit
      *
-     * @return Unit that is currently used
+     * @return Unit
      */
     public String getUnit() {
         return unit;

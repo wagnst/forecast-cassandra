@@ -5,9 +5,8 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Provides the data from the Region table
+ * Class that maps the regions table
  */
-
 @Table(name = "regions")
 public class RegionEntity {
 

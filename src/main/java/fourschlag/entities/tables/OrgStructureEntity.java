@@ -6,9 +6,8 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Provides the data from the OrgStructure table
+ * Class that maps the org_structure table
  */
-
 @Table(name = "org_structure")
 public class OrgStructureEntity {
 

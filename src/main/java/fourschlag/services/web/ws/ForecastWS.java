@@ -27,11 +27,8 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
 /**
  * ForecastWS offers web service to get KPIs from a database
  */
-@Path("/{keyspace}/forecast/")
+@Path("{keyspace}/forecast")
 public class ForecastWS {
-
-    /* TODO: connection can be local */
-    private CassandraConnection connection;
     private SalesService salesService;
     private FixedCostsService fixedCostsService;
 
@@ -39,13 +36,10 @@ public class ForecastWS {
      * Constructor to initialize the database connection and services
      */
     public ForecastWS(@PathParam("keyspace") String keyspace) {
-        connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
+        CassandraConnection connection = ConnectionPool.getConnection(ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
         salesService = new SalesService(connection);
         fixedCostsService = new FixedCostsService(connection);
     }
-
-    /* TODO: Maybe close session each time, but not connection */
-    /* TODO: Create Connection pool and remove the connection from this WS */
 
     /**
      * This method collects all to be calculated forecast KPI's in
@@ -57,15 +51,12 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKPIs(
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
-
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
@@ -103,15 +94,12 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/sales")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}/sales")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSalesKPIs(
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
-
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);
             Period currentPeriod = new Period(period);
@@ -141,14 +129,12 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/fixedcosts")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}/fixedcosts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFixedCostsKPIs(
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
 
         if (validateCurrency(currency) && validatePlanYear(planYear) && validatePeriod(period)) {
             Currency curr = Currency.getCurrencyByAbbreviation(currency);

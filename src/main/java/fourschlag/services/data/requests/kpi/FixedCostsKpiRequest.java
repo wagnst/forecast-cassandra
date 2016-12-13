@@ -172,7 +172,6 @@ public class FixedCostsKpiRequest extends KpiRequest {
             kpiMap.put(DIFF_ACT_PRE_MAN_COST, queryResult.getDiffActPreManCost());
             kpiMap.put(IDLE_EQUIP_COST, queryResult.getIdleEquipCost());
 
-            /* TODO: Check alternative with saving each kpi to a double variable first, instead of getting them all from the map */
             double fixCostBetweenCm1Cm2 = kpiMap.get(FIX_PRE_MAN_COST) + kpiMap.get(SHIP_COST) +
                     kpiMap.get(SELL_COST) + kpiMap.get(DIFF_ACT_PRE_MAN_COST) + kpiMap.get(IDLE_EQUIP_COST);
 
@@ -218,7 +217,6 @@ public class FixedCostsKpiRequest extends KpiRequest {
     @Override
     protected OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,
                                                   LinkedList<Double> monthlyValues, LinkedList<Double> bjValues) {
-        /* TODO: why do we need the sales type in fixed costs */
         return new OutputDataType(kpi, sbu, sbu, region, subregion, SalesType.THIRD_PARTY.toString(),
                 entryType.toString(), exchangeRates.getToCurrency(), monthlyValues, bjValues);
     }
