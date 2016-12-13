@@ -198,4 +198,16 @@ public interface ForecastSalesAccessor {
             @Param("userid") String userId,
             @Param("entry_ts") String entryTs
     );
+
+    /*CQL-Query to get a unique record (depends on primary keys
+        product_main_group,region,period,sales_type,plan_period,entry_type */
+    @Query("DELETE FROM forecast_sales WHERE product_main_group = :product_main_group AND region = :region AND period = :period AND sales_type = :sales_type AND plan_period = :plan_period AND entry_type = :entry_type")
+    ForecastSalesEntity deleteForecastSales(
+            @Param("product_main_group") String productMainGroup,
+            @Param("region") String region,
+            @Param("period") int period,
+            @Param("sales_type") String salesType,
+            @Param("plan_period") int planPeriod,
+            @Param("entry_type") String entryType
+    );
 }

@@ -27,7 +27,7 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
 /**
  * ForecastWS offers web service to get KPIs from a database
  */
-@Path("/{keyspace}/forecast/")
+@Path("{keyspace}/forecast")
 public class ForecastWS {
     private SalesService salesService;
     private FixedCostsService fixedCostsService;
@@ -51,7 +51,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKPIs(
             @PathParam("currency") String currency,
@@ -94,7 +94,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/sales")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}/sales")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSalesKPIs(
             @PathParam("currency") String currency,
@@ -129,7 +129,7 @@ public class ForecastWS {
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
-    @Path("/period/{period}/planyear/{planyear}/currency/{currency}/fixedcosts")
+    @Path("period/{period}/planyear/{planyear}/currency/{currency}/fixedcosts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFixedCostsKPIs(
             @PathParam("currency") String currency,

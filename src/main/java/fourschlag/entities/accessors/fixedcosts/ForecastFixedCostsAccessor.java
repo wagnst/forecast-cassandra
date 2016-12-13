@@ -202,4 +202,14 @@ public interface ForecastFixedCostsAccessor {
             @Param("userid") String userId,
             @Param("entry_ts") String entryTs
     );
+
+    /*CQL-Query to delete an entry with its primary key*/
+    @Query("DELETE FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND entry_type = :entry_type AND plan_period = :plan_period")
+    ResultSet deleteForecastFixedCosts(
+            @Param("sbu") String sbu,
+            @Param("subregion") String subregion,
+            @Param("period") int period,
+            @Param("entry_type") String entryType,
+            @Param("plan_period") int planPeriod
+    );
 }
