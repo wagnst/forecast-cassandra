@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedList;
 
 /**
- * Provides the final output structure
+ * OutputDataType has the structure of the JSON that is sent by the ForecastWS
  */
 public class OutputDataType {
     @JsonIgnore
@@ -80,20 +80,6 @@ public class OutputDataType {
     @JsonIgnore
     private String currency;
 
-    /**
-     * Constructor for OutputDataType
-     *
-     * @param kpi
-     * @param sbu
-     * @param productMainGroup
-     * @param region
-     * @param subregion
-     * @param salesType
-     * @param entryType
-     * @param currency
-     * @param months
-     * @param bjValues
-     */
     public OutputDataType(KeyPerformanceIndicators kpi, String sbu, String productMainGroup, String region,
                           String subregion, String salesType, String entryType, Currency currency,
                           LinkedList<Double> months, LinkedList<Double> bjValues) {
@@ -107,7 +93,7 @@ public class OutputDataType {
         this.salesType = salesType;
         this.entryType = entryType;
         this.currency = currency.getAbbreviation();
-        this.unit = convertUnitCurrency(kpi.getUnit(), currency);
+        this.unit = kpi.convertUnitCurrency(currency);
         this.setMonths(months);
         this.setBj(bjValues);
     }
@@ -126,9 +112,9 @@ public class OutputDataType {
     }
 
     /**
-     * Setter for the Months
+     * Sets all monthly values from a LinkedList. The values in the list must be in the correct order.
      *
-     * @param months List of the months to be set
+     * @param months List with the monthly values
      */
     private void setMonths(LinkedList<Double> months) {
         this.m01 = months.poll();
@@ -152,33 +138,14 @@ public class OutputDataType {
     }
 
     /**
-     * Setter for the Bj
+     * Sets the bj values from LinkedList. The values in the list must be in the correct order.
      *
-     * @param bjValues List of the bjValues to be set
+     * @param bjValues LinkedList with the bj values
      */
     private void setBj(LinkedList<Double> bjValues) {
         this.bj2 = bjValues.poll();
         this.bj3 = bjValues.poll();
         this.bj4 = bjValues.poll();
-    }
-
-    /**
-     * method to convert the unit currency from € to $
-     *
-     * @param unit     Unit that is supposed to be converted
-     * @param currency Currency that is supposed to be cconverted
-     * @return Converted Currency
-     */
-    private String convertUnitCurrency(String unit, Currency currency) {
-        if (currency == Currency.EURO) {
-            return unit;
-        } else if (unit.indexOf(Currency.EURO.getSymbol()) == -1) {
-            return unit;
-        } else if (currency == Currency.DOLLAR) {
-            return unit.replace(Currency.EURO.getSymbol(), Currency.DOLLAR.getSymbol());
-        } else {
-            return unit.replace(Currency.EURO.getSymbolAsString(), currency.getAbbreviation());
-        }
     }
 
     public int getOrderNumber() {

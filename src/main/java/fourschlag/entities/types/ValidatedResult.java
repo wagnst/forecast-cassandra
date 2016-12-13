@@ -4,17 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides functionality to validate the KPI results
+ * Class that can be used to store a validated KPI result.
  */
-
-
 public class ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> kpiResult;
 
     /**
-     * Constructor for ValidatedResult
+     * Constructor for ValidatedResult. Fills the map with KPIs as keys and 0.0 as values.
      *
-     * @param kpiArray The KPIs to be validated
+     * @param kpiArray the KPIs that will be put in the map
      */
     public ValidatedResult(KeyPerformanceIndicators[] kpiArray) {
         kpiResult = new HashMap<KeyPerformanceIndicators, Double>() {{
@@ -25,11 +23,11 @@ public class ValidatedResult {
     }
 
     /**
-     * Constructor for ValidatedResult
+     * Constructor for ValidatedResult.
      *
-     * @param kpiResult The KPIs to be validated
+     * @param kpiResult already existent kpiResult map
      */
-    public ValidatedResult(Map<KeyPerformanceIndicators, Double> kpiResult) {
+    ValidatedResult(Map<KeyPerformanceIndicators, Double> kpiResult) {
         this.kpiResult = kpiResult;
     }
 

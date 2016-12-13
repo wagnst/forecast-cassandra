@@ -1,10 +1,8 @@
 package fourschlag.entities.types;
 
 /**
- * Enum that provides the possible entry types auf the data
+ * Enum with all know entry types
  */
-
-
 public enum EntryType {
     ACTUAL("actual"),
     FORECAST("forecast"),
@@ -14,22 +12,15 @@ public enum EntryType {
 
     private final String type;
 
-    /**
-     * Constructor for EntryType
-     *
-     * @param type The type of the Entry (actual, forecast, actual/forecast,
-     *             budget, topdown)
-     */
     EntryType(String type) {
         this.type = type;
     }
 
     /**
-     * Compares a String with the each content of this enum and returns null or
-     * itself
+     * Searches the enum for a specific entry type by its name
      *
-     * @param str String which shall be compared
-     * @return null or the valid enum
+     * @param str name of the entry type
+     * @return EntryType or null if nothing was found
      */
     public static EntryType getEntryTypeByString(String str) {
         for (EntryType et : EntryType.values()) {
@@ -43,17 +34,12 @@ public enum EntryType {
     /**
      * Getter for the Type
      *
-     * @return EntryType that is currently used
+     * @return Name of the entry type as String
      */
     public String getType() {
         return type;
     }
 
-    /**
-     * toString method to print out the currently used type
-     *
-     * @return EntryType that is currently used
-     */
     @Override
     public String toString() {
         return getType();
