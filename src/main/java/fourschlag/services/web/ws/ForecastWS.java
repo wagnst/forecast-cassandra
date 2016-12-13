@@ -53,7 +53,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -100,7 +99,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET
@@ -139,7 +137,6 @@ public class ForecastWS {
      * @param currency desired currency parameter
      * @param planYear desired plan-year parameter
      * @param period   desired period parameter
-     *
      * @return WS Response as JSON containing all calculated KPI's
      */
     @GET

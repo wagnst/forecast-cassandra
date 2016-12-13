@@ -54,7 +54,6 @@ public class ForecastFixedCostsWS {
      * @param period        parameter for period
      * @param entryType     parameter for entryType
      * @param planPeriodInt parameter for planPeriod
-     *
      * @return a specific entry of forecast_fixed_costs
      */
     @GET
@@ -87,7 +86,6 @@ public class ForecastFixedCostsWS {
      * @param period    parameter for period
      * @param entryType parameter for entryType
      * @param planYear  parameter for planPeriod from
-     *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET
@@ -124,7 +122,6 @@ public class ForecastFixedCostsWS {
      * @param sbu       parameter for sbu
      * @param subregion parameter for subregion
      * @param planYear  parameter for planYear from
-     *
      * @return multiple entries of forecast_fixed_costs
      */
     @GET

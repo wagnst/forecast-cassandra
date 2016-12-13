@@ -66,7 +66,6 @@ public class Period {
      * method to get the period by year
      *
      * @param year Year that is currently used
-     *
      * @return Period Object whith the ....
      */
     public static Period getPeriodByYear(int year) {

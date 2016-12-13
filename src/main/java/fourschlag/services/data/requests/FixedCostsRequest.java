@@ -84,7 +84,7 @@ public class FixedCostsRequest extends Request {
     public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
                                                                       Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
-        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+        while (planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
             resultList.add(forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, planPeriodFrom.getPeriod(),
                     planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
             //increment period to fetch all months

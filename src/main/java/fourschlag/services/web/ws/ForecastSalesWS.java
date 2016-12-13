@@ -107,11 +107,10 @@ public class ForecastSalesWS {
      * Method returns multiple entries from table forecast_sales
      * as a valid WebService. Just taking care of budget values
      *
-     * @param productMainGroup  parameter for sbu
-     * @param region parameter for subregion
-     * @param salesType parameter for Sales Type
-     * @param planYear  parameter for planYear from
-     *
+     * @param productMainGroup parameter for sbu
+     * @param region           parameter for subregion
+     * @param salesType        parameter for Sales Type
+     * @param planYear         parameter for planYear from
      * @return multiple entries of forecast_fixed_costs
      */
     @GET

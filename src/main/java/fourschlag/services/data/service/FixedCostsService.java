@@ -39,7 +39,6 @@ public class FixedCostsService extends Service {
      * @param currentPeriod The point of view in time from which the data is
      *                      supposed to be looked at
      * @param toCurrency    The desired output currency
-     *
      * @return stream of OutputDataTypes that contain all KPIs for the given
      * parameters
      */
@@ -85,7 +84,6 @@ public class FixedCostsService extends Service {
      *                       planPeriodTo
      * @param planPeriodTo   in case we have entry_type eq budget leave ot
      *                       planPeriodTo
-     *
      * @return a list of specific ForecastFixedCostsEntities
      */
     public List<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(String subregion, String sbu, Period period,

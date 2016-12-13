@@ -81,7 +81,7 @@ public class SalesRequest extends Request {
 
     public List<ForecastSalesEntity> getBudgetForecastSales(String productMainGroup, String region, SalesType salesType, Period planPeriodFrom, Period planPeriodTo) {
         List<ForecastSalesEntity> resultList = new ArrayList<>();
-        while(planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
+        while (planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
             resultList.add(forecastAccessor.getSpecificForecastSales(productMainGroup, region, planPeriodFrom.getPeriod(),
                     salesType.getType(), planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
             //increment period to fetch all months
