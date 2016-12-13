@@ -15,7 +15,6 @@ var kpiType;
 var newTab;
 var salesurl;
 var fixedcosturl;
-var forecastSalesTable = '################';
 var forecastFixedCostsTable;
 
 
@@ -35,10 +34,9 @@ window.addEventListener('load', function () {
 
 
     function loadTable (type ,request){
-        newTab.addEventListener('load', function () {
-            console.log(forecastSalesTable + ' bevor table inizialisiert')
+        addEventListener('load', function () {
             if (type == 'sales'){
-                forecastSalesTable = newTab.$('#ForecastSalesTable').DataTable({
+                var forecastSalesTable = $('#ForecastSalesTable').DataTable({
                     "ajax": {
                         "url": request,
                         "dataSrc": ""
@@ -46,6 +44,7 @@ window.addEventListener('load', function () {
                     "info": false,
                     "paging": false,
                     aaSorting: [],
+                    stateSave: true,
                     "columns": [
                         {"data": "PERIOD"},
                         {"data": "REGION"},
@@ -72,7 +71,11 @@ window.addEventListener('load', function () {
                         {"data": "USERCOMMENT"}
                     ]
                 });
-            console.log(forecastSalesTable + ' nach table inizialisiert');
+
+                localStorage.setItem("forecastSalesTable", JSON.stringify(forecastSalesTable));
+                var test = localStorage.getItem("forecastSalesTable");
+                console.log('retrievedObject: ', JSON.parse(test));
+            console.log(forecastSalesTable.data);
 
             }
             if (type =='fixed costs'){
@@ -126,8 +129,7 @@ window.addEventListener('load', function () {
                     ]
                 });
             }
-            console.log(forecastSalesTable + ' am Ende der loadTable');
-            return forecastSalesTable
+            console.log(forecastSalesTable);
         });
 
     }
@@ -219,10 +221,7 @@ window.addEventListener('load', function () {
                     '/plan_year/' + planYear;
 
                 openNewTab(saleshtmlurl);
-                console.log(forecastSalesTable + ' vor dem Methondenaufruf');
-                var test = loadTable(data.FC_TYPE, salesurl);
-                console.log(forecastSalesTable + ' nach dem Methondenaufruf');
-                console.log(test);
+                loadTable(data.FC_TYPE, salesurl);
 
 
 
@@ -261,9 +260,13 @@ window.addEventListener('load', function () {
 
     });
 
+    var forecastSalesTable = localStorage.getItem("forecastSalesTable");
+
         $('#ForecastSalesTable').on('click', 'tr', function() {
+            var forecastSalesTable = localStorage.getItem("forecastSalesTable");
+            console.log(JSON.parse(forecastSalesTable));
         $('#SalesModal').modal('show');
-        var oData = forecastSalesTable.row(this).data();
+        var oData = JSON.parse(forecastSalesTable).row(this).data();
         console.log(oData);
         $('#period').val(oData["PERIOD"]);
         $('#region').val(oData["REGION"]);
