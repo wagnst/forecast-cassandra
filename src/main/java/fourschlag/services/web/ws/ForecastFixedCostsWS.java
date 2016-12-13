@@ -21,6 +21,7 @@ import static fourschlag.services.web.ws.ParameterUtil.*;
 @Path("/{keyspace}/fixedcosts")
 public class ForecastFixedCostsWS {
 
+    /* TODO: connection can be local */
     private CassandraConnection connection;
     private FixedCostsService fixedCostsService;
 
