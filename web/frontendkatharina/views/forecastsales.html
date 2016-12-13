@@ -51,10 +51,10 @@
             <ul class="nav navbar-nav">
 
                 <li>
-                    <a>Daten abfragen</a>
+                    <a href="index.html">Daten abfragen</a>
                 </li>
                 <li>
-                    <a>Daten einfügen</a>
+                    <a href="insert.html" >Daten einfügen</a>
                 </li>
             </ul>
         </div>
@@ -102,6 +102,80 @@
         </table>
     </div>
 </div>
+<div id="SalesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <h1>Bitte ändern Sie die Daten</h1>
+                <div class="from-group">
+
+
+                    <form class="sales" action="index.html" method="post">
+
+                        <label for="period">PERIOD:</label>
+                        <input class="form-control" type="text" id="period" disabled /><br />
+                        <label for="region">REGION:</label>
+                        <input class="form-control" type="text" id="region" disabled /><br />
+                        <label for="periodYear">PERIOD_YEAR</label>
+                        <input class="form-control" type="text" id="periodYear" disabled /><br />
+                        <label for="periodMoth">PERIOD_MONTH</label>
+                        <input class="form-control" type="text" id="periodMoth" disabled /><br />
+                        <label for="currency">CURRENCY</label>
+                        <input class="form-control" type="text" id="currency" disabled /><br />
+                        <label for="userid">USERID:</label>
+                        <input class="form-control" type="text" id="userid" disabled /><br />
+                        <label for="entryts">ENTRY_TS:</label>
+                        <input class="form-control" type="text" id="entryts" disabled /><br />
+                        <label for="productMainGroup">PRODUCT_MAIN_GROUP</label>
+                        <input class="form-control" type="text" id="productMainGroup" disabled /><br />
+                        <label for="salesType">SALES_TYPE:</label>
+                        <input class="form-control" type="text" id="salesType" disabled /><br />
+                        <label for="salesVolumes">SALES_VOLUMES:</label>
+                        <input class="form-control" type="number" id="salesVolumes" /><br />
+                        <label for="netSales">NET_SALES:</label>
+                        <input class="form-control" type="number" id="netSales" /><br />
+                        <label for="cm1">CM1:</label>
+                        <input class="form-control" type="number" id="cm1" /><br />
+                        <label for="topdownSalesVolumes">TOPDOWN_ADJUST_SALES_VOLUMES</label>
+                        <input class="form-control" type="number" id="topdownSalesVolumes" /><br />
+                        <label for="topdownNetSales">TOPDOWN_ADJUST_NET_SALES:</label>
+                        <input class="form-control" type="number" id="topdownNetSales" /><br />
+                        <label for="topdownCm1">TOPDOWN_ADJUST_CM1:</label>
+                        <input class="form-control" type="number" id="topdownCm1" /><br />
+                        <label for="planPeriod">PLAN_PERIOD:</label>
+                        <input class="form-control" type="text" id="planPeriod" disabled /><br />
+                        <label for="planYear">PLAN_YEAR:</label>
+                        <input class="form-control" type="text" id="planYear" disabled /><br />
+                        <label for="planHalfYear">PLAN_HALF_YEAR:</label>
+                        <input class="form-control" type="text" id="planHalfYear" disabled /><br />
+                        <label for="planQuarter">PLAN_QUARTER</label>
+                        <input class="form-control" type="text" id="planQuarter" disabled /><br />
+                        <label for="planMonth">PLAN_MONTH</label>
+                        <input class="form-control" type="text" id="planMonth" disabled /><br />
+                        <label for="entryType">ENTRY_TYPEe</label>
+                        <input class="form-control" type="text" id="entryType" disabled /><br />
+                        <label for="status">STATUS</label>
+                        <input class="form-control" type="text" id="status" disabled /><br />
+                        <label for="usercomment">USERCOMMENT:</label>
+                        <input class="form-control" type="text" id="usercomment" disabled /><br />
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
 
 <script src="../javascript/main.js"></script>
 <script src="../js/bootstrap.min.js"></script>

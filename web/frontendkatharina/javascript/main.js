@@ -15,15 +15,30 @@ var kpiType;
 var newTab;
 var salesurl;
 var fixedcosturl;
+var forecastSalesTable = '################';
+var forecastFixedCostsTable;
 
 
-function openNewTabAndLoadTables(url, type, request) {
-    newTab = window.open(url);
-    if (newTab) {
-        newTab.focus();
+
+window.addEventListener('load', function () {
+
+    function openNewTab(url) {
+        newTab = window.open(url);
+        if (newTab) {
+            newTab.focus();
+
+        } else {
+            //Browser has blocked it
+            alert('Please allow popups for this website');
+        }
+    }
+
+
+    function loadTable (type ,request){
         newTab.addEventListener('load', function () {
+            console.log(forecastSalesTable + ' bevor table inizialisiert')
             if (type == 'sales'){
-                newTab.$('#ForecastSalesTable').DataTable({
+                forecastSalesTable = newTab.$('#ForecastSalesTable').DataTable({
                     "ajax": {
                         "url": request,
                         "dataSrc": ""
@@ -57,10 +72,11 @@ function openNewTabAndLoadTables(url, type, request) {
                         {"data": "USERCOMMENT"}
                     ]
                 });
+            console.log(forecastSalesTable + ' nach table inizialisiert');
 
             }
             if (type =='fixed costs'){
-                newTab.$('#ForecastFixedcostsTable').DataTable({
+                forecastFixedCostsTable = newTab.$('#ForecastFixedcostsTable').DataTable({
                     "ajax": {
                         "url": request,
                         "dataSrc": ""
@@ -110,17 +126,11 @@ function openNewTabAndLoadTables(url, type, request) {
                     ]
                 });
             }
+            console.log(forecastSalesTable + ' am Ende der loadTable');
+            return forecastSalesTable
+        });
 
-
-            });
-    } else {
-        //Browser has blocked it
-        alert('Please allow popups for this website');
     }
-}
-
-
-window.addEventListener('load', function () {
 
     var indexTable = $('#KpiTable').DataTable({
         "ajax": {
@@ -129,6 +139,7 @@ window.addEventListener('load', function () {
         },
         "info": false,
         aaSorting: [],
+        "lengthMenu": [ [50, 100, 500, 1000, 5000, 10000, -1], [50, 100, 500, 1000, 5000, 10000,  "All"] ],
         "columns": [
             {"data": "ENTRY_TYPE"},
             {"data": "REGION"},
@@ -170,12 +181,6 @@ window.addEventListener('load', function () {
         }]
     });
 
-
-
-    const startbutton = document.getElementById('startbutton');
-
-
-
     $('#KpiTable tbody').on('click', 'button', function () {
         var data = indexTable.row($(this).parents('tr')).data();
         planYear = document.getElementById('datepicker_planYear').value;
@@ -191,7 +196,8 @@ window.addEventListener('load', function () {
                     + data.REGION + '/sales_type/' + data.SALES_TYPE + '/entry_type/budget' +
                     '/plan_year/' + planYear;
 
-                openNewTabAndLoadTables(saleshtmlurl, data.FC_TYPE, salesurl);
+                openNewTab(saleshtmlurl);
+                loadTable(data.FC_TYPE, salesurl);
 
             }
             if (data.FC_TYPE == 'fixed costs') {
@@ -199,7 +205,8 @@ window.addEventListener('load', function () {
                 fixedcosturl = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION +  '/entry_type/budget' +  '/plan_year/' + planYear;
 
-                openNewTabAndLoadTables(fixedcostshtmlurl, data.FC_TYPE, fixedcosturl);
+                openNewTab(fixedcostshtmlurl);
+                loadTable(data.FC_TYPE, fixedcosturl)
 
             }
         }
@@ -208,26 +215,32 @@ window.addEventListener('load', function () {
 
 
                 salesurl = endpointScheme + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
-                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/' + data.ENTRY_TYPE +
+                    + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
-                console.log(salesurl);
-                openNewTabAndLoadTables(saleshtmlurl, data.FC_TYPE, salesurl);
+
+                openNewTab(saleshtmlurl);
+                console.log(forecastSalesTable + ' vor dem Methondenaufruf');
+                var test = loadTable(data.FC_TYPE, salesurl);
+                console.log(forecastSalesTable + ' nach dem Methondenaufruf');
+                console.log(test);
+
 
 
             }
             if (data.FC_TYPE == 'fixed costs') {
 
                 fixedcosturl = endpointScheme + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
-                    + data.SUBREGION + '/period/' + period + '/entry_type/' + data.ENTRY_TYPE +
+                    + data.SUBREGION + '/period/' + period + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
 
-                openNewTabAndLoadTables(fixedcostshtmlurl);
+                openNewTab(fixedcostshtmlurl);
+                loadTable(data.FC_TYPE, fixedcosturl)
 
             }
         }
     });
 
-    startbutton.addEventListener('click', function () {
+    $('#startbutton').on('click', function () {
 
         planYear = document.getElementById('datepicker_planYear').value;
         backend = document.getElementById('backendServer').value;
@@ -246,7 +259,39 @@ window.addEventListener('load', function () {
             indexTable.ajax.url(urlother).load();
         }
 
-    }, false);
+    });
+
+        $('#ForecastSalesTable').on('click', 'tr', function() {
+        $('#SalesModal').modal('show');
+        var oData = forecastSalesTable.row(this).data();
+        console.log(oData);
+        $('#period').val(oData["PERIOD"]);
+        $('#region').val(oData["REGION"]);
+        $('#periodYear').val(oData["PERIDO_YEAR"]);
+        $('#periodMonth').val(oData["PERIOD_MONTH"]);
+        $('#currency').val(oData["CURRENCY"]);
+        $('#userid').val(oData["USERID"]);
+        $('#entryts').val(oData["ENTRY_TS"]);
+        $('#productMainGroup').val(oData["PRODUCT_MAIN_GROUP"]);
+        $('#salesType').val(oData["SALES_TYPE"]);
+        $('#salesVolumes').val(oData["SALES_VOLUMES"]);
+        $('#netSales').val(oData["NET_SALES"]);
+        $('#cm1').val(oData["CM1"]);
+        $('#topdownSalesVolumes').val(oData["TOPDOWN_ADJUST_SALES_VOLUMES"]);
+        $('#topdownNetSales').val(oData["TOPDOWN_ADJUST_NET_SALES"]);
+        $('#topdownCm1').val(oData["TOPDOWN_ADJUST_CM1"]);
+        $('#planPeriod').val(oData["PLAN_PERIOD"]);
+        $('#planYear').val(oData["PLAN_YEAR"]);
+        $('#planHalfYear').val(oData["PLAN_HALF_YEAR"]);
+        $('#planQuarter').val(oData["PLAN_QUARTER"]);
+        $('#planMonth').val(oData["PLAN_MONTH"]);
+        $('#entryType').val(oData["ENTRY_TYPE"]);
+        $('#status').val(oData["STATUS"]);
+        $('#usercomment').val(oData["USERCOMMENT"]);
+    });
+
+
+
 }, false);
 
 
