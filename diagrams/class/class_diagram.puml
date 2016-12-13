@@ -4,11 +4,12 @@ http://plantuml.com/component-diagram
 http://plantuml.com/class-diagram '/
 
 title
- <b>Class diagram of <u>FourSchlag</u> project</b>
+ <b>Class_diagram of <u>FourSchlag</u> project</b>
  <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
- <i>Version:</i> <b>DRAFT</b>, 29th Nov 2016
+ <i>Version:</i> <b>DRAFT</b>, 13th Dec 2016
  <i>Author:</i> Mei Yuan
 end title
+
 
 left to right direction
 
@@ -32,8 +33,6 @@ package fourschlag {
             Interface OrgStructureAccessor
 
             Interface RegionAccessor
-
-
         }
 
 
@@ -50,7 +49,6 @@ package fourschlag {
                     FixedCostsEntity <|-- ActualFixedCostsEntity
                     FixedCostsEntity <|-- ForecastFixedCostsEntity
                 }
-
 
                 package fourschlag.entities.tables.kpi.sales {
                     Class ActualSalesEntity
@@ -70,15 +68,12 @@ package fourschlag {
                 KpiEntity <|-- SalesEntity
             }
 
-
             Class ExchangeRateEntity
 
             Class OrgStructureEntity
 
             Class RegionEntity
-
         }
-
 
         package fourschlag.entities.types {
             package fourschlag.entities.types.comparators {
@@ -99,7 +94,7 @@ package fourschlag {
 
             Class Period
 
-            Enum SalesType
+            Class SalesType<E>
 
             Class ValidatedResult
 
@@ -114,8 +109,9 @@ package fourschlag {
             Period <|-- ZeroMonthPeriod
         }
     }
- package fourschlag.services {
 
+
+ package fourschlag.services {
         package fourschlag.services.data {
             package fourschlag.services.data.requests {
                 package fourschlag.services.data.requests.kpi {
@@ -124,7 +120,6 @@ package fourschlag {
                     Abstract Class KpiRequest
 
                     Class SalesKpiRequest
-
                 }
 
                 Class ExchangeRateRequest {
@@ -162,6 +157,9 @@ package fourschlag {
                 KpiRequest <|-- SalesKpiRequest
 
             }
+                namespace fourschlag.services.data.requests{
+                    .KpiRequest o-- ExchangeRateRequest
+                }
 
             package fourschlag.services.data.service {
                 Class FixedCostsService {
@@ -180,8 +178,6 @@ package fourschlag {
 
                 Service <|-- SalesService
                 Service <|-- FixedCostsService
-
-
             }
         }
 
@@ -195,6 +191,11 @@ package fourschlag {
             }
 
             Enum KeyspaceNames
+        }
+        namespace fourschlag.services.db{
+            .CassandraConnection *-- ClusterEndpoints : has
+            .CassandraConnection *-- KeyspaceNames : has
+            .CassandraConnection ..> ConnectionPool : create
         }
 
         package fourschlag.services.web {
@@ -210,7 +211,19 @@ package fourschlag {
 
                 Class ParameterValidator
             }
+            namespace fourschlag.services.web.ws{
+            .ForecastFixedCostsWS o-- FixedCostsService
+            .ForecastSalesWS o-- SalesService
+            .ForecastWS o-- FixedCostsService
+            .ForecastWS o-- SalesService
+            .ForecastWS o-- CassandraConnection
+            .ForecastFixedCostsWS o-- CassandraConnection
+            .ForecastSalesWS o-- CassandraConnection
+            }
         }
     }
+
+            fourschlag.services.data.requests o-- fourschlag.entities.accessors
+            fourschlag.services.data.requests *-- CassandraConnection : use
 }
 @enduml
