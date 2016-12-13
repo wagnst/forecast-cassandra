@@ -111,7 +111,9 @@ public class Period {
         }
         return this;
     }
-
+    /*
+    TODO: method need be to fixed
+     */
     public Period immutableIncrementMultipleTimes(int multiplier) {
         Period tempPeriod = this;
         for (int i = 0; i < multiplier; i++) {
@@ -124,6 +126,9 @@ public class Period {
      * method to get the first period of the year
      *
      * @return Period Object ...
+     */
+    /*
+    TODO: method need be to fixed
      */
     public Period getFirstPeriodOfYear() {
         return new Period(year * 100 + 1);

@@ -1,6 +1,6 @@
 @startuml
 
-left to right direction
+'left to right direction
 
 node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>>{
 
@@ -18,7 +18,7 @@ node ":__Datenbankserver 1...n, Linux__" as N1 <<device>>{
     database ":Apache Cassandra" as Cassandra <<database>>
 }
 
-LZ == N1: <<Cassandra´s Binary Protocol>>
-LZ =up= N2: <<HTTP>>
+LZ == N1: Cassandra´s Binary Protocol <<protocol>>
+LZ =up= N2: HTTP <<protocol>>
 
 @enduml

@@ -17,8 +17,8 @@ public abstract class KpiRequest extends Request {
     protected String sbu;
     protected String region;
     protected Period currentPeriod;
-    protected ExchangeRateRequest exchangeRates;
-    protected KeyPerformanceIndicators[] kpiArray;
+    ExchangeRateRequest exchangeRates;
+    KeyPerformanceIndicators[] kpiArray;
     private Period planPeriod;
 
     /**
