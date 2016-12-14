@@ -105,9 +105,9 @@ public abstract class KpiRequest extends Request {
         Period tempPlanPeriod = new Period(planPeriod);
 
         /* Prepare maps that will store the monthly values */
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>(kpiArray.length);
         fillMap(bjValues);
 
         /*Prepare ValidatedResult object */
@@ -154,13 +154,13 @@ public abstract class KpiRequest extends Request {
 
         Period tempPlanPeriod = new Period(this.planPeriod);
 
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyTopdownValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyTopdownValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyTopdownValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>(kpiArray.length);
         fillMap(bjValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> topdownBjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> topdownBjValues = new HashMap<>(kpiArray.length);
         fillMap(topdownBjValues);
 
         Map<Integer, KpiEntity> actualData = getActualData(tempPlanPeriod, currentPeriod);
