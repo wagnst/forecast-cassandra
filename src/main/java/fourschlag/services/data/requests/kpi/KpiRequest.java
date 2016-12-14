@@ -251,7 +251,7 @@ public abstract class KpiRequest extends Request {
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
     /**
-     * Queries rows from the actual table that are within a specific time window.
+     * Queries entities from the actual table that are within a specific time window.
      *
      * @param tempPlanPeriodFrom plan_period to begin with
      * @param tempPlanPeriodTo plan_period to end with
@@ -260,7 +260,7 @@ public abstract class KpiRequest extends Request {
     protected abstract Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
 
     /**
-     * Queries rows from the forecast table table that are within a specific time window.
+     * Queries entities from the forecast table table that are within a specific time window.
      *
      * @param tempPlanPeriodFrom plan_period to begin with
      * @param tempPlanPeriodTo plan_period to end with

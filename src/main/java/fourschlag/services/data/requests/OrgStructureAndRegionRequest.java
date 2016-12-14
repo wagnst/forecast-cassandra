@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Extends Request. Offers functionality to request product main groups and
- * sbus.
+ * Extends Request. Offers functionality to query the OrgStructure and Regions tables
  */
 public class OrgStructureAndRegionRequest extends Request {
 
@@ -34,13 +33,13 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     /**
-     * method that applies the sbu belonging to a specific PMG
+     * Method that finds the correct SBU of a product main group
      *
-     * @param productMainGroup product main group for which the sbu is supposed
-     *                         to be found
-     * @return
+     * @param productMainGroup product main group for which the sbu is needed
+     * @return SBU that corresponds with the given PMG
      */
     public String getSbu(String productMainGroup) {
+        /* IF the map is null THEN fill it with data from the OrgStructure table */
         if (sbu == null) {
             Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
             sbu = new HashMap<String, String>() {{
@@ -49,6 +48,7 @@ public class OrgStructureAndRegionRequest extends Request {
                 }
             }};
         }
+
         String returnValue = sbu.get(productMainGroup);
         if (returnValue == null) {
             return productMainGroup;
@@ -57,12 +57,13 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     /**
-     * Getter for the region
+     * Method that finds the correct region for a subregion
      *
-     * @param subregion
-     * @return
+     * @param subregion subregion for which the region is needed
+     * @return region that corresponds with the given subregion
      */
     public String getRegion(String subregion) {
+        /* IF the map is null THEN fill it with data from the Regions table */
         if (region == null) {
             Result<RegionEntity> queryResult = regionAccessor.getAll();
             region = new HashMap<String, String>() {{
@@ -78,6 +79,13 @@ public class OrgStructureAndRegionRequest extends Request {
         return returnValue;
     }
 
+    /**
+     * Checks if the given parameters are valid for a Sales Entity
+     *
+     * @param productMainGroup product main group to be checked
+     * @param region region to be checked
+     * @return True IF parameters are valid; False if not
+     */
     boolean checkSalesParams(String productMainGroup, String region) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesByPmg(productMainGroup).all();
         if (orgEntities.isEmpty()) {
@@ -88,13 +96,21 @@ public class OrgStructureAndRegionRequest extends Request {
         return (!regionEntities.isEmpty());
     }
 
-    boolean checkFixedCostsParams(String sbu, String subregion) {
+    /**
+     * Checks if the given parameters are valid for a Fixed Costs Entity
+     *
+     * @param sbu sbu to be checked
+     * @param subregion subregion to be checked
+     * @param region region to be checked
+     * @return True IF parameters are valid; False if not
+     */
+    boolean checkFixedCostsParams(String sbu, String subregion, String region) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesBySbu(sbu).all();
         if (orgEntities.isEmpty()) {
             return false;
         }
-        List<RegionEntity> regionEntities = regionAccessor.getEntitiesBySubregion(subregion).all();
+        RegionEntity regionEntity = regionAccessor.getSpecificEntity(subregion, region);
 
-        return (!regionEntities.isEmpty());
+        return (regionEntity != null);
     }
 }

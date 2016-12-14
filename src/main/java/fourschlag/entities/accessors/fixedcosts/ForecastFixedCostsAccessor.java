@@ -204,7 +204,7 @@ public interface ForecastFixedCostsAccessor {
     );
 
     /*CQL-Query to delete an entry with its primary key*/
-    @Query("DELETE FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND entry_type = :entry_type AND plan_period = :plan_period")
+    @Query("DELETE FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND entry_type = :entry_type AND plan_period = :plan_period IF EXISTS")
     ResultSet deleteForecastFixedCosts(
             @Param("sbu") String sbu,
             @Param("subregion") String subregion,

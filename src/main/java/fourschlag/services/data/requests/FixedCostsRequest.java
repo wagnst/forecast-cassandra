@@ -12,6 +12,9 @@ import fourschlag.services.db.CassandraConnection;
 
 import java.util.*;
 
+/**
+ * Extends Request. Offers functionality to query the Fixed Costs tables.
+ */
 public class FixedCostsRequest extends Request {
 
     private final ActualFixedCostsAccessor actualAccessor;
@@ -24,6 +27,11 @@ public class FixedCostsRequest extends Request {
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
+    /**
+     * Inserts (if combination of primary keys does not exist) or updates a row in the forecast fixed costs table
+     *
+     * @return True IF process was successful; False IF it something went wrong
+     */
     public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
                                          double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
                                          double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
@@ -33,23 +41,27 @@ public class FixedCostsRequest extends Request {
 
         OrgStructureAndRegionRequest request = new OrgStructureAndRegionRequest(getConnection());
 
-        if (!request.checkFixedCostsParams(sbu, subregion)) {
-            /* Maybe throw exception that tells the user which params are invalid */
+        /* Check if the given values for sbu, subregion and region are existent in the OrgStructure and Regions tables */
+        if (!request.checkFixedCostsParams(sbu, subregion, region)) {
+            /* IF invalid THEN return false */
             return false;
         }
 
         try {
+            /* IF the forecast fixed costs table already has data for that combination of primary key values */
             if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType) != null) {
-                // update an existing record
+                /* THEN update that existing record */
                 forecastAccessor.updateForecastFixedCosts(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                         otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
                         planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             } else {
+                /* ELSE insert a new row */
                 forecastAccessor.setForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
                         otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
                         planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             }
         } catch (Exception e) {
+            /* IF something goes wrong THEN return false */
             //TODO: implement better exception to be catched
             return false;
         }
@@ -98,31 +110,42 @@ public class FixedCostsRequest extends Request {
     public boolean deleteForecastFixedCosts(String sbu, String subregion, Period period,
                                             String entryType, Period planPeriod) {
         try {
-            if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType) != null) {
-                forecastAccessor.deleteForecastFixedCosts(sbu, subregion, period.getPeriod(), entryType, planPeriod.getPeriod());
-            } else {
-                /* no entry like this existing */
-                return false;
-            }
+            /* send delete query, is idempotent */
+            forecastAccessor.deleteForecastFixedCosts(sbu, subregion, period.getPeriod(), entryType, planPeriod.getPeriod());
         } catch (Exception e) {
             //TODO: implement better exception to be catched
+            /* IF something goes wrong THEN return false */
             return false;
         }
         return true;
     }
 
+    /**
+     * Gets Budget Data from the forecast fixed costs table
+     *
+     * @param subregion subregion in where clause
+     * @param sbu sbu in where clause
+     * @param planPeriodFrom plan period to begin with in where clause
+     * @param planPeriodTo plan period to end with in where clause
+     * @return List with mapped Entities
+     */
     public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
                                                                       Period planPeriodTo) {
         List<ForecastFixedCostsEntity> resultList = new ArrayList<>();
         while (planPeriodFrom.getPeriod() < planPeriodTo.getPeriod()) {
             resultList.add(forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, planPeriodFrom.getPeriod(),
                     planPeriodFrom.getPeriod(), EntryType.BUDGET.getType()));
-            //increment period to fetch all months
+            /* increment period to fetch all months */
             planPeriodFrom.increment();
         }
         return resultList;
     }
 
+    /**
+     * Gets all distinct combinations of subregions and sbus in the fixed costs tables
+     *
+     * @return Map with SBU as Key and Sets of subregions as values
+     */
     public Map<String, Set<String>> getSubregionsAndSbu() {
         if (sbuMap == null) {
             querySubregionsAndSbu();
@@ -130,6 +153,9 @@ public class FixedCostsRequest extends Request {
         return sbuMap;
     }
 
+    /**
+     * Queries the database for all combinations of SBU and subregion and puts them in the sbuMap
+     */
     private void querySubregionsAndSbu() {
         Result<ActualFixedCostsEntity> entitiesFromActual = actualAccessor.getDistinctSbuAndSubregions();
         Result<ForecastFixedCostsEntity> entitiesFromForecast = forecastAccessor.getDistinctSbuAndSubregions();
@@ -144,6 +170,11 @@ public class FixedCostsRequest extends Request {
         }
     }
 
+    /**
+     * Takes values from a fixed costs entity and puts them into the sbuMap
+     *
+     * @param entity fixed costs entity with values
+     */
     private void addToSbuMap(FixedCostsEntity entity) {
         if (sbuMap.containsKey(entity.getSbu())) {
             sbuMap.get(entity.getSbu()).add(entity.getSubregion());
