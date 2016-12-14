@@ -70,13 +70,13 @@
 
 <div id="überschrift">
     <h3>
-        Sales Daten einfügen:
+        FixedCosts Daten einfügen:
     </h3>
 </div>
 
 <div id ='divforform'>
 
-    <form id="form" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
+    <form id="form" action="http://localhost:8080/fourschlag/api/TEST/fixedcosts/" method="post">
 
         <div class="form-group row">
             <label for="period" class="col-xs-4 col-form-label">PERIOD:</label>
@@ -99,7 +99,7 @@
         <div class="form-group row">
             <label for="userid" class="col-xs-4 col-form-label">USERID:</label>
             <div class="col-xs-5">
-                <input class="form-control" type="text" id="userid" value="browser" name="userid"/><br />
+                <input class="form-control" type="text" id="userid" value="browser" name="user_id"/><br />
             </div>
         </div>
         <div class="form-group row">
@@ -109,51 +109,141 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="productMainGroup" class="col-xs-4 col-form-label">PRODUCT_MAIN_GROUP</label>
+            <label for="sbu" class="col-xs-4 col-form-label">SBU:</label>
             <div class="col-xs-5">
-                <input class="form-control" type="text" id="productMainGroup" name="product_main_group"/><br />
+                <input class="form-control" type="text" id="sbu" name="sbu"/><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="salesType" class="col-xs-4 col-form-label">SALES_TYPE:</label>
+            <label for="subRegion" class="col-xs-4 col-form-label">SUBREGION:</label>
             <div class="col-xs-5">
-                <input class="form-control" type="text" id="salesType" name="sales_type"/><br />
+                <input class="form-control" type="text" id="subRegion" name="subregion"/><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="salesVolumes" class="col-xs-4 col-form-label">SALES_VOLUMES:</label>
+            <label for="fixPreManCost" class="col-xs-4 col-form-label">FIX_PRE_MAN_COST:</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="salesVolumes" name="sales_volumes"/><br />
+                <input class="form-control" type="number" id="fixPreManCost" name="fix_pre_man_cost"/><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="netSales" class="col-xs-4 col-form-label">NET_SALES:</label>
+            <label for="shipCost" class="col-xs-4 col-form-label">SHIP_COST:</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="netSales" name="net_sales" /><br />
+                <input class="form-control" type="number" id="shipCost" name="ship_cost" /><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="cm1" class="col-xs-4 col-form-label">CM1:</label>
+            <label for="sellCost" class="col-xs-4 col-form-label">SELL_COST:</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="cm1" name="cm1"/><br />
+                <input class="form-control" type="number" id="sellCost" name="sell_cost"/><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="topdownSalesVolumes" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_SALES_VOLUMES</label>
+            <label for="diffActPreManCost" class="col-xs-4 col-form-label">DIFF_ACT_PRE_MAN_COST</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="topdownSalesVolumes" name="topdown_adjust_sales_volumes" /><br />
+                <input class="form-control" type="number" id="diffActPreManCost" name="diff_act_pre_man_cost" /><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="topdownNetSales" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_NET_SALES:</label>
+            <label for="idleEquipCost" class="col-xs-4 col-form-label">IDLE_EQUIP_COST:</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="topdownNetSales" name="topdown_adjust_net_sales" /><br />
+                <input class="form-control" type="number" id="idleEquipCost" name="idle_equip_cost" /><br />
             </div>
         </div>
         <div class="form-group row">
-            <label for="topdownCm1" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_CM1:</label>
+            <label for="rdCost" class="col-xs-4 col-form-label">RD_COST:</label>
             <div class="col-xs-3">
-                <input class="form-control" type="number" id="topdownCm1" name="topdown_adjust_cm1" /><br />
+                <input class="form-control" type="number" id="rdCost" name="rd_cost" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="adminCostBu" class="col-xs-4 col-form-label">ADMIN_COST_BU:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="adminCostBu" name="admin_cost_bu" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="adminCostOd" class="col-xs-4 col-form-label">ADMIN_COST_OD:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="adminCostOd" name="admin_cost_od" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="adminCostCompany" class="col-xs-4 col-form-label">ADMIN_COST_COMPANY:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="adminCostCompany" name="admin_cost_company" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="otherOpCostBu" class="col-xs-4 col-form-label">OTHER_OP_COST_BU:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="otherOpCostBu" name="other_op_cost_bu" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="otherOpCostOd" class="col-xs-4 col-form-label">OTHER_OP_COST_OD:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="otherOpCostOd" name="other_op_cost_od" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="otherOpCostCompany" class="col-xs-4 col-form-label">OTHER_OP_COST_COMPANY:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="otherOpCostCompany" name="other_op_cost_company" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="specItems" class="col-xs-4 col-form-label">SPEC_ITEMS:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="specItems" name="spec_items" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="provisions" class="col-xs-4 col-form-label">PROVISIONS:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="provisions" name="provisions" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="currencyGains" class="col-xs-4 col-form-label">CURRENCY_GAINS:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="currencyGains" name="currency_gains" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="valAdjustInventories" class="col-xs-4 col-form-label">VAL_ADJUST_INVENTORIES:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="valAdjustInventories" name="val_adjust_inventories" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="otherFixCost" class="col-xs-4 col-form-label">OTHER_FIX_COST:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="otherFixCost" name="other_fix_cost" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="deprecation" class="col-xs-4 col-form-label">DEPRECATION:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="deprecation" name="deprecation" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="capCost" class="col-xs-4 col-form-label">CAP_COST:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="capCost" name="cap_cost" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="equityIncome" class="col-xs-4 col-form-label">EQUITY_INCOME:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="equityIncome" name="equity_income" /><br />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="topdownAdjustFixCosts" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_FIX_COSTS:</label>
+            <div class="col-xs-3">
+                <input class="form-control" type="number" id="topdownAdjustFixCosts" name="topdown_adjust_fix_costs" /><br />
             </div>
         </div>
         <div class="form-group row">

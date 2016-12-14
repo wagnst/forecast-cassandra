@@ -123,6 +123,99 @@
     </div>
 </div>
 
+<div id="FixedCostModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Forecast FixedCosts Daten</h4>
+            </div>
+            <div class="modal-body">
+                <h1>Bitte ändern Sie die Daten</h1>
+                <div class="from-group">
+
+
+                    <form class="fixedcosts" action="http://localhost:8080/fourschlag/api/TEST/fixedcosts/" method="post">
+
+                        <label for="period">PERIOD:</label>
+                        <input class="form-control" type="text" id="period" readonly name="period" /><br />
+                        <label for="region">REGION:</label>
+                        <input class="form-control" type="text" id="region" readonly name="region" /><br />
+                        <label for="currency">CURRENCY</label>
+                        <input class="form-control" type="text" id="currency" readonly name="currency" /><br />
+                        <label for="userid">USERID:</label>
+                        <input class="form-control" type="text" id="userid" readonly name="user_id"/><br />
+                        <label for="entryts">ENTRY_TS:</label>
+                        <input class="form-control" type="text" id="entryts" readonly name="entry_ts"/><br />
+                        <label for="sbu">SBU:</label>
+                        <input class="form-control" type="text" id="sbu" readonly name="sbu" /><br />
+                        <label for="subRegion">SUBREGION:</label>
+                        <input class="form-control" type="text" id="subRegion" readonly name="subregion"/><br />
+                        <label for="fixPreManCost">FIX_PRE_MAN_COST:</label>
+                        <input class="form-control" type="number" id="fixPreManCost" name="fix_pre_man_cost"/><br />
+                        <label for="shipCost">SHIP_COST:</label>
+                        <input class="form-control" type="number" id="shipCost" name="ship_cost" /><br />
+                        <label for="sellCost">SELL_COST:</label>
+                        <input class="form-control" type="number" id="sellCost" name="sell_cost"/><br />
+                        <label for="diffActPreManCost">DIFF_ACT_PRE_MAN_COST:</label>
+                        <input class="form-control" type="number" id="diffActPreManCost" name="diff_act_pre_man_cost" /><br />
+                        <label for="idleEquipCost">IDLE_EQUIP_COST:</label>
+                        <input class="form-control" type="number" id="idleEquipCost" name="idle_equip_cost"/><br />
+                        <label for="rdCost">RD_COST:</label>
+                        <input class="form-control" type="number" id="rdCost" name="rd_cost"/><br />
+                        <label for="adminCostBu">ADMIN_COST_BU:</label>
+                        <input class="form-control" type="number" id="adminCostBu" name="admin_cost_bu"/><br />
+                        <label for="adminCostOd">ADMIN_COST_OD:</label>
+                        <input class="form-control" type="number" id="adminCostOd" name="admin_cost_od"/><br />
+                        <label for="adminCostCompany">ADMIN_COST_COMPANY:</label>
+                        <input class="form-control" type="number" id="adminCostCompany" name="admin_cost_company"/><br />
+                        <label for="otherOpCostBu">OTHER_OP_COST_BU:</label>
+                        <input class="form-control" type="number" id="otherOpCostBu" name="other_op_cost_bu"/><br />
+                        <label for="otherOpCostOd">OTHER_OP_COST_OD:</label>
+                        <input class="form-control" type="number" id="otherOpCostOd" name="other_op_cost_od"/><br />
+                        <label for="otherOpCostCompany">OTHER_OP_COST_COMPANY:</label>
+                        <input class="form-control" type="number" id="otherOpCostCompany" name="other_op_cost_company"/><br />
+                        <label for="specItems">SPEC_ITEMS:</label>
+                        <input class="form-control" type="number" id="specItems" name="spec_items"/><br />
+                        <label for="provisions">PROVISIONS:</label>
+                        <input class="form-control" type="number" id="provisions" name="provisions"/><br />
+                        <label for="currencyGains">CURRENCY_GAINS:</label>
+                        <input class="form-control" type="number" id="currencyGains" name="currency_gains"/><br />
+                        <label for="valAdjustInventories">VAL_ADJUST_INVENTORIES:</label>
+                        <input class="form-control" type="number" id="valAdjustInventories" name="val_adjust_inventories"/><br />
+                        <label for="otherFixCost">OTHER_FIX_COST:</label>
+                        <input class="form-control" type="number" id="otherFixCost" name="other_fix_cost"/><br />
+                        <label for="deprecation">DEPRECATION:</label>
+                        <input class="form-control" type="number" id="deprecation" name="deprecation"/><br />
+                        <label for="capCost">CAP_COST:</label>
+                        <input class="form-control" type="number" id="capCost" name="cap_cost"/><br />
+                        <label for="equityIncome">EQUITY_INCOME:</label>
+                        <input class="form-control" type="number" id="equityIncome" name="equity_income"/><br />
+                        <label for="topdownAdjustFixCosts">TOPDOWN_ADJUST_FIXCOSTS:</label>
+                        <input class="form-control" type="number" id="topdownAdjustFixCosts" name="topdown_adjust_fix_costs"/><br />
+                        <label for="planPeriod">PLAN_PERIOD:</label>
+                        <input class="form-control" type="text" id="planPeriod" readonly name="plan_period"/><br />
+                        <label for="entryType">ENTRY_TYPE:</label>
+                        <input class="form-control" type="text" id="entryType" readonly name="entry_type"/><br />
+                        <label for="status">STATUS:</label>
+                        <input class="form-control" type="text" id="status" readonly name="status" /><br />
+                        <label for="usercomment">USERCOMMENT:</label>
+                        <input class="form-control" type="text" id="usercomment" readonly name="usercomment"/><br />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="submit" value="Submit" class="btn btn-success" >Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
 <script src="../javascript/main.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 
