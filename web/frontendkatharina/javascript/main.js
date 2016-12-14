@@ -15,9 +15,15 @@ var kpiType;
 var newTab;
 var salesurl;
 var fixedcosturl;
+var query;
 
 
 window.addEventListener('load', function () {
+
+    query = window.location.search.substring(1);
+    var test = endpointScheme + query;
+    console.log(query);
+    console.log(test);
 
     function openNewTab(url) {
         newTab = window.open(url);
@@ -77,6 +83,10 @@ window.addEventListener('load', function () {
     });
 
     var forecastSalesTable = $('#ForecastSalesTable').DataTable({
+        "ajax":{
+            "url": endpointScheme + query,
+            "dataSrc":""
+        },
         "info": false,
         "paging": false,
         aaSorting: [],
@@ -164,7 +174,7 @@ window.addEventListener('load', function () {
         if (data.ENTRY_TYPE == 'budget') {
             if (data.FC_TYPE == 'sales') {
 
-                salesurl = '?sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/sales_type/' + data.SALES_TYPE + '/entry_type/budget' +
                     '/plan_year/' + planYear;
 
@@ -173,7 +183,7 @@ window.addEventListener('load', function () {
             }
             if (data.FC_TYPE == 'fixed costs') {
 
-                fixedcosturl = '?fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
+                fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/entry_type/budget' + '/plan_year/' + planYear;
 
                 openNewTab(fixedcostshtmlurl + fixedcosturl);
@@ -183,7 +193,7 @@ window.addEventListener('load', function () {
         else {
             if (data.FC_TYPE == 'sales') {
 
-                salesurl = '?sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
 
@@ -192,7 +202,7 @@ window.addEventListener('load', function () {
             }
             if (data.FC_TYPE == 'fixed costs') {
 
-                fixedcosturl = '?fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
+                fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/period/' + period + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
 
@@ -220,7 +230,7 @@ window.addEventListener('load', function () {
                 indexTable.clear().draw();
                 indexTable.rows.add(result).draw();
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR + ' ' + textStatus + ' ' + errorThrown)
+                alert("Data can't be loaded!")
             });
         }
         if (kpiType == 'sales' || kpiType == 'fixedcosts') {
@@ -232,7 +242,7 @@ window.addEventListener('load', function () {
                 indexTable.clear().draw();
                 indexTable.rows.add(result).draw();
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert(jqXHR + ' ' + textStatus + ' ' + errorThrown)
+                alert("Data can't be loaded!")
             });
         }
 
@@ -244,8 +254,6 @@ window.addEventListener('load', function () {
         console.log(oData);
         $('#period').val(oData["PERIOD"]);
         $('#region').val(oData["REGION"]);
-        $('#periodYear').val(oData["PERIDO_YEAR"]);
-        $('#periodMonth').val(oData["PERIOD_MONTH"]);
         $('#currency').val(oData["CURRENCY"]);
         $('#userid').val(oData["USERID"]);
         $('#entryts').val(oData["ENTRY_TS"]);
@@ -258,10 +266,6 @@ window.addEventListener('load', function () {
         $('#topdownNetSales').val(oData["TOPDOWN_ADJUST_NET_SALES"]);
         $('#topdownCm1').val(oData["TOPDOWN_ADJUST_CM1"]);
         $('#planPeriod').val(oData["PLAN_PERIOD"]);
-        $('#planYear').val(oData["PLAN_YEAR"]);
-        $('#planHalfYear').val(oData["PLAN_HALF_YEAR"]);
-        $('#planQuarter').val(oData["PLAN_QUARTER"]);
-        $('#planMonth').val(oData["PLAN_MONTH"]);
         $('#entryType').val(oData["ENTRY_TYPE"]);
         $('#status').val(oData["STATUS"]);
         $('#usercomment').val(oData["USERCOMMENT"]);

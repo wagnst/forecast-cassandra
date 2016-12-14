@@ -114,67 +114,57 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Daten</h4>
+                <h4 class="modal-title">Forecast Sales Daten</h4>
             </div>
             <div class="modal-body">
                 <h1>Bitte ändern Sie die Daten</h1>
                 <div class="from-group">
 
 
-                    <form class="sales" action="index.html" method="post">
+                    <form class="sales" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
 
                         <label for="period">PERIOD:</label>
-                        <input class="form-control" type="text" id="period" disabled /><br />
+                        <input class="form-control" type="text" id="period" readonly name="period" /><br />
                         <label for="region">REGION:</label>
-                        <input class="form-control" type="text" id="region" disabled /><br />
-                        <label for="periodYear">PERIOD_YEAR</label>
-                        <input class="form-control" type="text" id="periodYear" disabled /><br />
-                        <label for="periodMoth">PERIOD_MONTH</label>
-                        <input class="form-control" type="text" id="periodMoth" disabled /><br />
+                        <input class="form-control" type="text" id="region" readonly name="region" /><br />
                         <label for="currency">CURRENCY</label>
-                        <input class="form-control" type="text" id="currency" disabled /><br />
+                        <input class="form-control" type="text" id="currency" readonly name="currency" /><br />
                         <label for="userid">USERID:</label>
-                        <input class="form-control" type="text" id="userid" disabled /><br />
+                        <input class="form-control" type="text" id="userid" readonly name="userid"/><br />
                         <label for="entryts">ENTRY_TS:</label>
-                        <input class="form-control" type="text" id="entryts" disabled /><br />
+                        <input class="form-control" type="text" id="entryts" readonly name="entry_ts"/><br />
                         <label for="productMainGroup">PRODUCT_MAIN_GROUP</label>
-                        <input class="form-control" type="text" id="productMainGroup" disabled /><br />
+                        <input class="form-control" type="text" id="productMainGroup" readonly name="product_main_group" /><br />
                         <label for="salesType">SALES_TYPE:</label>
-                        <input class="form-control" type="text" id="salesType" disabled /><br />
+                        <input class="form-control" type="text" id="salesType" readonly name="sales_type"/><br />
                         <label for="salesVolumes">SALES_VOLUMES:</label>
-                        <input class="form-control" type="number" id="salesVolumes" /><br />
+                        <input class="form-control" type="number" id="salesVolumes" name="sales_volumes"/><br />
                         <label for="netSales">NET_SALES:</label>
-                        <input class="form-control" type="number" id="netSales" /><br />
+                        <input class="form-control" type="number" id="netSales" name="net_sales" /><br />
                         <label for="cm1">CM1:</label>
-                        <input class="form-control" type="number" id="cm1" /><br />
+                        <input class="form-control" type="number" id="cm1" name="cm1"/><br />
                         <label for="topdownSalesVolumes">TOPDOWN_ADJUST_SALES_VOLUMES</label>
-                        <input class="form-control" type="number" id="topdownSalesVolumes" /><br />
+                        <input class="form-control" type="number" id="topdownSalesVolumes" name="topdown_adjust_sales_volumes" /><br />
                         <label for="topdownNetSales">TOPDOWN_ADJUST_NET_SALES:</label>
-                        <input class="form-control" type="number" id="topdownNetSales" /><br />
+                        <input class="form-control" type="number" id="topdownNetSales" name="topdown_adjust_net_sales"/><br />
                         <label for="topdownCm1">TOPDOWN_ADJUST_CM1:</label>
-                        <input class="form-control" type="number" id="topdownCm1" /><br />
+                        <input class="form-control" type="number" id="topdownCm1" name="topdown_adjust_cm1"/><br />
                         <label for="planPeriod">PLAN_PERIOD:</label>
-                        <input class="form-control" type="text" id="planPeriod" disabled /><br />
-                        <label for="planYear">PLAN_YEAR:</label>
-                        <input class="form-control" type="text" id="planYear" disabled /><br />
-                        <label for="planHalfYear">PLAN_HALF_YEAR:</label>
-                        <input class="form-control" type="text" id="planHalfYear" disabled /><br />
-                        <label for="planQuarter">PLAN_QUARTER:</label>
-                        <input class="form-control" type="text" id="planQuarter" disabled /><br />
-                        <label for="planMonth">PLAN_MONTH:</label>
-                        <input class="form-control" type="text" id="planMonth" disabled /><br />
+                        <input class="form-control" type="text" id="planPeriod" readonly name="plan_period"/><br />
                         <label for="entryType">ENTRY_TYPE:</label>
-                        <input class="form-control" type="text" id="entryType" disabled /><br />
+                        <input class="form-control" type="text" id="entryType" readonly name="entry_type"/><br />
                         <label for="status">STATUS:</label>
-                        <input class="form-control" type="text" id="status" disabled /><br />
+                        <input class="form-control" type="text" id="status" readonly name="status" /><br />
                         <label for="usercomment">USERCOMMENT:</label>
-                        <input class="form-control" type="text" id="usercomment" disabled /><br />
+                        <input class="form-control" type="text" id="usercomment" readonly name="usercomment"/><br />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="submit" value="Submit" class="btn btn-success" >Save changes</button>
+                        </div>
                     </form>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
 
     </div>
