@@ -94,6 +94,8 @@ package fourschlag {
 
             Class Period
 
+            Class PeriodMap<V>
+
             Enum SalesType
 
             Class ValidatedResult
