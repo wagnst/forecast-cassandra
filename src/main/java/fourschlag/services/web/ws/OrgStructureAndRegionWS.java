@@ -15,10 +15,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("{keyspace}/org_region")
-public class OrgStructureAndRegionsWS {
+public class OrgStructureAndRegionWS {
     private OrgStructureAndRegionService orgStructureAndRegionService;
 
-    public OrgStructureAndRegionsWS(@PathParam("keyspace") String keyspace) {
+    public OrgStructureAndRegionWS(@PathParam("keyspace") String keyspace) {
         CassandraConnection connection = ConnectionPool.getConnection(
                 ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
 
