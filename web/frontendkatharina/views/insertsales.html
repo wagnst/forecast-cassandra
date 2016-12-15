@@ -25,6 +25,8 @@
             src="https://code.jquery.com/jquery-1.12.3.js"></script>
     <script type="text/javascript"
             src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.8/validator.min.js"></script>
 
 
 
@@ -77,7 +79,7 @@
 
 <div id ='divforform'>
 
-    <form  id="salesForm" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
+    <form  data-toggle="validator" role="form" id="salesInsertForm" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
 
     <div class="form-group row " >
         <label for="period" class="col-xs-4 col-form-label">PERIOD:</label>

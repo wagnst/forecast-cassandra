@@ -6,7 +6,6 @@ const endpointScheme = 'http://';
 const fixedcostshtmlurl = 'forecastfixedcosts.html';
 const saleshtmlurl = 'forecastsales.html';
 var planYear;
-var backend;
 var currency;
 var period;
 var keyspace;
@@ -16,9 +15,16 @@ var newTab;
 var salesurl;
 var fixedcosturl;
 var query;
+var backend;
+const sucessmessageInsert = 'Data was successfully transmitted.';
+const sucessmessageModal = 'Data was successfully changed.';
+const errormessage = 'Error, bad parameters.';
 
 
 window.addEventListener('load', function () {
+
+    backend = $(location).attr('host');
+    document.getElementById("backendServer").value = backend;
 
     query = window.location.search.substring(1);
 
@@ -80,9 +86,9 @@ window.addEventListener('load', function () {
     });
 
     var forecastSalesTable = $('#ForecastSalesTable').DataTable({
-        "ajax":{
+        "ajax": {
             "url": endpointScheme + query,
-            "dataSrc":""
+            "dataSrc": ""
         },
         "info": false,
         "paging": false,
@@ -115,9 +121,9 @@ window.addEventListener('load', function () {
     });
 
     var forecastFixedCostsTable = $('#ForecastFixedcostsTable').DataTable({
-        "ajax":{
+        "ajax": {
             "url": endpointScheme + query,
-            "dataSrc":""
+            "dataSrc": ""
         },
         "info": false,
         "paging": false,
@@ -213,6 +219,10 @@ window.addEventListener('load', function () {
         }
     });
 
+    $.getJSON('', function(obj){
+
+    });
+
     $('#startbutton').on('click', function () {
         planYear = document.getElementById('datepicker_planYear').value;
         backend = document.getElementById('backendServer').value;
@@ -249,37 +259,19 @@ window.addEventListener('load', function () {
 
     });
 
-   $('#salesForm').submit(function (e) {
-
-       $.ajax({
-           type:"POST",
-           url: "http://localhost:8080/fourschlag/api/TEST/sales/",
-           data: $('#salesForm').serialize(),
-           statusCode: {
-               200: function () {
-                   alert("Alles super toll")
-               },
-               400: function () {
-                   alert("Alles kaka!")
-               }
-
-           }
-
-       });
-       e.preventDefault();
-   });
-    $('#fixedcostsForm').submit(function (e) {
+    $('#salesModalForm').submit(function (e) {
 
         $.ajax({
-            type:"POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
-            data: $('#fixedcostsForm').serialize(),
+            type: "POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+            data: $('#salesModalForm').serialize(),
             statusCode: {
                 200: function () {
-                    alert("Alles super toll")
+                    alert(sucessmessageModal);
+                    location.reload();
                 },
                 400: function () {
-                    alert("Alles kaka!")
+                    alert(errormessage);
                 }
 
             }
@@ -288,6 +280,67 @@ window.addEventListener('load', function () {
         e.preventDefault();
     });
 
+    $('#salesInsertForm').submit(function (e) {
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+            data: $('#salesInsertForm').serialize(),
+            statusCode: {
+                200: function () {
+                    alert(sucessmessageInsert);
+                },
+                400: function () {
+                    alert(errormessage);
+                }
+
+            }
+
+        });
+        e.preventDefault();
+    });
+
+
+    $('#fixedcostsInsertForm').submit(function (e) {
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
+            data: $('#fixedcostsInsertForm').serialize(),
+            statusCode: {
+                200: function () {
+                    alert(sucessmessageInsert);
+                },
+                400: function () {
+                    alert(errormessage);
+                }
+
+            }
+
+        });
+        e.preventDefault();
+    });
+
+    $('#fixedcostsModalForm').submit(function (e) {
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
+            data: $('#fixedcostsModalForm').serialize(),
+            statusCode: {
+                200: function () {
+                    alert(sucessmessageModal);
+                    location.reload();
+                },
+                400: function () {
+                    alert(errormessage);
+                }
+
+            }
+
+        });
+        e.preventDefault();
+    });
 
 
     $('#ForecastSalesTable').on('click', 'tr', function () {
@@ -348,6 +401,7 @@ window.addEventListener('load', function () {
         $('#status').val(oData["STATUS"]);
         $('#usercomment').val(oData["USERCOMMENT"]);
     });
+
 
 }, false);
 
