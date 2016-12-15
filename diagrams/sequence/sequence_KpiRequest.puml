@@ -8,8 +8,9 @@ participant  ":ZeroMonthPeriod"
 
 
 " " -> ":KpiRequest" : calculateKpis()
-group
+
 ":KpiRequest" -> ":KpiRequest" : calculateActualForecastKpis()
+group calculateActualForecastKpis()
 ":KpiRequest" -> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
 ":KpiRequest" -> ":KpiRequest" : ActualData
 alt if actualData has current period
@@ -61,9 +62,9 @@ end
 ":KpiRequest" -> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
 ":Stream" --> ":KpiRequest" : Stream<OutputDataType>
 end
-group
-":KpiRequest" -> ":KpiRequest" : calculateBudgetKpis()
 
+":KpiRequest" -> ":KpiRequest" : calculateBudgetKpis()
+group calculateBudgetKpis()
 loop NumberOfMonths
     ":KpiRequest" -> ":KpiRequest" : validateQueryResult(BudgetData, tempPlanPeriod)
     loop kpiArray
