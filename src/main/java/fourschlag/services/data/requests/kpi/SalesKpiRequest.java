@@ -49,7 +49,7 @@ public class SalesKpiRequest extends KpiRequest {
     public SalesKpiRequest(CassandraConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                            String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                            OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, orgAndRegionRequest.getSbuByPmg(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
 

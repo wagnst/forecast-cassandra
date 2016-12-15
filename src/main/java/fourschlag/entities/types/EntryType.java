@@ -4,16 +4,18 @@ package fourschlag.entities.types;
  * Enum with all know entry types
  */
 public enum EntryType {
-    ACTUAL("actual"),
-    FORECAST("forecast"),
-    ACTUAL_FORECAST("actual/forecast"),
-    BUDGET("budget"),
-    TOPDOWN("topdown");
+    ACTUAL("actual", false),
+    FORECAST("forecast", true),
+    ACTUAL_FORECAST("actual/forecast", false),
+    BUDGET("budget", true),
+    TOPDOWN("topdown", false);
 
     private final String type;
+    private final boolean inTable;
 
-    EntryType(String type) {
+    EntryType(String type, boolean inTable) {
         this.type = type;
+        this.inTable = inTable;
     }
 
     /**
@@ -29,6 +31,10 @@ public enum EntryType {
             }
         }
         return null;
+    }
+
+    public boolean isInTable() {
+        return inTable;
     }
 
     /**

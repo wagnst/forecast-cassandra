@@ -7,9 +7,8 @@ import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.tables.RegionEntity;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Extends Request. Offers functionality to query the OrgStructure and Regions tables
@@ -32,13 +31,45 @@ public class OrgStructureAndRegionRequest extends Request {
         regionAccessor = getManager().createAccessor(RegionAccessor.class);
     }
 
+    public List<String> getProductMainGroups() {
+        Result<OrgStructureEntity> queryResult = orgStructureAccessor.getDistinctPmg();
+
+        List<String> resultList = new ArrayList<>();
+        queryResult.forEach(e -> resultList.add(e.getProductMainGroup()));
+        return resultList;
+    }
+
+    public List<String> getSbus() {
+        Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
+
+        Set<String> set = new HashSet<>();
+        queryResult.forEach(e -> set.add(e.getSbu()));
+        return set.stream().collect(Collectors.toList());
+    }
+
+    public List<String> getRegions() {
+        Result<RegionEntity> queryResult = regionAccessor.getAll();
+
+        Set<String> set = new HashSet<>();
+        queryResult.forEach(e -> set.add(e.getRegion()));
+        return set.stream().collect(Collectors.toList());
+    }
+
+    public List<String> getSubregionsForRegion(String region) {
+        Result<RegionEntity> queryResult = regionAccessor.getEntitiesByRegion(region);
+        List<String> resultList = new ArrayList<>();
+        queryResult.forEach(e -> resultList.add(e.getSubregion()));
+
+        return resultList;
+    }
+
     /**
      * Method that finds the correct SBU of a product main group
      *
      * @param productMainGroup product main group for which the sbu is needed
      * @return SBU that corresponds with the given PMG
      */
-    public String getSbu(String productMainGroup) {
+    public String getSbuByPmg(String productMainGroup) {
         /* IF the map is null THEN fill it with data from the OrgStructure table */
         if (sbu == null) {
             Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
@@ -62,7 +93,7 @@ public class OrgStructureAndRegionRequest extends Request {
      * @param subregion subregion for which the region is needed
      * @return region that corresponds with the given subregion
      */
-    public String getRegion(String subregion) {
+    public String getRegionBySubregion(String subregion) {
         /* IF the map is null THEN fill it with data from the Regions table */
         if (region == null) {
             Result<RegionEntity> queryResult = regionAccessor.getAll();

@@ -40,8 +40,9 @@ public interface RegionAccessor {
     Result<RegionEntity> getEntitiesBySubregion(
             @Param("subregion") String subregion);
 
-    @Query("SELECT * FROM regions WHERE subregion = :subregion AND region = :region ALLOW FILTER;")
+    @Query("SELECT * FROM regions WHERE subregion = :subregion AND region = :region ALLOW FILTERING;")
     RegionEntity getSpecificEntity(
             @Param("subregion") String subregion,
             @Param("region") String region);
+
 }
