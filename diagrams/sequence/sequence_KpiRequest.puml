@@ -33,12 +33,6 @@ loop
 ":ValidatedResultTopdown" --> ":KpiRequest" : topdownResult
 end
 
-":KpiRequest" -> ":OutputDataType" : getNumberOfBj()
-":OutputDataType" -> ":KpiRequest" : NumberOfBj
-
- ":KpiRequest" -> ":ZeroMonthPeriod" : new ZeroMonthPeriod(tempPlanPeriod)
- ":ZeroMonthPeriod" --> ":KpiRequest" : new ZeroMonthPeriod
-
 loop Arraylist nicht leer
    ":KpiRequest" -> ":Map" : Arrays.asList(actualData, forecastData)
    loop kpiEntityMap nicht null
