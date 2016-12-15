@@ -27,6 +27,7 @@
             src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 
 
+
 </head>
 <body>
 
@@ -76,102 +77,102 @@
 
 <div id ='divforform'>
 
-    <form id="form" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
+    <form  id="salesForm" action="http://localhost:8080/fourschlag/api/TEST/sales/" method="post">
 
-    <div class="form-group row">
+    <div class="form-group row " >
         <label for="period" class="col-xs-4 col-form-label">PERIOD:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="period" name="period"/><br/>
+            <input class="form-control" type="number" id="period" name="period" required/><br/>
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row ">
         <label for="region" class="col-xs-4 col-form-label">REGION:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="region" name="region"/><br />
+            <input class="form-control" type="text" id="region" name="region" required/><br />
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row ">
         <label for="currency" class="col-xs-4 col-form-label">CURRENCY:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="currency" name="currency"/><br />
+            <input class="form-control" type="text" id="currency" name="currency" required/><br />
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row ">
         <label for="userid" class="col-xs-4 col-form-label">USERID:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="userid" value="browser" name="userid"/><br />
+            <input class="form-control" type="text" id="userid" value="browser" name="userid" required/><br />
         </div>
     </div>
     <div class="form-group row">
             <label for="entryts" class="col-xs-4 col-form-label">ENTRY_TS:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="datetime-local" id="entryts" value="2016-04-12T23:20:50.52" name="entry_ts"/><br />
+            <input class="form-control" type="datetime-local" id="entryts" value="2016-04-12T23:20:50.52" name="entry_ts" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="productMainGroup" class="col-xs-4 col-form-label">PRODUCT_MAIN_GROUP</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="productMainGroup" name="product_main_group"/><br />
+            <input class="form-control" type="text" id="productMainGroup" name="product_main_group" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="salesType" class="col-xs-4 col-form-label">SALES_TYPE:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="salesType" name="sales_type"/><br />
+            <input class="form-control" type="text" id="salesType" name="sales_type" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="salesVolumes" class="col-xs-4 col-form-label">SALES_VOLUMES:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="salesVolumes" name="sales_volumes"/><br />
+            <input class="form-control" type="number" id="salesVolumes" name="sales_volumes" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="netSales" class="col-xs-4 col-form-label">NET_SALES:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="netSales" name="net_sales" /><br />
+            <input class="form-control" type="number" id="netSales" name="net_sales" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="cm1" class="col-xs-4 col-form-label">CM1:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="cm1" name="cm1"/><br />
+            <input class="form-control" type="number" id="cm1" name="cm1" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="topdownSalesVolumes" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_SALES_VOLUMES</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="topdownSalesVolumes" name="topdown_adjust_sales_volumes" /><br />
+            <input class="form-control" type="number" id="topdownSalesVolumes" name="topdown_adjust_sales_volumes" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="topdownNetSales" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_NET_SALES:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="topdownNetSales" name="topdown_adjust_net_sales" /><br />
+            <input class="form-control" type="number" id="topdownNetSales" name="topdown_adjust_net_sales" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="topdownCm1" class="col-xs-4 col-form-label">TOPDOWN_ADJUST_CM1:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="topdownCm1" name="topdown_adjust_cm1" /><br />
+            <input class="form-control" type="number" id="topdownCm1" name="topdown_adjust_cm1" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="planPeriod" class="col-xs-4 col-form-label">PLAN_PERIOD:</label>
         <div class="col-xs-3">
-            <input class="form-control" type="number" id="planPeriod" name="plan_period"/><br />
+            <input class="form-control" type="number" id="planPeriod" name="plan_period" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="entryType" class="col-xs-4 col-form-label">ENTRY_TYPE:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="entryType" name="entry_type" /><br />
+            <input class="form-control" type="text" id="entryType" name="entry_type" required/><br />
         </div>
     </div>
     <div class="form-group row">
         <label for="status" class="col-xs-4 col-form-label">STATUS:</label>
         <div class="col-xs-5">
-            <input class="form-control" type="text" id="status" name="status"/><br />
+            <input class="form-control" type="text" id="status" name="status" /><br />
         </div>
     </div>
 

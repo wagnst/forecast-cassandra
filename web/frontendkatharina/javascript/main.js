@@ -226,7 +226,7 @@ window.addEventListener('load', function () {
         if (kpiType == 'all') {
             $.ajax({
                 url: mainPath,
-                type: "GET",
+                type: "GET"
             }).done(function (result) {
                 indexTable.clear().draw();
                 indexTable.rows.add(result).draw();
@@ -238,7 +238,7 @@ window.addEventListener('load', function () {
             var urlother = mainPath + kpiType;
             $.ajax({
                 url: urlother,
-                type: "GET",
+                type: "GET"
             }).done(function (result) {
                 indexTable.clear().draw();
                 indexTable.rows.add(result).draw();
@@ -248,6 +248,47 @@ window.addEventListener('load', function () {
         }
 
     });
+
+   $('#salesForm').submit(function (e) {
+
+       $.ajax({
+           type:"POST",
+           url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+           data: $('#salesForm').serialize(),
+           statusCode: {
+               200: function () {
+                   alert("Alles super toll")
+               },
+               400: function () {
+                   alert("Alles kaka!")
+               }
+
+           }
+
+       });
+       e.preventDefault();
+   });
+    $('#fixedcostsForm').submit(function (e) {
+
+        $.ajax({
+            type:"POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
+            data: $('#fixedcostsForm').serialize(),
+            statusCode: {
+                200: function () {
+                    alert("Alles super toll")
+                },
+                400: function () {
+                    alert("Alles kaka!")
+                }
+
+            }
+
+        });
+        e.preventDefault();
+    });
+
+
 
     $('#ForecastSalesTable').on('click', 'tr', function () {
         $('#SalesModal').modal('show');
