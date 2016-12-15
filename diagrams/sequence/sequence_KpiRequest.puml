@@ -2,12 +2,8 @@
 hide footbox
 participant  " "
 participant  ":KpiRequest"
-participant  ":Map"
 participant  ":Period"
 participant  ":ValidatedResultTopdown"
-participant  ":KeyPerformanceIndicators"
-participant  ":FixedCostsService"
-participant  ":OutputDataType"
 participant  ":ZeroMonthPeriod"
 
 
