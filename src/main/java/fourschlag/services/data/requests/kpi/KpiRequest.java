@@ -60,8 +60,10 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * @param fcType
-     * @return
+     * Filters the Enum KeyPerformanceIndicators.
+     *
+     * @param fcType filter param fc_type (example: sales)
+     * @return Array of KeyPerformanceIndicators
      */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
         return Arrays.stream(KeyPerformanceIndicators.values())
@@ -70,7 +72,9 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * @param map
+     * Fills a map with all KPIs needed and a LinkedList each
+     *
+     * @param map map to be filled
      */
     private void fillMap(Map<KeyPerformanceIndicators, LinkedList<Double>> map) {
         Arrays.stream(kpiArray)
@@ -79,7 +83,7 @@ public abstract class KpiRequest extends Request {
 
     /**
      * Initiates the calculation for all KPIs with the attributes of this
-     * instance
+     * instance. Calculates actual/forecast and budget Kpis.
      *
      * @return Stream of OutputDataTypes
      */
@@ -94,7 +98,7 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * Calculates KPIs excluding topdown values
+     * Calculates Budget KPIs without topdown
      *
      * @return Stream of OutputDataTypes
      */
@@ -102,12 +106,13 @@ public abstract class KpiRequest extends Request {
         /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
 
+        /* local copy of the plan_period */
         Period tempPlanPeriod = new Period(planPeriod);
 
         /* Prepare maps that will store the monthly values */
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>(kpiArray.length);
         fillMap(bjValues);
 
         /*Prepare ValidatedResult object */
@@ -115,7 +120,6 @@ public abstract class KpiRequest extends Request {
         /* calculateKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */
         for (int i = 0; i < OutputDataType.getNumberOfMonths(); i++) {
             kpisForSpecificMonth = validateQueryResult(getBudgetData(tempPlanPeriod), tempPlanPeriod);
-            /* Add all KPI values to the monthly KPI value map */
 
             /* The values from the validated result are written into their corresponding location in the monthly map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
@@ -126,10 +130,15 @@ public abstract class KpiRequest extends Request {
             tempPlanPeriod.increment();
         }
 
+        /* Create the zero month period --> 201606 is converted to 201600 */
         ZeroMonthPeriod bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         ValidatedResult bjValuesForSpecificMonth;
+
+        /* calculate the bj values for each bj period */
         for (int i = 0; i < OutputDataType.getNumberOfBj(); i++) {
             bjValuesForSpecificMonth = calculateBj(bjPeriod);
+
+            /* put the values into the map */
             for (KeyPerformanceIndicators kpi : kpiArray) {
                 bjValues.get(kpi).add(bjValuesForSpecificMonth.getKpiResult().get(kpi));
             }
@@ -145,47 +154,61 @@ public abstract class KpiRequest extends Request {
     }
 
     /**
-     * @return
+     * Calculates actual/forecast KPIs with topdown
+     *
+     * @return Stream of OutputDataTypes
      */
     private Stream<OutputDataType> calculateActualForecastKpis() {
-        /* Prepare result list that will be returned later */
+        /* Prepare result streams that will be returned later */
         Stream<OutputDataType> resultStream;
         Stream<OutputDataType> resultStreamTopdown;
 
+        /* local copy of plan_period */
         Period tempPlanPeriod = new Period(this.planPeriod);
 
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>();
+        /* Prepare maps to store all the kpi values */
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyKpiValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyTopdownValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> monthlyTopdownValues = new HashMap<>(kpiArray.length);
         fillMap(monthlyTopdownValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> bjValues = new HashMap<>(kpiArray.length);
         fillMap(bjValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> topdownBjValues = new HashMap<>();
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> topdownBjValues = new HashMap<>(kpiArray.length);
         fillMap(topdownBjValues);
 
+        /* Get kpis from the actual table from planPeriod to currentPeriod */
         Map<Integer, KpiEntity> actualData = getActualData(tempPlanPeriod, currentPeriod);
+        /* Prepare map for forecast data */
         Map<Integer, KpiEntity> forecastData;
 
         tempPlanPeriod.incrementMultipleTimes(OutputDataType.getNumberOfMonths());
+        /* IF the actual table had NO data for the current period THEN query that period again with the forecast table */
         if (actualData.get(currentPeriod.getPeriod()) == null) {
+            /* Remove that entry from the actual data map */
             actualData.remove(currentPeriod.getPeriod());
             forecastData = getForecastData(currentPeriod, tempPlanPeriod);
         } else {
+            /* ELSE start with the period one after the current period */
             forecastData = getForecastData(currentPeriod.immutableIncrement(), tempPlanPeriod);
         }
 
         ValidatedResultTopdown validatedResultTopdown;
+        /* For each one of the two result maps... */
         for (Map<Integer, KpiEntity> kpiEntityMap : Arrays.asList(actualData, forecastData)) {
+            /* For each entry of the map... */
             for (Integer period : kpiEntityMap.keySet()) {
+                /* Validate the query result */
                 validatedResultTopdown = validateTopdownQueryResult(kpiEntityMap.get(period), new Period(period));
+                /* For each kpi... */
                 for (KeyPerformanceIndicators kpi : kpiArray) {
+                    /* Add the values to the monthly lists */
                     monthlyKpiValues.get(kpi).add(validatedResultTopdown.getKpiResult().get(kpi));
                     monthlyTopdownValues.get(kpi).add(validatedResultTopdown.getTopdownResult().get(kpi));
                 }
             }
         }
 
-
+        /* Create the zero month period --> 201606 is converted to 201600 */
         ZeroMonthPeriod bjPeriod = new ZeroMonthPeriod(tempPlanPeriod);
         ValidatedResultTopdown bjValuesForSpecificMonth;
         for (int i = 0; i < OutputDataType.getNumberOfBj(); i++) {
@@ -214,7 +237,7 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
-     * @return ValidatedResult with all the values for the sales KPIs
+     * @return ValidatedResult with all the kpi values
      */
     protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
 
@@ -223,34 +246,33 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
-     * @return ValidatedResult with all the values for the sales KPIs
+     * @return ValidatedResult with all kpi values
      */
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
     /**
-     * method to get the actual data
+     * Queries entities from the actual table that are within a specific time window.
      *
-     * @param tempPlanPeriodFrom planPeriod the actual data is supposed to be taken
-     *                           from
-     * @return the actual data within the desired period.
+     * @param tempPlanPeriodFrom plan_period to begin with
+     * @param tempPlanPeriodTo plan_period to end with
+     * @return Map with mapped entities from the actual table
      */
     protected abstract Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
 
     /**
-     * method to get the forecast data
+     * Queries entities from the forecast table table that are within a specific time window.
      *
-     * @param tempPlanPeriodFrom planPeriod the forecast data is supposed to be
-     *                           taken from
-     * @return the forecast data within the desired period
+     * @param tempPlanPeriodFrom plan_period to begin with
+     * @param tempPlanPeriodTo plan_period to end with
+     * @return Map with mapped entities from the forecast table
      */
     protected abstract Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
 
     /**
-     * method to get the budget data
+     * Queries the database for budget data -> period = plan_period and entry_type = budget
      *
-     * @param tempPlanPeriod planPeriod the budget data is supposed to be taken
-     *                       from
-     * @return the budget data from the desired period
+     * @param tempPlanPeriod plan_period of data
+     * @return Mapped entity with budget query results
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
 

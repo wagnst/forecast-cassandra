@@ -1,6 +1,6 @@
 @startuml
 
-scale 0.5
+scale 0.75
 
 node ":__Laufzeitumgebung__" as LZ <<executionEnvironment>> {
 
@@ -55,7 +55,7 @@ node ":__Datenbankserver 1...n, Linux__" as N1 <<device>>{
     database ":Apache Cassandra" as Cassandra <<database>>
 }
 
-LZ == N1: Cassandra´s Binary Protocol <<protocol>>
+LZ == N1: 1 Gigabit/s <<LAN>>
 LZ =up= N2: HTTP <<protocol>>
 
 @enduml

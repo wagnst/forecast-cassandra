@@ -14,7 +14,7 @@ public class PeriodMap<V> extends LinkedHashMap<Integer, V> {
      * @param periodTo Period to end with
      */
     public PeriodMap(Period periodFrom, Period periodTo) {
-        super();
+        super(OutputDataType.getNumberOfMonths());
         Period tempPeriodFrom = new Period(periodFrom);
         while (tempPeriodFrom.getPeriod() < periodTo.getPeriod()) {
             put(tempPeriodFrom.getPeriod(), null);
