@@ -14,8 +14,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * MiscWS offers web services that don't need accecss to the database and don't fit into any other category
+ */
 @Path("misc")
 public class MiscWS {
+    /**
+     * Gets all keyspaces from the KeyspaceNames Enum
+     * @return WS Response with JSON containing all keyspace names
+     */
     @GET
     @Path("get/keyspaces")
     @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +34,10 @@ public class MiscWS {
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets all sales types from the SalesTypes Enum
+     * @return WS Response with JSON containing all sales types
+     */
     @GET
     @Path("get/sales_types")
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +49,10 @@ public class MiscWS {
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets those entry types form the EntryTypes Enum that can occur in any of the database tables
+     * @return WS Response with JSON containing entry types
+     */
     @GET
     @Path("get/entry_types")
     @Produces(MediaType.APPLICATION_JSON)
