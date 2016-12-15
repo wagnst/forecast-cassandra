@@ -21,9 +21,6 @@ var query;
 window.addEventListener('load', function () {
 
     query = window.location.search.substring(1);
-    var test = endpointScheme + query;
-    console.log(query);
-    console.log(test);
 
     function openNewTab(url) {
         newTab = window.open(url);
@@ -118,6 +115,10 @@ window.addEventListener('load', function () {
     });
 
     var forecastFixedCostsTable = $('#ForecastFixedcostsTable').DataTable({
+        "ajax":{
+            "url": endpointScheme + query,
+            "dataSrc":""
+        },
         "info": false,
         "paging": false,
         aaSorting: [],
@@ -251,7 +252,6 @@ window.addEventListener('load', function () {
     $('#ForecastSalesTable').on('click', 'tr', function () {
         $('#SalesModal').modal('show');
         var oData = forecastSalesTable.row(this).data();
-        console.log(oData);
         $('#period').val(oData["PERIOD"]);
         $('#region').val(oData["REGION"]);
         $('#currency').val(oData["CURRENCY"]);
@@ -274,7 +274,6 @@ window.addEventListener('load', function () {
     $('#ForecastFixedcostsTable').on('click', 'tr', function () {
         $('#FixedCostModal').modal('show');
         var oData = forecastFixedCostsTable.row(this).data();
-        console.log(oData);
         $('#period').val(oData["PERIOD"]);
         $('#region').val(oData["REGION"]);
         $('#currency').val(oData["CURRENCY"]);
@@ -290,19 +289,19 @@ window.addEventListener('load', function () {
         $('#rdCost').val(oData["RD_COST"]);
         $('#adminCostBu').val(oData["ADMIN_COST_BU"]);
         $('#adminCostOd').val(oData["ADMIN_COST_OD"]);
-        $('#adminCostCompany').val(oData["ADMIN_COST_COMPANY"])
-        $('#otherOpCostBu').val(oData["OTHER_OP_COST_BU"])
-        $('#otherOpCostOd').val(oData["OTHER_OP_COST_OD"])
-        $('#otherOpCostCompany').val(oData["OTHER_OP_COST_COMPANY"])
-        $('#specItems').val(oData["SPEC_ITEMS"])
-        $('#provisions').val(oData["OTHER_OP_COST_COMPANY"])
-        $('#currencyGains').valu(oData["CURRENCY_GAINS"])
-        $('#valAdjustInventories').val(oData["VAL_ADJUST_INVENTORIES"])
-        $('#otherFixCost').val(oData["OTHER_FIX_COST"])
-        $('#deprecation').val(oData["DEPRECATION"])
-        $('#capCost').val(oData["CAP_COST"])
-        $('#equityIncome').val(oData["EQUITY_INCOME"])
-        $('#topdownAdjustFixCosts').val(oData["TOPDOWN_ADJUST_FIX_COSTS"])
+        $('#adminCostCompany').val(oData["ADMIN_COST_COMPANY"]);
+        $('#otherOpCostBu').val(oData["OTHER_OP_COST_BU"]);
+        $('#otherOpCostOd').val(oData["OTHER_OP_COST_OD"]);
+        $('#otherOpCostCompany').val(oData["OTHER_OP_COST_COMPANY"]);
+        $('#specItems').val(oData["SPEC_ITEMS"]);
+        $('#provisions').val(oData["OTHER_OP_COST_COMPANY"]);
+        $('#currencyGains').val(oData["CURRENCY_GAINS"]);
+        $('#valAdjustInventories').val(oData["VAL_ADJUST_INVENTORIES"]);
+        $('#otherFixCost').val(oData["OTHER_FIX_COST"]);
+        $('#depreciation').val(oData["DEPRECIATION"]);
+        $('#capCost').val(oData["CAP_COST"]);
+        $('#equityIncome').val(oData["EQUITY_INCOME"]);
+        $('#topdownAdjustFixCosts').val(oData["TOPDOWN_ADJUST_FIX_COSTS"]);
         $('#planPeriod').val(oData["PLAN_PERIOD"]);
         $('#entryType').val(oData["ENTRY_TYPE"]);
         $('#status').val(oData["STATUS"]);
