@@ -1,74 +1,102 @@
 @startuml
-
-participant  ":SalesService"
+hide footbox
+participant  " "
 participant  ":KpiRequest"
 participant  ":Map"
 participant  ":Period"
 participant  ":ValidatedResultTopdown"
+participant  ":KeyPerformanceIndicators"
 participant  ":FixedCostsService"
 participant  ":OutputDataType"
 participant  ":ZeroMonthPeriod"
 
 
-":SalesService" -> ":KpiRequest" : calculateKpis()
+" " -> ":KpiRequest" : calculateKpis()
 ":KpiRequest" -> ":KpiRequest" : calculateActualForecastKpis()
-":KpiRequest" -> ":Period" : incrementMultipleTimes(NumberOfMonths)
-":Period" --> ":KpiRequest" : currentPeriod
-":KpiRequest" -> ":Map" : getActualData(tempPlanPeriod, currentPeriod)
-":Map" --> ":KpiRequest" : actualData
-":KpiRequest" -> ":Period" : get(currentPeriod)
-":Period" --> ":KpiRequest" : currentPeriod
-
-alt if currentPeriod==null
-    ":KpiRequest" -> ":Period" : getForecastData(currentPeriod, Period)
+":KpiRequest" -> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
+":KpiRequest" -> ":KpiRequest" : ActualData
+alt if actualData has current period
+    ":KpiRequest" -> ":KpiRequest" : getForecastData(currentPeriod, Period)
     else else
     ":KpiRequest" -> ":Period" : currentPeriod.immutableIncrement()
     ":Period" --> ":KpiRequest" : Period
-    ":KpiRequest" -> ":Period" : getForecastData(Period, tempPlanPeriod)
+    ":KpiRequest" -> ":KpiRequest" : getForecastData(Period, tempPlanPeriod)
 end
-    ":Period" --> ":KpiRequest" : ForecastData
+    ":KpiRequest" --> ":KpiRequest" : ForecastData
 
 loop
 ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
 ":ValidatedResultTopdown" --> ":KpiRequest" : topdownResult
 end
 
-loop Arraylist nicht leer
-   ":KpiRequest" -> ":Map" : Arrays.asList(actualData, forecastData)
+loop Arraylist has Data
+   ":KpiRequest" -> ":Arrays" : Arrays.asList(actualData, forecastData)
    loop kpiEntityMap nicht null
-         ":KpiRequest" -> ":ValidatedResultTopdown" : validateTopdownQueryResult()
+         ":KpiRequest" -> ":KpiRequest" : validateTopdownQueryResult()
         loop kpiArray nicht null
-            ":KpiRequest" -> ":KeyPerformanceIndicators" : monthlyKpiValues add KpiResult
-            ":KeyPerformanceIndicators" --> ":KpiRequest" : monthlyKpiValues
-            ":KpiRequest" -> ":KeyPerformanceIndicators" : monthlyTopdownValues add TopdownResult
-            ":KeyPerformanceIndicators" --> ":KpiRequest" : monthlyTopdownValues
+            ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
+            ":ValidatedResult" --> ":KpiRequest" : monthlyKpiValues
+            ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
+            ":ValidatedResultTopdown" --> ":KpiRequest" : monthlyTopdownValues
         end
-        ":ValidatedResultTopdown" --> ":KpiRequest" : validateTopdownQueryResult
+        ":KpiRequest" --> ":KpiRequest" : validateTopdownQueryResult
    end
-   ":Map" --> ":KpiRequest" : kpiEntityMap
+   ":Arrays" --> ":KpiRequest" : kpiEntityMap
 end
 
 loop NumberOfBj
-    ":KpiRequest" -> ":ValidatedResultTopdown" : calculateBjTopdown(Period)
-    ":ValidatedResultTopdown" --> ":KpiRequest" : calculateBjTopdown
+    ":KpiRequest" -> ":KpiRequest" : calculateBjTopdown(Period)
+    ":KpiRequest" --> ":KpiRequest" : calculateBjTopdown
     loop kpiArray
-        ":KpiRequest" -> ":KeyPerformanceIndicators" : bjValues add KpiResult
-        ":KeyPerformanceIndicators" --> ":KpiRequest" : bjValues
-        ":KpiRequest" -> ":KeyPerformanceIndicators" : topdownBjValues add TopdownResult
-        ":KeyPerformanceIndicators" --> ":KpiRequest" : topdownBjValues
+        ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
+        ":ValidatedResult" --> ":KpiRequest" : KpiResult
+        ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
+        ":ValidatedResultTopdown" --> ":KpiRequest" : topdownBjValues
     end
     ":KpiRequest" -> ":ZeroMonthPeriod" : increment()
     ":ZeroMonthPeriod" --> ":KpiRequest" : bjPeriod
 end
+
 loop
-    ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
-    ":KpiRequest" --> ":KpiRequest" : OutputDataType
-    ":KpiRequest" -> ":OutputDataType" : Arrays.stream(kpiArray)
-    "OutputDataType" --> ":KpiRequest" : stream(kpi)
+       ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
+       ":KpiRequest" --> ":KpiRequest" : resultStream
 end
 
-    ":KpiRequest" -> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
-    ":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+loop
+    ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
+    ":KpiRequest" --> ":KpiRequest" : resultStreamTopdown
+end
 
-":KpiRequest" --> ":SalesService" :  Stream<OutputDataType>
+":KpiRequest" -> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
+":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+":KpiRequest" -> ":KpiRequest" : calculateBudgetKpis()
+
+loop NumberOfMonths
+    ":KpiRequest" -> ":KpiRequest" : validateQueryResult(BudgetData, tempPlanPeriod)
+    loop kpiArray
+        ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
+        ":ValidatedResult" --> ":KpiRequest" : monthlyKpiValues
+    end
+        ":KpiRequest" -> ":Period" : increment()
+        ":Period" -> ":KpiRequest" : tempPlanPeriod
+end
+
+loop NumberOfBj
+    ":KpiRequest" -> ":KpiRequest" : calculateBj(bjPeriod)
+    loop kpiArray
+        ":KpiRequest" -> ":ValidatedResult": getKpiResult()
+        ":ValidatedResult" --> ":KpiRequest": bjValues
+    end
+    ":KpiRequest" -> ":ZeroMonthPeriod" : increment()
+    ":ZeroMonthPeriod" --> ":KpiRequest" : bjPeriod
+end
+
+loop kpiArray
+    ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
+    ":KpiRequest" --> ":KpiRequest" : Stream<OutputDataType>
+end
+":KpiRequest" -> ":Stream" : concat(entryTypeNull, entryTypeBudget)
+":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+
+":KpiRequest" --> " " : Stream<OutputDataType>
 @enduml
