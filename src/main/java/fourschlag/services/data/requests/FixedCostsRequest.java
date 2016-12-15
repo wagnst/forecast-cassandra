@@ -35,7 +35,7 @@ public class FixedCostsRequest extends Request {
     public boolean setForecastFixedCosts(String sbu, String subregion, double fixPreManCost, double shipCost, double sellCost, double diffActPreManCost,
                                          double idleEquipCost, double rdCost, double adminCostBu, double adminCostOd, double adminCostCompany, double otherOpCostBu, double otherOpCostOd,
                                          double otherOpCostCompany, double specItems, double provisions, double currencyGains, double valAdjustInventories, double otherFixCost,
-                                         double deprecation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, Period planPeriod,
+                                         double depreciation, double capCost, double equitiyIncome, double topdownAdjustFixCosts, Period planPeriod,
                                          String status, String usercomment, String entryType, Period period, String region, String currency,
                                          String userId, String entryTs) {
 
@@ -52,12 +52,12 @@ public class FixedCostsRequest extends Request {
             if (forecastAccessor.getSpecificForecastFixedCosts(sbu, subregion, period.getPeriod(), planPeriod.getPeriod(), entryType) != null) {
                 /* THEN update that existing record */
                 forecastAccessor.updateForecastFixedCosts(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
-                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
                         planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             } else {
                 /* ELSE insert a new row */
                 forecastAccessor.setForecastFixedCost(sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany, otherOpCostBu,
-                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
+                        otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equitiyIncome, topdownAdjustFixCosts, planPeriod.getPeriod(),
                         planPeriod.getYear(), planPeriod.getHalfYear(), planPeriod.getQuarter(), planPeriod.getMonth(), status, usercomment, entryType, period.getPeriod(), region, period.getYear(), period.getMonth(), currency, userId, entryTs);
             }
         } catch (Exception e) {
