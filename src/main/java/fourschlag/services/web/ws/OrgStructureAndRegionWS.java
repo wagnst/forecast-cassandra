@@ -14,6 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ * OrgStructureAndRegionWS offers functionality to get data directly from the org_structure and regions tables
+ */
 @Path("{keyspace}/org_region")
 public class OrgStructureAndRegionWS {
     private OrgStructureAndRegionService orgStructureAndRegionService;
@@ -25,6 +28,10 @@ public class OrgStructureAndRegionWS {
         orgStructureAndRegionService = new OrgStructureAndRegionService(connection);
     }
 
+    /**
+     * Gets all product main groups from org_structure
+     * @return WS Response with JSON containing all PMGs
+     */
     @GET
     @Path("get/product_main_groups")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +39,10 @@ public class OrgStructureAndRegionWS {
         return Response.ok(orgStructureAndRegionService.getProductMainGroups(), Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets all SBUs from the org_structure table
+     * @return WS Response with JSON containing all SBUs
+     */
     @GET
     @Path("get/sbus")
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,6 +50,10 @@ public class OrgStructureAndRegionWS {
         return Response.ok(orgStructureAndRegionService.getSbus(), Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets all regions from the regions table
+     * @return WS Response with JSON containing all regions
+     */
     @GET
     @Path("get/regions")
     @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +61,11 @@ public class OrgStructureAndRegionWS {
         return Response.ok(orgStructureAndRegionService.getRegions(), Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets all subregions for a specific region from the regions table
+     * @param region region to filter for
+     * @return WS Response with JSON containing subregions
+     */
     @GET
     @Path("get/subregions/region/{region}")
     @Produces(MediaType.APPLICATION_JSON)
