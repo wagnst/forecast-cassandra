@@ -5,7 +5,7 @@ import fourschlag.services.db.CassandraConnection;
 
 import java.util.List;
 
-public class OrgStructureAndRegionService extends Service {
+public class OrgStructureAndRegionService extends Service{
     public OrgStructureAndRegionService(CassandraConnection connection) {
         super(connection);
     }
