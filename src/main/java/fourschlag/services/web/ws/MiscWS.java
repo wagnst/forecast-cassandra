@@ -2,16 +2,11 @@ package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.EntryType;
 import fourschlag.entities.types.SalesType;
-import fourschlag.services.data.service.OrgStructureAndRegionService;
-import fourschlag.services.db.CassandraConnection;
-import fourschlag.services.db.ClusterEndpoints;
-import fourschlag.services.db.ConnectionPool;
 import fourschlag.services.db.KeyspaceNames;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -19,17 +14,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Path("{keyspace}/misc")
+/**
+ * MiscWS offers web services that don't need accecss to the database and don't fit into any other category
+ */
+@Path("misc")
 public class MiscWS {
-    private OrgStructureAndRegionService orgStructureAndRegionService;
+    /**
+     * Gets all keyspaces from the KeyspaceNames Enum
+     * @return WS Response with JSON containing all keyspace names
+     */
+    @GET
+    @Path("get/keyspaces")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getKeyspaces() {
+        List<String> resultList = Arrays.stream(KeyspaceNames.values())
+                .map(KeyspaceNames::getKeyspace)
+                .collect(Collectors.toList());
 
-    public MiscWS(@PathParam("keyspace") String keyspace) {
-        CassandraConnection connection = ConnectionPool.getConnection(
-                ClusterEndpoints.NODE1, KeyspaceNames.valueOf(keyspace.toUpperCase()), true);
-
-        orgStructureAndRegionService = new OrgStructureAndRegionService(connection);
+        return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets all sales types from the SalesTypes Enum
+     * @return WS Response with JSON containing all sales types
+     */
     @GET
     @Path("get/sales_types")
     @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +49,10 @@ public class MiscWS {
         return Response.ok(resultList, Params.MEDIATYPE).build();
     }
 
+    /**
+     * Gets those entry types form the EntryTypes Enum that can occur in any of the database tables
+     * @return WS Response with JSON containing entry types
+     */
     @GET
     @Path("get/entry_types")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,33 +63,5 @@ public class MiscWS {
                 .collect(Collectors.toList());
 
         return Response.ok(resultList, Params.MEDIATYPE).build();
-    }
-
-    @GET
-    @Path("get/product_main_groups")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductMainGroups() {
-        return Response.ok(orgStructureAndRegionService.getProductMainGroups(), Params.MEDIATYPE).build();
-    }
-
-    @GET
-    @Path("get/sbus")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSbus() {
-        return Response.ok(orgStructureAndRegionService.getSbus(), Params.MEDIATYPE).build();
-    }
-
-    @GET
-    @Path("get/regions")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRegions() {
-        return Response.ok(orgStructureAndRegionService.getRegions(), Params.MEDIATYPE).build();
-    }
-
-    @GET
-    @Path("get/subregions/region/{region}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSubregions(@PathParam("region") String region) {
-        return Response.ok(orgStructureAndRegionService.getSubregions(region), Params.MEDIATYPE).build();
     }
 }
