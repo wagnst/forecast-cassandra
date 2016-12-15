@@ -24,7 +24,11 @@ const errormessage = 'Error, bad parameters.';
 window.addEventListener('load', function () {
 
     backend = $(location).attr('host');
-    document.getElementById("backendServer").value = backend;
+
+    if (document.getElementById("backendServer")){
+        document.getElementById("backendServer").value = backend;
+    }
+
 
     query = window.location.search.substring(1);
 
