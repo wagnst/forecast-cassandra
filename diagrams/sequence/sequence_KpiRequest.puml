@@ -12,6 +12,7 @@ participant  ":ZeroMonthPeriod"
 
 
 " " -> ":KpiRequest" : calculateKpis()
+group
 ":KpiRequest" -> ":KpiRequest" : calculateActualForecastKpis()
 ":KpiRequest" -> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
 ":KpiRequest" -> ":KpiRequest" : ActualData
@@ -29,27 +30,23 @@ loop
 ":ValidatedResultTopdown" --> ":KpiRequest" : topdownResult
 end
 
-loop Arraylist has Data
-   ":KpiRequest" -> ":Arrays" : Arrays.asList(actualData, forecastData)
-   loop kpiEntityMap nicht null
+loop For actual and forecast data
+   loop For each entity
          ":KpiRequest" -> ":KpiRequest" : validateTopdownQueryResult()
-        loop kpiArray nicht null
-            ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
-            ":ValidatedResult" --> ":KpiRequest" : monthlyKpiValues
+        loop For each validated result
+            ":KpiRequest" -> ":ValidatedResultTopdown" : getKpiResult()
+            ":ValidatedResultTopdown" --> ":KpiRequest" : monthlyKpiValues
             ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
             ":ValidatedResultTopdown" --> ":KpiRequest" : monthlyTopdownValues
         end
-        ":KpiRequest" --> ":KpiRequest" : validateTopdownQueryResult
    end
-   ":Arrays" --> ":KpiRequest" : kpiEntityMap
 end
 
-loop NumberOfBj
+loop Number of bj
     ":KpiRequest" -> ":KpiRequest" : calculateBjTopdown(Period)
-    ":KpiRequest" --> ":KpiRequest" : calculateBjTopdown
     loop kpiArray
-        ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
-        ":ValidatedResult" --> ":KpiRequest" : KpiResult
+        ":KpiRequest" -> ":ValidatedResultTopdown" : getKpiResult()
+        ":ValidatedResultTopdown" --> ":KpiRequest" : KpiResult
         ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
         ":ValidatedResultTopdown" --> ":KpiRequest" : topdownBjValues
     end
@@ -58,17 +55,17 @@ loop NumberOfBj
 end
 
 loop
-       ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
-       ":KpiRequest" --> ":KpiRequest" : resultStream
+       ":KpiRequest" -> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
 end
 
 loop
-    ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
-    ":KpiRequest" --> ":KpiRequest" : resultStreamTopdown
+    ":KpiRequest" -> ":KpiRequest" : createOutputDataType(topdownKpiValues, topdownBjValues)
 end
 
 ":KpiRequest" -> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
 ":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+end
+group
 ":KpiRequest" -> ":KpiRequest" : calculateBudgetKpis()
 
 loop NumberOfMonths
@@ -92,9 +89,10 @@ loop NumberOfBj
 end
 
 loop kpiArray
-    ":KpiRequest" -> ":KpiRequest" : createOutputDataType()
-    ":KpiRequest" --> ":KpiRequest" : Stream<OutputDataType>
+    ":KpiRequest" -> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
 end
+end
+
 ":KpiRequest" -> ":Stream" : concat(entryTypeNull, entryTypeBudget)
 ":Stream" --> ":KpiRequest" : Stream<OutputDataType>
 
