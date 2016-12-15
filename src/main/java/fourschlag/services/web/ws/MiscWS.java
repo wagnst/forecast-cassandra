@@ -27,7 +27,7 @@ public class MiscWS {
     @Path("get/keyspaces")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKeyspaces() {
-        return Response.ok(Arrays.asList(KeyspaceNames.values()), Params.MEDIATYPE).build();
+        return Response.ok(KeyspaceNames.values(), Params.MEDIATYPE).build();
     }
 
     /**
