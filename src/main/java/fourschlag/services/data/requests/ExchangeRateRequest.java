@@ -4,6 +4,7 @@ import fourschlag.entities.jpaAccessors.ExchangeRateAccessor;
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
 import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.Period;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +25,11 @@ public class ExchangeRateRequest extends Request {
      *
      * @param toCurrency the desired currency
      */
-    public ExchangeRateRequest(Currency toCurrency) {
+    public ExchangeRateRequest(JpaConnection connection, Currency toCurrency) {
+        super(connection);
         this.toCurrency = toCurrency;
         this.exchangeRates = new HashMap<>();
-        accessor = new ExchangeRateAccessor();
+        accessor = new ExchangeRateAccessor(connection);
     }
 
     /**

@@ -8,6 +8,7 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.SalesRequest;
 import fourschlag.services.data.requests.kpi.SalesKpiRequest;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -18,6 +19,10 @@ import java.util.stream.Stream;
  * Extends Service. Provides functionality to get sales KPIs
  */
 public class SalesService extends Service {
+
+    public SalesService(JpaConnection connection) {
+        super(connection);
+    }
 
     /**
      * Calculates all Sales KPIs for a time span (planYear) and from certain
@@ -35,18 +40,18 @@ public class SalesService extends Service {
         /* Prepare result stream that will be returned later */
         Stream<OutputDataType> resultStream;
         /* Create instance of ExchangeRateRequest with the desired currency */
-        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(toCurrency);
+        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
 
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
-        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest();
+        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        Map<String, Set<String>> productAndRegions = new SalesRequest().getPmgAndRegionsFromSales();
+        Map<String, Set<String>> productAndRegions = new SalesRequest(getConnection()).getPmgAndRegionsFromSales();
 
         /* Nested for-loops implemented as parallel streams to iterate over all combinations of PMG, regions and sales types */
         resultStream = productAndRegions.keySet().stream().parallel()
                 .flatMap(product -> productAndRegions.get(product).stream()
                         .flatMap(region -> Arrays.stream(SalesType.values())
-                                .flatMap(salesType -> new SalesKpiRequest(product, planPeriod, currentPeriod, region,
+                                .flatMap(salesType -> new SalesKpiRequest(getConnection(), product, planPeriod, currentPeriod, region,
                                         salesType, exchangeRates, orgAndRegionRequest).calculateKpis())));
 
         System.out.println("Finished with sales");

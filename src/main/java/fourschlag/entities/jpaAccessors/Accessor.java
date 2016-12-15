@@ -1,18 +1,21 @@
 package fourschlag.entities.jpaAccessors;
 
+import fourschlag.services.db.JpaConnection;
+
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 public class Accessor {
-    private static final String PERSISTENCE_UNIT_NAME = "fourschlag";
+    private JpaConnection connection;
 
-    private static EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
-    public static EntityManagerFactory getEntityManagerFactory() {
-        return factory;
+    public Accessor(JpaConnection connection) {
+        this.connection = connection;
     }
 
-    public static String getPersistenceUnitName() {
-        return PERSISTENCE_UNIT_NAME;
+    public JpaConnection getConnection() {
+        return connection;
+    }
+
+    public EntityManagerFactory getEntityManagerFactory() {
+        return connection.getEntityManagerFactory();
     }
 }

@@ -1,11 +1,17 @@
 package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
+import fourschlag.services.db.JpaConnection;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 public class ExchangeRateAccessor extends Accessor{
+
+    public ExchangeRateAccessor(JpaConnection connection) {
+        super(connection);
+    }
+
     public ExchangeRateEntity getSpecificExchangeRate(
             int period,
             String fromCurrency,

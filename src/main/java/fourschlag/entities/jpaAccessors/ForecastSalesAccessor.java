@@ -1,12 +1,18 @@
 package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
+import fourschlag.services.db.JpaConnection;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
 public class ForecastSalesAccessor extends Accessor {
+
+    public ForecastSalesAccessor(JpaConnection connection) {
+        super(connection);
+    }
+
     public ForecastSalesEntity getSalesKpis(
             String productMainGroup,
             int period,

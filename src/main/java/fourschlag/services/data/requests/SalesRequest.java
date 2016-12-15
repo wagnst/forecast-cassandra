@@ -4,6 +4,7 @@ import fourschlag.entities.jpaAccessors.ActualSalesAccessor;
 import fourschlag.entities.jpaAccessors.ForecastSalesAccessor;
 import fourschlag.entities.jpaTables.ActualSalesEntity;
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,9 +17,10 @@ public class SalesRequest extends Request {
 
     private Map<String, Set<String>> productMap;
 
-    public SalesRequest() {
-        actualSalesAccessor = new ActualSalesAccessor();
-        forecastSalesAccessor = new ForecastSalesAccessor();
+    public SalesRequest(JpaConnection connection) {
+        super(connection);
+        actualSalesAccessor = new ActualSalesAccessor(connection);
+        forecastSalesAccessor = new ForecastSalesAccessor(connection);
     }
 
     public Map<String, Set<String>> getPmgAndRegionsFromSales() {

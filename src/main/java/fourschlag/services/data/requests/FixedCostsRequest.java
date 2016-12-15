@@ -4,6 +4,7 @@ import fourschlag.entities.jpaAccessors.ActualFixedCostsAccessor;
 import fourschlag.entities.jpaAccessors.ForecastFixedCostsAccessor;
 import fourschlag.entities.jpaTables.ActualFixedCostsEntity;
 import fourschlag.entities.jpaTables.ForecastFixedCostsEntity;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,9 +17,10 @@ public class FixedCostsRequest extends Request {
 
     private Map<String, Set<String>> sbuMap;
 
-    public FixedCostsRequest() {
-        actualFixedCostsAccessor = new ActualFixedCostsAccessor();
-        forecastFixedCostsAccessor = new ForecastFixedCostsAccessor();
+    public FixedCostsRequest(JpaConnection connection) {
+        super(connection);
+        actualFixedCostsAccessor = new ActualFixedCostsAccessor(connection);
+        forecastFixedCostsAccessor = new ForecastFixedCostsAccessor(connection);
     }
 
     public Map<String, Set<String>> getSubregionsAndSbuFromFixedCosts() {

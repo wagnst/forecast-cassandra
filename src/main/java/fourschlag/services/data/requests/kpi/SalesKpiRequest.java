@@ -10,6 +10,7 @@ import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -41,16 +42,16 @@ public class SalesKpiRequest extends KpiRequest {
      * @param exchangeRates    ExchangeRateRequest with the desired output currency
      * @param orgAndRegionRequest OrgStructureAndRegionRequest instance
      */
-    public SalesKpiRequest(String productMainGroup, Period planPeriod, Period currentPeriod,
+    public SalesKpiRequest(JpaConnection connection, String productMainGroup, Period planPeriod, Period currentPeriod,
                            String region, SalesType salesType, ExchangeRateRequest exchangeRates,
                            OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, orgAndRegionRequest.getSbu(productMainGroup), region, planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.productMainGroup = productMainGroup;
         this.salesType = salesType;
 
         /* Create needed accessors to be able to do queries */
-        actualAccessor = new ActualSalesAccessor();
-        forecastAccessor = new ForecastSalesAccessor();
+        actualAccessor = new ActualSalesAccessor(connection);
+        forecastAccessor = new ForecastSalesAccessor(connection);
     }
 
     /**
@@ -122,7 +123,7 @@ public class SalesKpiRequest extends KpiRequest {
                 return cm1.getCm1();
             } else {
                 /* TODO: Check for better way to convert currency */
-                double exchangeRate = new ExchangeRateRequest(Currency.getCurrencyByAbbreviation(toCurrency))
+                double exchangeRate = new ExchangeRateRequest(getConnection(), Currency.getCurrencyByAbbreviation(toCurrency))
                         .getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(cm1.getCurrency()));
                 return cm1.getCm1() * exchangeRate;
             }

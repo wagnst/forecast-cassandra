@@ -4,6 +4,7 @@ import fourschlag.entities.jpaAccessors.OrgStructureAccessor;
 import fourschlag.entities.jpaAccessors.RegionAccessor;
 import fourschlag.entities.jpaTables.OrgStructureEntity;
 import fourschlag.entities.jpaTables.RegionEntity;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +24,10 @@ public class OrgStructureAndRegionRequest extends Request {
      * Constructor for OrgStructureAndRegionRequest.
      *
      */
-    public OrgStructureAndRegionRequest() {
-        orgStructureAccessor = new OrgStructureAccessor();
-        regionAccessor = new RegionAccessor();
+    public OrgStructureAndRegionRequest(JpaConnection connection) {
+        super(connection);
+        orgStructureAccessor = new OrgStructureAccessor(connection);
+        regionAccessor = new RegionAccessor(connection);
     }
 
     /**

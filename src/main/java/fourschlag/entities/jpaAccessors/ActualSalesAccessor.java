@@ -1,12 +1,17 @@
 package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ActualSalesEntity;
+import fourschlag.services.db.JpaConnection;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
 public class ActualSalesAccessor extends Accessor {
+
+    public ActualSalesAccessor(JpaConnection connection) {
+        super(connection);
+    }
 
     public ActualSalesEntity getSalesKPIs(
             String productMainGroup,

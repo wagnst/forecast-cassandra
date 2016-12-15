@@ -1,12 +1,17 @@
 package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ActualFixedCostsEntity;
+import fourschlag.services.db.JpaConnection;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
 public class ActualFixedCostsAccessor extends Accessor {
+
+    public ActualFixedCostsAccessor(JpaConnection connection) {
+        super(connection);
+    }
 
     public ActualFixedCostsEntity getFixedCostsKpis(
             String sbu,

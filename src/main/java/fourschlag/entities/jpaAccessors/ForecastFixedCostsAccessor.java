@@ -1,12 +1,17 @@
 package fourschlag.entities.jpaAccessors;
 
 import fourschlag.entities.jpaTables.ForecastFixedCostsEntity;
+import fourschlag.services.db.JpaConnection;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
 public class ForecastFixedCostsAccessor extends Accessor {
+
+    public ForecastFixedCostsAccessor(JpaConnection connection) {
+        super(connection);
+    }
 
     public ForecastFixedCostsEntity getFixedCostsKpis(
             String sbu,

@@ -4,6 +4,7 @@ import fourschlag.entities.jpaTables.KpiEntity;
 import fourschlag.entities.types.*;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.Request;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,8 +41,9 @@ public abstract class KpiRequest extends Request {
      * @param exchangeRates     ExchangeRateRequest with the desired output currency
      * @param fcType            The type of KPI (example: "sales" or "fixed costs")
      */
-    public KpiRequest(String sbu, String region, Period planPeriod, Period currentPeriod,
+    public KpiRequest(JpaConnection connection, String sbu, String region, Period planPeriod, Period currentPeriod,
                       ExchangeRateRequest exchangeRates, String fcType) {
+        super(connection);
         this.sbu = sbu;
         this.region = region;
         this.planPeriod = planPeriod;
@@ -99,8 +101,10 @@ public abstract class KpiRequest extends Request {
         Period tempPlanPeriod = new Period(planPeriod);
 
         /* Prepare maps that will store the monthly values */
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>();
+        fillMap(tempMonthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>();
+        fillMap(tempBjValues);
 
         /*Prepare ValidatedResult object */
         ValidatedResult kpisForSpecificMonth;
@@ -147,10 +151,14 @@ public abstract class KpiRequest extends Request {
 
         Period tempPlanPeriod = new Period(planPeriod);
 
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyTopdownValues = new HashMap<>(monthlyKpiValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>(bjValues);
-        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempTopdownBjValues = new HashMap<>(bjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyKpiValues = new HashMap<>();
+        fillMap(tempMonthlyKpiValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempMonthlyTopdownValues = new HashMap<>();
+        fillMap(tempMonthlyTopdownValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempBjValues = new HashMap<>();
+        fillMap(tempBjValues);
+        final Map<KeyPerformanceIndicators, LinkedList<Double>> tempTopdownBjValues = new HashMap<>();
+        fillMap(tempTopdownBjValues);
 
         ValidatedResultTopdown kpisForSpecificMonth;
         /* calculateSalesKpisForSpecificMonth() is called multiple times. After each time we increment the plan period */

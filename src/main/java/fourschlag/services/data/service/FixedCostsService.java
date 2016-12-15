@@ -7,6 +7,7 @@ import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.FixedCostsRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
 import fourschlag.services.data.requests.kpi.FixedCostsKpiRequest;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,10 @@ import java.util.stream.Stream;
  * Extends Service. Provides functionality to get fixed costs KPIs
  */
 public class FixedCostsService extends Service {
+
+    public FixedCostsService(JpaConnection connection) {
+        super(connection);
+    }
 
     /**
      * Calculates all Fixed Costs KPIs for a time span (planYear) and from certain
@@ -34,17 +39,17 @@ public class FixedCostsService extends Service {
         Stream<OutputDataType> resultStream;
 
         /* Create instance of ExchangeRateRequest with the desired currency */
-        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(toCurrency);
+        ExchangeRateRequest exchangeRates = new ExchangeRateRequest(getConnection(), toCurrency);
 
         /* Create Request to be able to retrieve all distinct regions and products from different tables */
-        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest();
+        OrgStructureAndRegionRequest orgAndRegionRequest = new OrgStructureAndRegionRequest(getConnection());
 
-        Map<String, Set<String>> sbuAndSubregions = new FixedCostsRequest().getSubregionsAndSbuFromFixedCosts();
+        Map<String, Set<String>> sbuAndSubregions = new FixedCostsRequest(getConnection()).getSubregionsAndSbuFromFixedCosts();
 
         /* Nested for-loops that iterate over all sbus and subregions. For every combination a FixedCostsKpiRequest is created */
         resultStream = sbuAndSubregions.keySet().stream().parallel()
                 .flatMap(sbu -> sbuAndSubregions.get(sbu).stream()
-                        .flatMap(subregion -> new FixedCostsKpiRequest(sbu, planPeriod, currentPeriod, subregion,
+                        .flatMap(subregion -> new FixedCostsKpiRequest(getConnection(), sbu, planPeriod, currentPeriod, subregion,
                                 exchangeRates, orgAndRegionRequest).calculateKpis()));
 
 

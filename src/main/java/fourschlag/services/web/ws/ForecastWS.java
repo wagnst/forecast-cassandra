@@ -6,6 +6,7 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.data.service.SalesService;
+import fourschlag.services.db.JpaConnection;
 import fourschlag.services.web.Params;
 
 import javax.ws.rs.GET;
@@ -21,15 +22,24 @@ import java.util.stream.Stream;
 /**
  * ForecastWS offers web service to get KPIs from a database
  */
-@Path("/forecast")
+@Path("{keyspace}/forecast")
 public class ForecastWS {
 
-    private SalesService salesService = new SalesService();
-    private FixedCostsService fixedCostsService = new FixedCostsService();
+    private JpaConnection connection;
+    private SalesService salesService;
+    private FixedCostsService fixedCostsService;
 
 
-    /* TODO: Maybe close session each time, but not connection */
-    /* TODO: Create Connection pool and remove the connection from this WS */
+    public ForecastWS(@PathParam("keyspace") String keyspace) {
+        connection = new JpaConnection(keyspace);
+        salesService = new SalesService(connection);
+        fixedCostsService = new FixedCostsService(connection);
+    }
+
+    public static void main(String[] args) {
+        ForecastWS ws = new ForecastWS("original_version");
+        ws.getKPIs("eur", 2016, 201609);
+    }
 
     /**
      * This method collects all to be calculated forecast KPI's in
@@ -47,8 +57,6 @@ public class ForecastWS {
             @PathParam("currency") String currency,
             @PathParam("planyear") int planYear,
             @PathParam("period") int period) {
-        //TODO: period must be the present or the past, but must not be the future --> Not sure..ask Henrik
-
         /* Get correct currency object from currency enum */
         Currency curr = Currency.getCurrencyByAbbreviation(currency);
 
@@ -92,26 +100,6 @@ public class ForecastWS {
         fixedCostsKpis.close();
         /* Return the result list with a code 200 */
         return Response.ok(resultList, Params.MEDIATYPE).build();
-    }
-
-    public static void main(String[] args) {
-        SalesService salesService = new SalesService();
-        FixedCostsService fixedCostsService = new FixedCostsService();
-
-        /* Get all Sales KPIs and save them to a stream */
-        Stream<OutputDataType> salesKpis = salesService.getSalesKPIs(Period.getPeriodByYear(2016), new Period(201606), Currency.DOLLAR);
-        /* Also save the Fixed Costs KPIs to a stream */
-        Stream<OutputDataType> fixedCostsKpis = fixedCostsService.getFixedCostsKpis(Period.getPeriodByYear(2016), new Period(201606), Currency.DOLLAR);
-
-        /* Combine both streams to one */
-        List<OutputDataType> resultList = Stream.concat(salesKpis, fixedCostsKpis)
-                /* Sort the whole stream */
-                .sorted(new OutputDataTypeComparator())
-                /* Convert the stream to a List */
-                .collect(Collectors.toList());
-
-        System.out.println("Finished");
-        System.out.println(resultList.size());
     }
 
     /**

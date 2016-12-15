@@ -9,6 +9,7 @@ import fourschlag.entities.types.*;
 import fourschlag.entities.types.KeyPerformanceIndicators;
 import fourschlag.services.data.requests.ExchangeRateRequest;
 import fourschlag.services.data.requests.OrgStructureAndRegionRequest;
+import fourschlag.services.db.JpaConnection;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -38,14 +39,14 @@ public class FixedCostsKpiRequest extends KpiRequest {
      * @param exchangeRates     ExchangeRateRequest with the desired output currency
      * @param orgAndRegionRequest   OrgStructureAndRegionRequest instance
      */
-    public FixedCostsKpiRequest(String sbu, Period planPeriod, Period currentPeriod,
+    public FixedCostsKpiRequest(JpaConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                                 String subregion, ExchangeRateRequest exchangeRates,
                                 OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
-        actualAccessor = new ActualFixedCostsAccessor();
-        forecastAccessor = new ForecastFixedCostsAccessor();
+        actualAccessor = new ActualFixedCostsAccessor(connection);
+        forecastAccessor = new ForecastFixedCostsAccessor(connection);
     }
 
     /**
