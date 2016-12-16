@@ -1,5 +1,6 @@
 package fourschlag.services.web.ws;
 
+import fourschlag.entities.types.Currency;
 import fourschlag.entities.types.EntryType;
 import fourschlag.entities.types.SalesType;
 import fourschlag.services.db.KeyspaceNames;
@@ -56,6 +57,22 @@ public class MiscWS {
         List<String> resultList = Arrays.stream(EntryType.values())
                 .filter(EntryType::isInTable)
                 .map(EntryType::getType)
+                .collect(Collectors.toList());
+
+        return Response.ok(resultList, Params.MEDIATYPE).build();
+    }
+
+    /**
+     * Gets all Currencies by their abbreviations
+     *
+     * @return WS Response with JSON containing all currencies
+     */
+    @GET
+    @Path("get/currencies")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrencies() {
+        List<String> resultList = Arrays.stream(Currency.values())
+                .map(Currency::getAbbreviation)
                 .collect(Collectors.toList());
 
         return Response.ok(resultList, Params.MEDIATYPE).build();
