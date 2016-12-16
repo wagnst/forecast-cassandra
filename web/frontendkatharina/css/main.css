@@ -1,21 +1,16 @@
-#salesInsertForm{
+#salesInsertForm, #fixedcostsInsertForm{
     padding: 10px;
 }
 
-#fixedcostsForm{
-    padding: 10px;
-}
 #divforform{
     margin-left: 4%;
     margin-right: 20%;
     background: rgba(104, 143, 191, 0.38)
 }
 
-#überschrift{
+#überschrift, #divformhorizontal{
     text-align: left;
     margin-left: 4%;
 }
 
-/*input:required:hover {
-    border-color: rgba(200, 0, 0, 0.85);
-}*/
+
