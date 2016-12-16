@@ -94,7 +94,7 @@ package fourschlag {
 
             Class Period
 
-            Class PeriodMap<V>
+            Class PeriodMap<? extends LinkedHashMap<Integer,V>>
 
             Enum SalesType
 
@@ -137,8 +137,6 @@ package fourschlag {
                     + Map<String, Set<String>> : getSubregionsAndSbu()
                 }
 
-                Class SalesRequest
-
                 Class OrgStructureAndRegionRequest {
                     +Set<String> : getRegionsAsSetFromSales()
                     +Set<String> : getProductMainGroupsAsSetFromSales()
@@ -147,6 +145,16 @@ package fourschlag {
                 Abstract Class Request {
                     +Session : getSession()
                     +MappingManager : getManager()
+                }
+
+                Class SalesRequest{
+                    +boolean : setForecastSales()
+                    +List<ForecastSalesEntity> : getAllForecastSales()
+                    +ForecastSalesEntity : getSpecificForecastSales()
+                    +List<ForecastSalesEntity> : getMultipleForecastSales()
+                    +boolean : deleteForecastSales()
+                    +List<ForecastSalesEntity> : getBudgetForecastSales()
+                    +Map<String, Set<String>> : getPmgAndRegions()
                 }
 
                 ' inherits for Request
@@ -168,18 +176,25 @@ package fourschlag {
                     +Stream<OutputDataType> : getFixedCostsKpis()
                 }
 
+
+                Class OrgStructureAndRegionService{
+                    +List<String> : getProductMainGroups()
+                    +List<String> : getSbus()
+                    +List<String> : getRegions()
+                    +List<String> : getSubregions()
+                }
+
                 Class SalesService {
-                ' TODO: auf Stream anpassen! vgl mit FixedCosts
                     +Stream<OutputDataType> : getSalesKPIs()
                 }
 
                 Abstract Class Service {
                     +CassandraConnection : getConnection()
-                    +{static}int : getNumberOfMonths()
                 }
 
                 Service <|-- SalesService
                 Service <|-- FixedCostsService
+                Service <|-- OrgStructureAndRegionService
             }
         }
 
@@ -189,7 +204,8 @@ package fourschlag {
             Enum ClusterEndpoints
 
             Class ConnectionPool {
-                + getConnection()
+                +{static} CassandraConnection : getConnection()
+                +{static} void : removeConnection()
             }
 
             Enum KeyspaceNames
@@ -209,6 +225,7 @@ package fourschlag {
                     +Response : getMultipleForecastFixedCosts()
                     +Response : getBudgetForecastFixedCosts()
                     +Response : createForecastFixedCosts()
+                    +Response : deleteForecastFixedCosts()
                 }
 
                 Class ForecastSalesWS{
@@ -216,6 +233,7 @@ package fourschlag {
                     +Response : getOneForecastSales()
                     +Response : getBudgetForecastSales()
                     +Response : createForecastSales()
+                    +Response : deleteForecastSales()
                 }
 
                 Class ForecastWS {
@@ -224,22 +242,39 @@ package fourschlag {
                     +Response : getFixedCostsKPIs()
                 }
 
+                Class MiscWS {
+                    +Response : getKeyspaces()
+                    +Response : getSalesTypes()
+                    +Response : getEntryTypes()
+                    +Response : getCurrencies()
+                }
+
+                Class OrgStructureAndRegionWS {
+                    +Response : getProductMainGroups()
+                    +Response : getSbus()
+                    +Response : getRegions()
+                    +Response : getSubregions()
+                }
                 Class ParameterValidator
             }
+
+            Class Params
+
             namespace fourschlag.services.web.ws{
-            .ForecastFixedCostsWS o-- FixedCostsService : use
-            .ForecastSalesWS o-- SalesService : use
-            .ForecastWS o-- FixedCostsService : use
-            .ForecastWS o-- SalesService : use
-            .ForecastWS *-- CassandraConnection : use
-            .ForecastWS o-- OutputDataTypeComparator : use
             .ForecastFixedCostsWS *-- CassandraConnection : use
             .ForecastSalesWS *-- CassandraConnection : use
+            .ForecastWS *-- CassandraConnection : use
+            .ForecastWS o-- OutputDataTypeComparator : use
+            .MiscWS *-- Params
+            .ForecastFixedCostsWS *-- CassandraConnection : use
+            .OrgStructureAndRegionWS *-- CassandraConnection : use
             }
         }
     }
+
             fourschlag.services.data.service *-- CassandraConnection : use
-            fourschlag.services.data.requests o-- fourschlag.entities.accessors : use
+            fourschlag.services.data.requests *-- fourschlag.entities.accessors : use
             fourschlag.services.data.requests *-- CassandraConnection : use
+            fourschlag.services.web.ws *-- fourschlag.services.data.service : use
 }
 @enduml
