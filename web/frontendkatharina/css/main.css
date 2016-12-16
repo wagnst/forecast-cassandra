@@ -1,15 +1,24 @@
 #salesInsertForm{
-    padding: 20px;
+
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
 }
 
-#fixedcostsForm{
-    padding: 20px;
+#fixedcostsInsertForm{
+
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
 }
+
 #divforform{
 
     margin-left: 4%;
     margin-right: 20%;
-    padding-top:1%;
+    margin-bottom: 5%;
     background: rgba(104, 143, 191, 0.38)
 
 }
@@ -19,8 +28,6 @@
     margin-left: 4%;
 }
 
-
-
 #jumbo
 {
     position: fixed;
@@ -29,6 +36,9 @@
 
 }
 
+#buttons{
+
+}
 
 #indexTable{
 
@@ -37,11 +47,3 @@
 
 }
 
-
-/*#buttons{
-
-    min-width: 100px;
-    margin-left: 51em;
-    bottom: 0;
-    right: 0;
-}*/
