@@ -1,0 +1,7 @@
+@startuml
+hide footbox
+participant  ":KpiRequest"
+participant  ":SalesKpiRequest"
+participant  ":FixedCostsKpiRequest"
+
+@enduml
