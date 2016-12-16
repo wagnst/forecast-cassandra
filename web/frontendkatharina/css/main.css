@@ -1,14 +1,17 @@
 #salesInsertForm{
-    padding: 10px;
+    padding: 20px;
 }
 
 #fixedcostsForm{
-    padding: 10px;
+    padding: 20px;
 }
 #divforform{
+
     margin-left: 4%;
     margin-right: 20%;
+    padding-top:1%;
     background: rgba(104, 143, 191, 0.38)
+
 }
 
 #überschrift{
@@ -16,6 +19,35 @@
     margin-left: 4%;
 }
 
-/*input:required:hover {
-    border-color: rgba(200, 0, 0, 0.85);
+
+
+#jumbo
+{
+    position: fixed;
+    right: 0;
+    left: 0;
+
+}
+
+
+#indexTable{
+
+    position: absolute;
+    margin-top: 20em;
+
+}
+
+
+/*#buttons{
+
+    min-width: 100px;
+    margin-left: 51em;
+    bottom: 0;
+    right: 0;
 }*/
+
+
+
+
+
+

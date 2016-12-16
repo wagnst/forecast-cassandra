@@ -85,7 +85,7 @@ window.addEventListener('load', function () {
         "columnDefs": [{
             "data": null,
             "targets": -1,
-            "defaultContent": '<button type="button" class="btn btn-primary" >Show Data!</button>'
+            "defaultContent": '<button type="button" class="btn btn-primary" >Drilldown</button>'
         }]
     });
 
@@ -129,6 +129,7 @@ window.addEventListener('load', function () {
             "url": endpointScheme + query,
             "dataSrc": ""
         },
+
         "info": false,
         "paging": false,
         aaSorting: [],
