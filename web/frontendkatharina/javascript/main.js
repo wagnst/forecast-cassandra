@@ -9,17 +9,18 @@ var planYear;
 var currency;
 var period;
 var keyspace;
-var endpointPath = '/fourschlag/api/' + keyspace + '/';
+var endpointPath = '/fourschlag/api/';
 var kpiType;
 var newTab;
 var salesurl;
 var fixedcosturl;
 var query;
 var backend;
+var dropdownMisc = '/fourschlag/api/misc/get/';
 const sucessmessageInsert = 'Data was successfully transmitted.';
 const sucessmessageModal = 'Data was successfully changed.';
 const errormessage = 'Error, bad parameters.';
-
+const errormessageDropdown = "Error, dropdown parameters aren't available!";
 
 window.addEventListener('load', function () {
 
@@ -28,7 +29,6 @@ window.addEventListener('load', function () {
     if (document.getElementById("backendServer")){
         document.getElementById("backendServer").value = backend;
     }
-
 
     query = window.location.search.substring(1);
 
@@ -224,10 +224,6 @@ window.addEventListener('load', function () {
         }
     });
 
-    $.getJSON('', function(obj){
-
-    });
-
     $('#startbutton').on('click', function () {
         planYear = document.getElementById('datepicker_planYear').value;
         backend = document.getElementById('backendServer').value;
@@ -264,32 +260,117 @@ window.addEventListener('load', function () {
 
     });
 
-    $('#salesModalForm').submit(function (e) {
 
-        $.ajax({
-            type: "POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
-            data: $('#salesModalForm').serialize(),
-            statusCode: {
-                200: function () {
-                    alert(sucessmessageModal);
-                    location.reload();
-                },
-                400: function () {
-                    alert(errormessage);
-                }
+// Dropdowns
 
-            }
-
+    $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
+        $.each(data ,function(key, value){
+            var option = $('<option />').val(value).text(value);
+            $("#keyspace").append(option);
         });
-        e.preventDefault();
+
+    })  .fail(function() {
+        alert( errormessageDropdown );
+    })  .done(function () {
+        keyspace = document.getElementById('keyspace').value;
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#region").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+            $("#productMainGroup").empty();
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#productMainGroup").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+            $("#sbu").empty();
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#sbu").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+
     });
 
+    $.getJSON( endpointScheme + backend + dropdownMisc + 'sales_types', function(data){
+        $.each(data ,function(key, value){
+            var option = $('<option />').val(value).text(value);
+            $("#salesType").append(option);
+        });
+
+    }) .fail(function() {
+        alert( errormessageDropdown );
+    });
+
+    $.getJSON( endpointScheme + backend + dropdownMisc + 'entry_types', function(data){
+        $.each(data ,function(key, value){
+            var option = $('<option />').val(value).text(value);
+            $("#entryType").append(option);
+        });
+
+    }) .fail(function() {
+        alert( errormessageDropdown );
+    });
+
+    $('#keyspace').change(function () {
+        keyspace = document.getElementById('keyspace').value;
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
+            $("#region").empty();
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#region").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+            $("#productMainGroup").empty();
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#productMainGroup").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+            $("#sbu").empty();
+            $.each(data ,function(key, value){
+                var option = $('<option />').val(value).text(value);
+                $("#sbu").append(option);
+            });
+
+        }) .fail(function() {
+            alert( errormessageDropdown );
+        });
+    });
+
+
+
+//Post Forms
+
     $('#salesInsertForm').submit(function (e) {
+        keyspace = document.getElementById('keyspace').value;
+        endpointPath = '/fourschlag/api/' + keyspace ;
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+            url: endpointScheme + endpointPath + "/sales/",
             data: $('#salesInsertForm').serialize(),
             statusCode: {
                 200: function () {
@@ -307,10 +388,12 @@ window.addEventListener('load', function () {
 
 
     $('#fixedcostsInsertForm').submit(function (e) {
+        keyspace = document.getElementById('keyspace').value;
+        endpointPath = '/fourschlag/api/' + keyspace ;
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
+            url: endpointScheme + endpointPath + "/fixedcosts/",
             data: $('#fixedcostsInsertForm').serialize(),
             statusCode: {
                 200: function () {
@@ -347,6 +430,29 @@ window.addEventListener('load', function () {
         e.preventDefault();
     });
 
+    $('#salesModalForm').submit(function (e) {
+
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+            data: $('#salesModalForm').serialize(),
+            statusCode: {
+                200: function () {
+                    alert(sucessmessageModal);
+                    location.reload();
+                },
+                400: function () {
+                    alert(errormessage);
+                }
+
+            }
+
+        });
+        e.preventDefault();
+    });
+
+// Modal
 
     $('#ForecastSalesTable').on('click', 'tr', function () {
         $('#SalesModal').modal('show');

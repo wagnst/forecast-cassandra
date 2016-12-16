@@ -14,7 +14,7 @@
 
 }
 
-#überschrift{
+#überschrift, #divformhorizontal{
     text-align: left;
     margin-left: 4%;
 }
@@ -45,9 +45,3 @@
     bottom: 0;
     right: 0;
 }*/
-
-
-
-
-
-

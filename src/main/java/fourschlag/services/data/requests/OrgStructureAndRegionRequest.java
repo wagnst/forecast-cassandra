@@ -31,6 +31,11 @@ public class OrgStructureAndRegionRequest extends Request {
         regionAccessor = getManager().createAccessor(RegionAccessor.class);
     }
 
+    /**
+     * Gets all Product Main Groups from the org_structure table
+     *
+     * @return List with all PMGs
+     */
     public List<String> getProductMainGroups() {
         Result<OrgStructureEntity> queryResult = orgStructureAccessor.getDistinctPmg();
 
@@ -39,14 +44,26 @@ public class OrgStructureAndRegionRequest extends Request {
         return resultList;
     }
 
+    /**
+     * Gets all SBUs from the org_structure table
+     *
+     * @return List with all SBUs
+     */
     public List<String> getSbus() {
         Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
 
+        /* Remove duplicates with a Set */
         Set<String> set = new HashSet<>();
         queryResult.forEach(e -> set.add(e.getSbu()));
+
         return set.stream().collect(Collectors.toList());
     }
 
+    /**
+     * Gets all Regions from the regions table
+     *
+     * @return List with all Regions
+     */
     public List<String> getRegions() {
         Result<RegionEntity> queryResult = regionAccessor.getAll();
 
@@ -55,6 +72,12 @@ public class OrgStructureAndRegionRequest extends Request {
         return set.stream().collect(Collectors.toList());
     }
 
+    /**
+     * Gets all subregions for a specific region
+     *
+     * @param region region to filter for
+     * @return List with subregions
+     */
     public List<String> getSubregionsForRegion(String region) {
         Result<RegionEntity> queryResult = regionAccessor.getEntitiesByRegion(region);
         List<String> resultList = new ArrayList<>();
