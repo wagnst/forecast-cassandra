@@ -16,6 +16,7 @@ var salesurl;
 var fixedcosturl;
 var query;
 var backend;
+var region;
 var dropdownMisc = '/fourschlag/api/misc/get/';
 const sucessmessageInsert = 'Data was successfully transmitted.';
 const sucessmessageModal = 'Data was successfully changed.';
@@ -88,6 +89,7 @@ window.addEventListener('load', function () {
             "defaultContent": '<button type="button" class="btn btn-primary" >Drilldown</button>'
         }]
     });
+
 
     var forecastSalesTable = $('#ForecastSalesTable').DataTable({
         "ajax": {
@@ -263,102 +265,165 @@ window.addEventListener('load', function () {
 
 // Dropdowns
 
-    $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
-        $.each(data ,function(key, value){
-            var option = $('<option />').val(value).text(value);
-            $("#keyspace").append(option);
-        });
+    $(function(){
+        if($('body').is('.insert')){
 
-    })  .fail(function() {
-        alert( errormessageDropdown );
-    })  .done(function () {
-        keyspace = document.getElementById('keyspace').value;
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#region").append(option);
+            //on change
+            $('#region').change(function () {
+                region = document.getElementById('region').value;
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function(data){
+                    $("#subRegion").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#subRegion").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
             });
 
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
-            $("#productMainGroup").empty();
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#productMainGroup").append(option);
+            $('#keyspace').change(function () {
+                keyspace = document.getElementById('keyspace').value;
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
+                    $("#region").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#region").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+                    $("#productMainGroup").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#productMainGroup").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+                    $("#sbu").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#sbu").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
             });
 
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
 
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
-            $("#sbu").empty();
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#sbu").append(option);
+
+            // restliche
+            $.getJSON( endpointScheme + backend + dropdownMisc + 'sales_types', function(data){
+                $.each(data ,function(key, value){
+                    var option = $('<option />').val(value).text(value);
+                    $("#salesType").append(option);
+                });
+
+            }) .fail(function() {
+                alert( errormessageDropdown );
             });
 
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
+            $.getJSON( endpointScheme + backend + dropdownMisc + 'entry_types', function(data){
+                $.each(data ,function(key, value){
+                    var option = $('<option />').val(value).text(value);
+                    $("#entryType").append(option);
+                });
 
+            }) .fail(function() {
+                alert( errormessageDropdown );
+            });
+
+            $.getJSON( endpointScheme + backend + dropdownMisc + 'currencies', function(data){
+                $.each(data ,function(key, value){
+                    var option = $('<option />').val(value).text(value);
+                    $("#currency").append(option);
+                });
+
+            }) .fail(function() {
+                alert( errormessageDropdown );
+            });
+
+            $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
+                $.each(data ,function(key, value){
+                    var option = $('<option />').val(value).text(value);
+                    $("#keyspace").append(option);
+                });
+
+            })  .fail(function() {
+                alert( errormessageDropdown );
+            })  .done(function () {
+                keyspace = document.getElementById('keyspace').value;
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#region").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                }) .done(function () {
+                    region = document.getElementById('region').value;
+                    $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function(data){
+                        $("#subRegion").empty();
+                        $.each(data ,function(key, value){
+                            var option = $('<option />').val(value).text(value);
+                            $("#subRegion").append(option);
+                        });
+
+                    }) .fail(function() {
+                        alert( errormessageDropdown );
+                    });
+                });
+
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+                    $("#productMainGroup").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#productMainGroup").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
+
+                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+                    $("#sbu").empty();
+                    $.each(data ,function(key, value){
+                        var option = $('<option />').val(value).text(value);
+                        $("#sbu").append(option);
+                    });
+
+                }) .fail(function() {
+                    alert( errormessageDropdown );
+                });
+
+            });
+
+        }
     });
 
-    $.getJSON( endpointScheme + backend + dropdownMisc + 'sales_types', function(data){
-        $.each(data ,function(key, value){
-            var option = $('<option />').val(value).text(value);
-            $("#salesType").append(option);
-        });
 
-    }) .fail(function() {
-        alert( errormessageDropdown );
+    $(function(){
+        if($('body').is('.index')){
+            $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
+                $.each(data ,function(key, value){
+                    var option = $('<option />').val(value).text(value);
+                    $("#keyspace").append(option);
+                });
+
+            })  .fail(function() {
+                alert( errormessageDropdown );
+            })
+        }
     });
 
-    $.getJSON( endpointScheme + backend + dropdownMisc + 'entry_types', function(data){
-        $.each(data ,function(key, value){
-            var option = $('<option />').val(value).text(value);
-            $("#entryType").append(option);
-        });
-
-    }) .fail(function() {
-        alert( errormessageDropdown );
-    });
-
-    $('#keyspace').change(function () {
-        keyspace = document.getElementById('keyspace').value;
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
-            $("#region").empty();
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#region").append(option);
-            });
-
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
-            $("#productMainGroup").empty();
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#productMainGroup").append(option);
-            });
-
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
-        $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
-            $("#sbu").empty();
-            $.each(data ,function(key, value){
-                var option = $('<option />').val(value).text(value);
-                $("#sbu").append(option);
-            });
-
-        }) .fail(function() {
-            alert( errormessageDropdown );
-        });
-    });
 
 
 
