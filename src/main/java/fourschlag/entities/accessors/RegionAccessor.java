@@ -24,6 +24,7 @@ public interface RegionAccessor {
      * Queries the table for all rows with a specific region
      *
      * @param region primary key field region for where clause
+     *
      * @return Iterable of entities mapped as RegionEntity
      */
     @Query("SELECT * FROM regions WHERE region = :region ALLOW FILTERING")
@@ -34,6 +35,7 @@ public interface RegionAccessor {
      * Queries the table for all rows with a specific subregion
      *
      * @param subregion primary key field subregion for where clause
+     *
      * @return Iterable of entities mapped as RegionEntity
      */
     @Query("SELECT * FROM regions WHERE subregion = :subregion ALLOW FILTERING")

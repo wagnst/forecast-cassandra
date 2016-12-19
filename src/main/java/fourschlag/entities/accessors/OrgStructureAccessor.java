@@ -25,6 +25,7 @@ public interface OrgStructureAccessor {
      * Queries the table for all rows restricted by a specific sbu
      *
      * @param sbu primary key field sbu for where clause
+     *
      * @return Iterable of entities mapped as OrgStructureEntity
      */
     @Query("SELECT * FROM org_structure WHERE sbu = :sbu ALLOW FILTERING")
@@ -32,9 +33,12 @@ public interface OrgStructureAccessor {
             @Param("sbu") String sbu);
 
     /**
-     * Queries the table for all rows restricted by a specific product_main_group
+     * Queries the table for all rows restricted by a specific
+     * product_main_group
      *
-     * @param productMainGroup primary key field product_main_group for where clause
+     * @param productMainGroup primary key field product_main_group for where
+     *                         clause
+     *
      * @return Iterable of entities mapped as OrgStructureEntity
      */
     @Query("SELECT * FROM org_structure WHERE product_main_group = :productMainGroup ALLOW FILTERING")

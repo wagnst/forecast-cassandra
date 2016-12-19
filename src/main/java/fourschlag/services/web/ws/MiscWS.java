@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * MiscWS offers web services that don't need accecss to the database and don't fit into any other category
+ * MiscWS offers web services that don't need accecss to the database and don't
+ * fit into any other category
  */
 @Path("misc")
 public class MiscWS {
     /**
      * Gets all keyspaces from the KeyspaceNames Enum
+     *
      * @return WS Response with JSON containing all keyspace names
      */
     @GET
@@ -33,6 +35,7 @@ public class MiscWS {
 
     /**
      * Gets all sales types from the SalesTypes Enum
+     *
      * @return WS Response with JSON containing all sales types
      */
     @GET
@@ -47,7 +50,9 @@ public class MiscWS {
     }
 
     /**
-     * Gets those entry types form the EntryTypes Enum that can occur in any of the database tables
+     * Gets those entry types form the EntryTypes Enum that can occur in any of
+     * the database tables
+     *
      * @return WS Response with JSON containing entry types
      */
     @GET

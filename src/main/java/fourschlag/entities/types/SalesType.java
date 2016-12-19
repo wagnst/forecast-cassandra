@@ -13,6 +13,23 @@ public enum SalesType {
         this.type = type;
     }
 
+    /**
+     * Compares a String with the each content of this enum and returns null or
+     * itself
+     *
+     * @param str String which shall be compared
+     *
+     * @return null or the valid enum
+     */
+    public static SalesType getSalesTypeByString(String str) {
+        for (SalesType st : SalesType.values()) {
+            if (st.getType().equals(str)) {
+                return st;
+            }
+        }
+        return null;
+    }
+
     public String getType() {
         return type;
     }
@@ -27,22 +44,6 @@ public enum SalesType {
      */
     public boolean IsEqualStringandEnum(String str) {
         return this.type.equals(str);
-    }
-
-    /**
-     * Compares a String with the each content of this enum and returns null or
-     * itself
-     *
-     * @param str String which shall be compared
-     * @return null or the valid enum
-     */
-    public static SalesType getSalesTypeByString(String str) {
-        for (SalesType st : SalesType.values()) {
-            if (st.getType().equals(str)) {
-                return st;
-            }
-        }
-        return null;
     }
 
     @Override

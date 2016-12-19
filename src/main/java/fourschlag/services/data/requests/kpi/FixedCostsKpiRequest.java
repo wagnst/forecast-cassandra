@@ -31,12 +31,13 @@ public class FixedCostsKpiRequest extends KpiRequest {
     /**
      * Constructor for FixedCostsKpiRequest with additional parameters
      *
-     * @param connection Cassandra connection that is supposed to be used
-     * @param sbu sbu to query for
-     * @param planPeriod planPeriod to begin with
-     * @param currentPeriod point of view when querying data
-     * @param subregion subregion to query for
-     * @param exchangeRates ExchangeRateRequest with the desired output
+     * @param connection          Cassandra connection that is supposed to be
+     *                            used
+     * @param sbu                 sbu to query for
+     * @param planPeriod          planPeriod to begin with
+     * @param currentPeriod       point of view when querying data
+     * @param subregion           subregion to query for
+     * @param exchangeRates       ExchangeRateRequest with the desired output
      *                            currency
      * @param orgAndRegionRequest OrgStructureAndRegionInstance
      */

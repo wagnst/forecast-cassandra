@@ -1,4 +1,4 @@
-#salesInsertForm{
+#salesInsertForm {
 
     padding-top: 10px;
     padding-left: 10px;
@@ -6,7 +6,7 @@
 
 }
 
-#fixedcostsInsertForm{
+#fixedcostsInsertForm {
 
     padding-top: 10px;
     padding-left: 10px;
@@ -14,7 +14,7 @@
 
 }
 
-#divforform{
+#divforform {
 
     margin-left: 4%;
     margin-right: 20%;
@@ -23,7 +23,7 @@
 
 }
 
-#insertheading, #divformhorizontal{
+#insertheading, #divformhorizontal {
     text-align: left;
     margin-left: 4%;
 }

@@ -1,7 +1,3 @@
-/**
- * Created by katharinaspinner on 05.12.16.
- */
-
 const endpointScheme = 'http://';
 const fixedcostshtmlurl = 'forecastfixedcosts.html';
 const saleshtmlurl = 'forecastsales.html';
