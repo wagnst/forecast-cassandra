@@ -15,7 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * OrgStructureAndRegionWS offers functionality to get data directly from the org_structure and regions tables
+ * OrgStructureAndRegionWS offers functionality to get data directly from the
+ * org_structure and regions tables
  */
 @Path("{keyspace}/org_region")
 public class OrgStructureAndRegionWS {
@@ -30,6 +31,7 @@ public class OrgStructureAndRegionWS {
 
     /**
      * Gets all product main groups from org_structure
+     *
      * @return WS Response with JSON containing all PMGs
      */
     @GET
@@ -41,6 +43,7 @@ public class OrgStructureAndRegionWS {
 
     /**
      * Gets all SBUs from the org_structure table
+     *
      * @return WS Response with JSON containing all SBUs
      */
     @GET
@@ -52,6 +55,7 @@ public class OrgStructureAndRegionWS {
 
     /**
      * Gets all regions from the regions table
+     *
      * @return WS Response with JSON containing all regions
      */
     @GET
@@ -63,7 +67,9 @@ public class OrgStructureAndRegionWS {
 
     /**
      * Gets all subregions for a specific region from the regions table
+     *
      * @param region region to filter for
+     *
      * @return WS Response with JSON containing subregions
      */
     @GET

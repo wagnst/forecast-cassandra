@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Extends ValidatedResult. Extends ValidatedResult by an extra map for topdown results.
+ * Extends ValidatedResult. Extends ValidatedResult by an extra map for topdown
+ * results.
  */
 public class ValidatedResultTopdown extends ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> topdownResult;
@@ -20,7 +21,8 @@ public class ValidatedResultTopdown extends ValidatedResult {
     }
 
     /**
-     * Constructor for ValidatedResultTopdown when there already is a kpi result map.
+     * Constructor for ValidatedResultTopdown when there already is a kpi result
+     * map.
      *
      * @param kpiResult already existent Map with kpi results
      */

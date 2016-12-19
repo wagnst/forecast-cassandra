@@ -28,7 +28,8 @@ public class FixedCostsRequest extends Request {
     }
 
     /**
-     * Inserts (if combination of primary keys does not exist) or updates a row in the forecast fixed costs table
+     * Inserts (if combination of primary keys does not exist) or updates a row
+     * in the forecast fixed costs table
      *
      * @return True IF process was successful; False IF it something went wrong
      */
@@ -123,10 +124,11 @@ public class FixedCostsRequest extends Request {
     /**
      * Gets Budget Data from the forecast fixed costs table
      *
-     * @param subregion subregion in where clause
-     * @param sbu sbu in where clause
+     * @param subregion      subregion in where clause
+     * @param sbu            sbu in where clause
      * @param planPeriodFrom plan period to begin with in where clause
-     * @param planPeriodTo plan period to end with in where clause
+     * @param planPeriodTo   plan period to end with in where clause
+     *
      * @return List with mapped Entities
      */
     public List<ForecastFixedCostsEntity> getBudgetForecastFixedCosts(String subregion, String sbu, Period planPeriodFrom,
@@ -142,7 +144,8 @@ public class FixedCostsRequest extends Request {
     }
 
     /**
-     * Gets all distinct combinations of subregions and sbus in the fixed costs tables
+     * Gets all distinct combinations of subregions and sbus in the fixed costs
+     * tables
      *
      * @return Map with SBU as Key and Sets of subregions as values
      */
@@ -154,7 +157,8 @@ public class FixedCostsRequest extends Request {
     }
 
     /**
-     * Queries the database for all combinations of SBU and subregion and puts them in the sbuMap
+     * Queries the database for all combinations of SBU and subregion and puts
+     * them in the sbuMap
      */
     private void querySubregionsAndSbu() {
         Result<ActualFixedCostsEntity> entitiesFromActual = actualAccessor.getDistinctSbuAndSubregions();

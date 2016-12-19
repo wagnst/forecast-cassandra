@@ -6,9 +6,10 @@ import fourschlag.services.db.CassandraConnection;
 import java.util.List;
 
 /**
- * Extends Service. Provides functionality to access OrgStructure and Regions data
+ * Extends Service. Provides functionality to access OrgStructure and Regions
+ * data
  */
-public class OrgStructureAndRegionService extends Service{
+public class OrgStructureAndRegionService extends Service {
     public OrgStructureAndRegionService(CassandraConnection connection) {
         super(connection);
     }
@@ -47,6 +48,7 @@ public class OrgStructureAndRegionService extends Service{
      * Gets all subregions for a specific region
      *
      * @param region region to filter for
+     *
      * @return List with subregions
      */
     public List<String> getSubregions(String region) {

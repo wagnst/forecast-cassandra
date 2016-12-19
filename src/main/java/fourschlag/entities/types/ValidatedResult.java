@@ -10,7 +10,8 @@ public class ValidatedResult {
     private Map<KeyPerformanceIndicators, Double> kpiResult;
 
     /**
-     * Constructor for ValidatedResult. Fills the map with KPIs as keys and 0.0 as values.
+     * Constructor for ValidatedResult. Fills the map with KPIs as keys and 0.0
+     * as values.
      *
      * @param kpiArray the KPIs that will be put in the map
      */
