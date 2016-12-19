@@ -72,10 +72,10 @@ public class ForecastSalesWS {
     }
 
     /**
-     * Method returns specific entries from table forecast_sales
+     * Method returns multiple entries from table forecast_sales
      * as a valid WebService
      *
-     * @return a specific entry of forecast_sales
+     * @return multiple entries of forecast_sales
      */
     @GET
     @Path("product_main_group/{productMainGroup}/region/{region}/period/{period}/sales_type/{salesType}/entry_type/{entryType}/plan_year/{planYear}")
