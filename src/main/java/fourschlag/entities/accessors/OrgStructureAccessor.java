@@ -40,4 +40,7 @@ public interface OrgStructureAccessor {
     @Query("SELECT * FROM org_structure WHERE product_main_group = :productMainGroup ALLOW FILTERING")
     Result<OrgStructureEntity> getEntitiesByPmg(
             @Param("productMainGroup") String productMainGroup);
+
+    @Query("SELECT DISTINCT product_main_group FROM org_structure")
+    Result<OrgStructureEntity> getDistinctPmg();
 }

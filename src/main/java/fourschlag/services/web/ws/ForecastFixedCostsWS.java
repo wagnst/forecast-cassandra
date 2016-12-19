@@ -154,6 +154,7 @@ public class ForecastFixedCostsWS {
      */
     @POST
     @Path("/")
+
     public Response createForecastFixedCosts(
             @FormParam("sbu") String sbu,
             @FormParam("subregion") String subregion,
@@ -174,9 +175,9 @@ public class ForecastFixedCostsWS {
             @FormParam("currency_gains") double currencyGains,
             @FormParam("val_adjust_inventories") double valAdjustInventories,
             @FormParam("other_fix_cost") double otherFixCost,
-            @FormParam("deprecation") double deprecation,
+            @FormParam("depreciation") double depreciation,
             @FormParam("cap_cost") double capCost,
-            @FormParam("equitiy_income") double equitiyIncome,
+            @FormParam("equity_income") double equityIncome,
             @FormParam("topdown_adjust_fix_costs") double topdownAdjustFixCosts,
             @FormParam("plan_period") int planPeriod,
             @FormParam("status") String status,
@@ -195,7 +196,7 @@ public class ForecastFixedCostsWS {
 
             if (fixedCostsService.setForecastFixedCosts(
                     sbu, subregion, fixPreManCost, shipCost, sellCost, diffActPreManCost, idleEquipCost, rdCost, adminCostBu, adminCostOd, adminCostCompany,
-                    otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, deprecation, capCost, equitiyIncome, topdownAdjustFixCosts,
+                    otherOpCostBu, otherOpCostOd, otherOpCostCompany, specItems, provisions, currencyGains, valAdjustInventories, otherFixCost, depreciation, capCost, equityIncome, topdownAdjustFixCosts,
                     tempPlanPeriod, status, usercomment, entryType, tempPeriod, region, currency, userId, entryTs)) {
                 return Response.status(Response.Status.OK).entity("Request completed. The data has been successfully inserted or updated.").build();
             }

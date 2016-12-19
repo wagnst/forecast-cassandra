@@ -1,0 +1,97 @@
+@startuml
+hide footbox
+participant  " "
+participant  ":KpiRequest"
+participant  ":Period"
+participant  ":ValidatedResultTopdown"
+participant  ":ZeroMonthPeriod"
+
+
+" " -[#0000FF]> ":KpiRequest" : calculateKpis()
+
+":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateActualForecastKpis()
+group calculateActualForecastKpis()
+":KpiRequest" -[#0000FF]> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
+":KpiRequest" --[#FF00FF]> ":KpiRequest" : ActualData
+alt if actualData has current period
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(currentPeriod, Period)
+    else else
+    ":KpiRequest" -[#0000FF]> ":Period" : currentPeriod.immutableIncrement()
+    ":Period" --[#FF00FF]> ":KpiRequest" : Period
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(Period, tempPlanPeriod)
+end
+    ":KpiRequest" --[#FF00FF]> ":KpiRequest" : ForecastData
+
+loop
+":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : topdownResult
+end
+
+loop For actual and forecast data
+   loop For each entity
+         ":KpiRequest" -[#0000FF]> ":KpiRequest" : validateTopdownQueryResult()
+        loop For each validated result
+            ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getKpiResult()
+            ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : monthlyKpiValues
+            ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+            ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : monthlyTopdownValues
+        end
+   end
+end
+
+loop Number of bj
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBjTopdown(Period)
+    loop kpiArray
+        ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getKpiResult()
+        ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : KpiResult
+        ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+        ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : topdownBjValues
+    end
+    ":KpiRequest" -[#0000FF]> ":ZeroMonthPeriod" : increment()
+    ":ZeroMonthPeriod" --[#FF00FF]> ":KpiRequest" : bjPeriod
+end
+
+loop
+       ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
+end
+
+loop
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(topdownKpiValues, topdownBjValues)
+end
+
+":KpiRequest" -[#0000FF]> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
+":Stream" --[#FF00FF]> ":KpiRequest" : Stream<OutputDataType>
+end
+
+":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBudgetKpis()
+group calculateBudgetKpis()
+loop NumberOfMonths
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : validateQueryResult(BudgetData, tempPlanPeriod)
+    loop kpiArray
+        ":KpiRequest" -[#0000FF]> ":ValidatedResult" : getKpiResult()
+        ":ValidatedResult" --[#FF00FF]> ":KpiRequest" : monthlyKpiValues
+    end
+        ":KpiRequest" -[#0000FF]> ":Period" : increment()
+        ":Period" -[#0000FF]> ":KpiRequest" : tempPlanPeriod
+end
+
+loop NumberOfBj
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBj(bjPeriod)
+    loop kpiArray
+        ":KpiRequest" -[#0000FF]> ":ValidatedResult": getKpiResult()
+        ":ValidatedResult" --[#FF00FF]> ":KpiRequest": bjValues
+    end
+    ":KpiRequest" -[#0000FF]> ":ZeroMonthPeriod" : increment()
+    ":ZeroMonthPeriod" --[#FF00FF]> ":KpiRequest" : bjPeriod
+end
+
+loop kpiArray
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
+end
+end
+
+":KpiRequest" -[#0000FF]> ":Stream" : concat(entryTypeNull, entryTypeBudget)
+":Stream" --[#FF00FF]> ":KpiRequest" : Stream<OutputDataType>
+
+":KpiRequest" --[#FF00FF]> " " : Stream<OutputDataType>
+@enduml

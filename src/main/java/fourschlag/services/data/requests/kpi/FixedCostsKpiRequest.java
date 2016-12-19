@@ -20,7 +20,7 @@ import static fourschlag.entities.types.KeyPerformanceIndicators.*;
 
 /**
  * Extends KpiRequest. Offers Functionality to request Fixed Costs KPIs for a
- * specific region, period and product main group
+ * specific subregion, period and sbu
  */
 public class FixedCostsKpiRequest extends KpiRequest {
     private static final String FC_TYPE = "fixed costs";
@@ -32,30 +32,34 @@ public class FixedCostsKpiRequest extends KpiRequest {
      * Constructor for FixedCostsKpiRequest with additional parameters
      *
      * @param connection Cassandra connection that is supposed to be used
+     * @param sbu sbu to query for
+     * @param planPeriod planPeriod to begin with
+     * @param currentPeriod point of view when querying data
+     * @param subregion subregion to query for
+     * @param exchangeRates ExchangeRateRequest with the desired output
+     *                            currency
+     * @param orgAndRegionRequest OrgStructureAndRegionInstance
      */
     public FixedCostsKpiRequest(CassandraConnection connection, String sbu, Period planPeriod, Period currentPeriod,
                                 String subregion, ExchangeRateRequest exchangeRates,
                                 OrgStructureAndRegionRequest orgAndRegionRequest) {
-        super(connection, sbu, orgAndRegionRequest.getRegion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
+        super(connection, sbu, orgAndRegionRequest.getRegionBySubregion(subregion), planPeriod, currentPeriod, exchangeRates, FC_TYPE);
         this.subregion = subregion;
 
         actualAccessor = getManager().createAccessor(ActualFixedCostsAccessor.class);
         forecastAccessor = getManager().createAccessor(ForecastFixedCostsAccessor.class);
     }
 
-    /**
-     * Queries KPIs from the actual fixed costs table
-     *
-     * @return SalesEntity Object with query result
-     */
     @Override
     protected Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
         /* Send query to the database */
         Result<ActualFixedCostsEntity> queryResult = actualAccessor.getMultipleFixedCostsKpis
                 (sbu, subregion, tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
 
+        /* Prepare Map */
         Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
 
+        /* Fill the map with the query results */
         for (ActualFixedCostsEntity entity : queryResult) {
             returnMap.put(entity.getPeriod(), entity);
         }
@@ -63,25 +67,22 @@ public class FixedCostsKpiRequest extends KpiRequest {
         return returnMap;
     }
 
-    /**
-     * Queries KPIs from the forecast fixed costs table
-     *
-     * @param tempPlanPeriodFrom planPeriod the forecast data is supposed to be
-     *                           taken from
-     * @return
-     */
     @Override
     protected Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo) {
+       /* Send query to the database */
         Result<ForecastFixedCostsEntity> queryResult = forecastAccessor.getMultipleFixedCostsKpis
                 (subregion, sbu, currentPeriod.getPeriod(), EntryType.FORECAST.getType(),
                         tempPlanPeriodFrom.getPeriod(), tempPlanPeriodTo.getPeriod());
 
+        /* Prepare map */
         Map<Integer, KpiEntity> returnMap = new PeriodMap<>(tempPlanPeriodFrom, tempPlanPeriodTo);
 
+        /* Fill map with query results */
         for (ForecastFixedCostsEntity entity : queryResult) {
             returnMap.put(entity.getPlanPeriod(), entity);
         }
 
+        /* Check if the map has still null values. For each null value -> redo query with period - 1 */
         for (Integer period : returnMap.keySet()) {
             /* IF entity is null THEN retry query with currentPeriod - 1 */
             returnMap.putIfAbsent(period, forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPreviousPeriod(),
@@ -91,29 +92,18 @@ public class FixedCostsKpiRequest extends KpiRequest {
         return returnMap;
     }
 
-    /**
-     * Queries KPIs with the budgetdata
-     *
-     * @param tempPlanPeriod planPeriod ....
-     * @return
-     */
     @Override
     protected FixedCostsEntity getBudgetData(Period tempPlanPeriod) {
         return forecastAccessor.getFixedCostsKpis(sbu, subregion, tempPlanPeriod.getPeriod(), tempPlanPeriod.getPeriod(),
                 EntryType.BUDGET.toString());
     }
 
-    /**
-     * method that calculates the BJ values for all KPIs but one specific period
-     * (--> zero month period)
-     *
-     * @param zeroMonthPeriod ZeroMonthPeriod of the desired budget year
-     */
     @Override
     protected ValidatedResultTopdown calculateBjTopdown(ZeroMonthPeriod zeroMonthPeriod) {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
+        /* return the validated result */
         return validateTopdownQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
@@ -122,19 +112,26 @@ public class FixedCostsKpiRequest extends KpiRequest {
         FixedCostsEntity queryResult = forecastAccessor.getFixedCostsKpis(sbu, subregion, currentPeriod.getPeriod(),
                 zeroMonthPeriod.getPeriod(), EntryType.BUDGET.toString());
 
+        /* return the validated result */
         return validateQueryResult(queryResult, new Period(zeroMonthPeriod));
     }
 
     @Override
     protected ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod) {
+        /* Cast the Entity to be able to access all needed fields */
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
-        /* Prepare the kpi variables */
+
+        /* Prepare the validated result object with topdown . One of the parameters is the method
+         * validateQueryResult that returns a validated result without topdown
+         */
         ValidatedResultTopdown validatedResult = new ValidatedResultTopdown(validateQueryResult(queryResult, tempPlanPeriod).getKpiResult());
 
-        Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
+        /* Prepare map for topdown values by getting it from the validatedResult Object */
         Map<KeyPerformanceIndicators, Double> topdownMap = validatedResult.getTopdownResult();
 
+        /* IF the result is NOT empty THEN get its data */
         if (queryResult != null) {
+            /* IF result is an instance of ForecastFixedCostsEntity THEN set topdown values */
             if (queryResult.getClass().isInstance(ForecastFixedCostsEntity.class)) {
                 ForecastFixedCostsEntity fcEntity = (ForecastFixedCostsEntity) queryResult;
                 double topdownFixCosts = fcEntity.getTopdownAdjustFixCosts();
@@ -147,7 +144,7 @@ public class FixedCostsKpiRequest extends KpiRequest {
             if (queryResult.getCurrency().equals(exchangeRates.getToCurrency()) == false) {
                 double exchangeRate = exchangeRates.getExchangeRate(tempPlanPeriod, Currency.getCurrencyByAbbreviation(queryResult.getCurrency()));
 
-                for (KeyPerformanceIndicators kpi : kpiMap.keySet()) {
+                for (KeyPerformanceIndicators kpi : topdownMap.keySet()) {
                     topdownMap.put(kpi, topdownMap.get(kpi) * exchangeRate);
                 }
             }
@@ -158,13 +155,16 @@ public class FixedCostsKpiRequest extends KpiRequest {
 
     @Override
     protected ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod) {
+        /* Cast the Entity to be able to access all needed fields */
         FixedCostsEntity queryResult = (FixedCostsEntity) result;
 
+        /* Prepare the validated result object */
         ValidatedResult validatedResult = new ValidatedResult(kpiArray);
 
+        /* Prepare map for kpi result by getting it from the validated result object */
         Map<KeyPerformanceIndicators, Double> kpiMap = validatedResult.getKpiResult();
 
-        /* IF the result of the query is not empty THEN get the values from the query result */
+        /* IF the result of the query is NOT empty THEN get the values from the query result */
         if (queryResult != null) {
             kpiMap.put(FIX_PRE_MAN_COST, queryResult.getFixPreManCost());
             kpiMap.put(SHIP_COST, queryResult.getShipCost());

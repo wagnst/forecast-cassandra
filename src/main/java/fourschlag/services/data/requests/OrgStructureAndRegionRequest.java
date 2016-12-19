@@ -7,13 +7,11 @@ import fourschlag.entities.tables.OrgStructureEntity;
 import fourschlag.entities.tables.RegionEntity;
 import fourschlag.services.db.CassandraConnection;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Extends Request. Offers functionality to request product main groups and
- * sbus.
+ * Extends Request. Offers functionality to query the OrgStructure and Regions tables
  */
 public class OrgStructureAndRegionRequest extends Request {
 
@@ -34,13 +32,68 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     /**
-     * method that applies the sbu belonging to a specific PMG
+     * Gets all Product Main Groups from the org_structure table
      *
-     * @param productMainGroup product main group for which the sbu is supposed
-     *                         to be found
-     * @return
+     * @return List with all PMGs
      */
-    public String getSbu(String productMainGroup) {
+    public List<String> getProductMainGroups() {
+        Result<OrgStructureEntity> queryResult = orgStructureAccessor.getDistinctPmg();
+
+        List<String> resultList = new ArrayList<>();
+        queryResult.forEach(e -> resultList.add(e.getProductMainGroup()));
+        return resultList;
+    }
+
+    /**
+     * Gets all SBUs from the org_structure table
+     *
+     * @return List with all SBUs
+     */
+    public List<String> getSbus() {
+        Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
+
+        /* Remove duplicates with a Set */
+        Set<String> set = new HashSet<>();
+        queryResult.forEach(e -> set.add(e.getSbu()));
+
+        return set.stream().collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all Regions from the regions table
+     *
+     * @return List with all Regions
+     */
+    public List<String> getRegions() {
+        Result<RegionEntity> queryResult = regionAccessor.getAll();
+
+        Set<String> set = new HashSet<>();
+        queryResult.forEach(e -> set.add(e.getRegion()));
+        return set.stream().collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all subregions for a specific region
+     *
+     * @param region region to filter for
+     * @return List with subregions
+     */
+    public List<String> getSubregionsForRegion(String region) {
+        Result<RegionEntity> queryResult = regionAccessor.getEntitiesByRegion(region);
+        List<String> resultList = new ArrayList<>();
+        queryResult.forEach(e -> resultList.add(e.getSubregion()));
+
+        return resultList;
+    }
+
+    /**
+     * Method that finds the correct SBU of a product main group
+     *
+     * @param productMainGroup product main group for which the sbu is needed
+     * @return SBU that corresponds with the given PMG
+     */
+    public String getSbuByPmg(String productMainGroup) {
+        /* IF the map is null THEN fill it with data from the OrgStructure table */
         if (sbu == null) {
             Result<OrgStructureEntity> queryResult = orgStructureAccessor.getProductsAndSbus();
             sbu = new HashMap<String, String>() {{
@@ -49,6 +102,7 @@ public class OrgStructureAndRegionRequest extends Request {
                 }
             }};
         }
+
         String returnValue = sbu.get(productMainGroup);
         if (returnValue == null) {
             return productMainGroup;
@@ -57,12 +111,13 @@ public class OrgStructureAndRegionRequest extends Request {
     }
 
     /**
-     * Getter for the region
+     * Method that finds the correct region for a subregion
      *
-     * @param subregion
-     * @return
+     * @param subregion subregion for which the region is needed
+     * @return region that corresponds with the given subregion
      */
-    public String getRegion(String subregion) {
+    public String getRegionBySubregion(String subregion) {
+        /* IF the map is null THEN fill it with data from the Regions table */
         if (region == null) {
             Result<RegionEntity> queryResult = regionAccessor.getAll();
             region = new HashMap<String, String>() {{
@@ -78,6 +133,13 @@ public class OrgStructureAndRegionRequest extends Request {
         return returnValue;
     }
 
+    /**
+     * Checks if the given parameters are valid for a Sales Entity
+     *
+     * @param productMainGroup product main group to be checked
+     * @param region region to be checked
+     * @return True IF parameters are valid; False if not
+     */
     boolean checkSalesParams(String productMainGroup, String region) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesByPmg(productMainGroup).all();
         if (orgEntities.isEmpty()) {
@@ -88,13 +150,21 @@ public class OrgStructureAndRegionRequest extends Request {
         return (!regionEntities.isEmpty());
     }
 
-    boolean checkFixedCostsParams(String sbu, String subregion) {
+    /**
+     * Checks if the given parameters are valid for a Fixed Costs Entity
+     *
+     * @param sbu sbu to be checked
+     * @param subregion subregion to be checked
+     * @param region region to be checked
+     * @return True IF parameters are valid; False if not
+     */
+    boolean checkFixedCostsParams(String sbu, String subregion, String region) {
         List<OrgStructureEntity> orgEntities = orgStructureAccessor.getEntitiesBySbu(sbu).all();
         if (orgEntities.isEmpty()) {
             return false;
         }
-        List<RegionEntity> regionEntities = regionAccessor.getEntitiesBySubregion(subregion).all();
+        RegionEntity regionEntity = regionAccessor.getSpecificEntity(subregion, region);
 
-        return (!regionEntities.isEmpty());
+        return (regionEntity != null);
     }
 }
