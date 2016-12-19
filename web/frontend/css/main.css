@@ -33,3 +33,15 @@
     border-color: black;
 }
 
+#startbutton{
+    background:url(../img/fourschlag-logo.png) no-repeat;
+    cursor:pointer;
+    width: 120px;
+    height: 120px;
+    border: solid 1px black;
+}
+
+#startbutton:hover{
+    border: solid 1px #707070;
+    box-shadow: 0 0 5px 1px #969696;
+}
