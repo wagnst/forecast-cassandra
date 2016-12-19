@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.ForecastSalesEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
@@ -21,7 +22,9 @@ public class ForecastSalesAccessor extends Accessor {
             String salesType,
             String entryType) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select new ForecastSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.topdownAdjustSalesVolumes," +
                         " e.topdownAdjustNetSales, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
@@ -43,6 +46,8 @@ public class ForecastSalesAccessor extends Accessor {
             return (ForecastSalesEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
     }
 
@@ -53,7 +58,9 @@ public class ForecastSalesAccessor extends Accessor {
             String region,
             String salesType) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select new ForecastSalesEntity(e.cm1, e.topdownAdjustCm1, e.currency) " +
                         "from ForecastSalesEntity e " +
                         "where e.primaryKey.productMainGroup = :productMainGroup " +
@@ -73,14 +80,23 @@ public class ForecastSalesAccessor extends Accessor {
             return (ForecastSalesEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
     }
 
     public List<ForecastSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select distinct new ForecastSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ForecastSalesEntity e", ForecastSalesEntity.class);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } finally {
+            manager.close();
+        }
+
     }
 }

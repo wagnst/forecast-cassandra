@@ -12,6 +12,10 @@ public class JpaConnection {
         factory = Persistence.createEntityManagerFactory(persistanceUnitName);
     }
 
+    public String getPersistanceUnitName() {
+        return persistanceUnitName;
+    }
+
     public EntityManagerFactory getEntityManagerFactory() {
         return factory;
     }

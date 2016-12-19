@@ -2,12 +2,13 @@ package fourschlag.entities.jpaAccessors;
 
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 public class Accessor {
     private JpaConnection connection;
 
-    public Accessor(JpaConnection connection) {
+    Accessor(JpaConnection connection) {
         this.connection = connection;
     }
 
@@ -15,7 +16,11 @@ public class Accessor {
         return connection;
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
+    EntityManagerFactory getEntityManagerFactory() {
         return connection.getEntityManagerFactory();
+    }
+
+    EntityManager createEntityManager() {
+        return getEntityManagerFactory().createEntityManager();
     }
 }

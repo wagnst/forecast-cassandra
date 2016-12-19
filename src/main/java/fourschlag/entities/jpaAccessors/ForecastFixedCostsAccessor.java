@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.ForecastFixedCostsEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
@@ -20,7 +21,9 @@ public class ForecastFixedCostsAccessor extends Accessor {
             int planPeriod,
             String entryType) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select new ForecastFixedCostsEntity(e.fixPreManCost, e.shipCost, e.sellCost, e.diffActPreManCost, " +
                         "e.idleEquipCost, e.rdCost, e.adminCostBu, e.adminCostOd, e.adminCostCompany, e.otherOpCostBu," +
                         " e.otherOpCostOd, e.otherOpCostCompany, e.specItems, e.provisions, e.currencyGains," +
@@ -43,14 +46,23 @@ public class ForecastFixedCostsAccessor extends Accessor {
             return (ForecastFixedCostsEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
     }
 
     public List<ForecastFixedCostsEntity> getDistinctSbuAndSubregions() {
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select distinct new ForecastFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ForecastFixedCostsEntity e", ForecastFixedCostsEntity.class);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } finally {
+            manager.close();
+        }
+
     }
 }

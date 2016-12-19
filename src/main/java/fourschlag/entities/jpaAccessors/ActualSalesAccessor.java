@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.ActualSalesEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
@@ -20,7 +21,9 @@ public class ActualSalesAccessor extends Accessor {
             String salesType,
             String dataSource) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select new ActualSalesEntity(e.salesVolumes, e.netSales, e.cm1, e.currency) from ActualSalesEntity e " +
                         "where e.primaryKey.productMainGroup = :productMainGroup " +
                         "and e.primaryKey.period = :period " +
@@ -38,14 +41,21 @@ public class ActualSalesAccessor extends Accessor {
             return (ActualSalesEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
     }
 
     public List<ActualSalesEntity> getDistinctPmgAndRegions() {
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+        Query query = manager.createQuery(
                 "select distinct new ActualSalesEntity(e.primaryKey.productMainGroup, e.primaryKey.region) " +
                         "from ActualSalesEntity e", ActualSalesEntity.class);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } finally {
+            manager.close();
+        }
     }
 }

@@ -4,30 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ConnectionPool {
-    private static Set<CassandraConnection> connections = new HashSet<>();
+    private static Set<JpaConnection> connections = new HashSet<>();
     private static ConnectionPool instance = null;
 
-    public static CassandraConnection getConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace, boolean authentification) {
-        for (CassandraConnection connection : connections) {
-            if (connection.getEndpoint() == endpoint) {
-                if (connection.getKeyspace() == keyspace) {
+    public static JpaConnection getConnection(String persistenceUnitName) {
+        for (JpaConnection connection : connections) {
+            if (connection.getPersistanceUnitName().equals(persistenceUnitName)) {
                     return connection;
-                }
             }
         }
-        CassandraConnection connection = new CassandraConnection(endpoint, keyspace, authentification);
+        JpaConnection connection = new JpaConnection(persistenceUnitName);
         connections.add(connection);
         return connection;
-    }
-
-    public static void removeConnection(ClusterEndpoints endpoint, KeyspaceNames keyspace) {
-        for (CassandraConnection connection : connections) {
-            if (connection.getEndpoint() == endpoint) {
-                if (connection.getKeyspace() == keyspace) {
-                    connection.closeConnection();
-                    connections.remove(connection);
-                }
-            }
-        }
     }
 }

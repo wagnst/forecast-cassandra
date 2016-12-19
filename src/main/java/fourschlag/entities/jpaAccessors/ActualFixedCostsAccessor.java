@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.ActualFixedCostsEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
@@ -18,7 +19,9 @@ public class ActualFixedCostsAccessor extends Accessor {
             String subregion,
             int period) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select new ActualFixedCostsEntity(e.fixPreManCost, e.shipCost, e.sellCost, e.diffActPreManCost, " +
                         "e.idleEquipCost, e.rdCost, e.adminCostBu, e.adminCostOd, e.adminCostCompany, e.otherOpCostBu," +
                         " e.otherOpCostOd, e.otherOpCostCompany, e.specItems, e.provisions, e.currencyGains," +
@@ -36,15 +39,22 @@ public class ActualFixedCostsAccessor extends Accessor {
             return (ActualFixedCostsEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
-
     }
 
     public List<ActualFixedCostsEntity> getDistinctSbuAndSubregions() {
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select distinct new ActualFixedCostsEntity(e.primaryKey.sbu, e.primaryKey.subregion) " +
                         "from ActualFixedCostsEntity e", ActualFixedCostsEntity.class);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } finally {
+            manager.close();
+        }
     }
 }

@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.ExchangeRateEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -17,7 +18,9 @@ public class ExchangeRateAccessor extends Accessor{
             String fromCurrency,
             String toCurrency) {
 
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select e from ExchangeRateEntity e " +
                         "where e.primaryKey.period = :period " +
                         "and e.primaryKey.fromCurrency = :fromCurrency " +
@@ -31,6 +34,8 @@ public class ExchangeRateAccessor extends Accessor{
             return (ExchangeRateEntity) query.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } finally {
+            manager.close();
         }
     }
 }

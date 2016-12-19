@@ -3,6 +3,7 @@ package fourschlag.entities.jpaAccessors;
 import fourschlag.entities.jpaTables.RegionEntity;
 import fourschlag.services.db.JpaConnection;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -13,9 +14,16 @@ public class RegionAccessor extends Accessor {
     }
 
     public List<RegionEntity> getSubregions() {
-        Query query = getEntityManagerFactory().createEntityManager().createQuery(
+        EntityManager manager = createEntityManager();
+
+        Query query = manager.createQuery(
                 "select e from RegionEntity e", RegionEntity.class);
 
-        return query.getResultList();
+        try {
+            return query.getResultList();
+        } finally {
+            manager.close();
+        }
+
     }
 }

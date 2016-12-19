@@ -6,6 +6,7 @@ import fourschlag.entities.types.Period;
 import fourschlag.entities.types.comparators.OutputDataTypeComparator;
 import fourschlag.services.data.service.FixedCostsService;
 import fourschlag.services.data.service.SalesService;
+import fourschlag.services.db.ConnectionPool;
 import fourschlag.services.db.JpaConnection;
 import fourschlag.services.web.Params;
 
@@ -31,7 +32,7 @@ public class ForecastWS {
 
 
     public ForecastWS(@PathParam("keyspace") String keyspace) {
-        connection = new JpaConnection(keyspace);
+        connection = ConnectionPool.getConnection(keyspace);
         salesService = new SalesService(connection);
         fixedCostsService = new FixedCostsService(connection);
     }
