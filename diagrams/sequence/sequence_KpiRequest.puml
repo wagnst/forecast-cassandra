@@ -7,91 +7,91 @@ participant  ":ValidatedResultTopdown"
 participant  ":ZeroMonthPeriod"
 
 
-" " -> ":KpiRequest" : calculateKpis()
+" " -[#0000FF]> ":KpiRequest" : calculateKpis()
 
-":KpiRequest" -> ":KpiRequest" : calculateActualForecastKpis()
+":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateActualForecastKpis()
 group calculateActualForecastKpis()
-":KpiRequest" -> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
-":KpiRequest" -> ":KpiRequest" : ActualData
+":KpiRequest" -[#0000FF]> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
+":KpiRequest" --[#FF00FF]> ":KpiRequest" : ActualData
 alt if actualData has current period
-    ":KpiRequest" -> ":KpiRequest" : getForecastData(currentPeriod, Period)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(currentPeriod, Period)
     else else
-    ":KpiRequest" -> ":Period" : currentPeriod.immutableIncrement()
-    ":Period" --> ":KpiRequest" : Period
-    ":KpiRequest" -> ":KpiRequest" : getForecastData(Period, tempPlanPeriod)
+    ":KpiRequest" -[#0000FF]> ":Period" : currentPeriod.immutableIncrement()
+    ":Period" --[#FF00FF]> ":KpiRequest" : Period
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(Period, tempPlanPeriod)
 end
-    ":KpiRequest" --> ":KpiRequest" : ForecastData
+    ":KpiRequest" --[#FF00FF]> ":KpiRequest" : ForecastData
 
 loop
-":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
-":ValidatedResultTopdown" --> ":KpiRequest" : topdownResult
+":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : topdownResult
 end
 
 loop For actual and forecast data
    loop For each entity
-         ":KpiRequest" -> ":KpiRequest" : validateTopdownQueryResult()
+         ":KpiRequest" -[#0000FF]> ":KpiRequest" : validateTopdownQueryResult()
         loop For each validated result
-            ":KpiRequest" -> ":ValidatedResultTopdown" : getKpiResult()
-            ":ValidatedResultTopdown" --> ":KpiRequest" : monthlyKpiValues
-            ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
-            ":ValidatedResultTopdown" --> ":KpiRequest" : monthlyTopdownValues
+            ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getKpiResult()
+            ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : monthlyKpiValues
+            ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+            ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : monthlyTopdownValues
         end
    end
 end
 
 loop Number of bj
-    ":KpiRequest" -> ":KpiRequest" : calculateBjTopdown(Period)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBjTopdown(Period)
     loop kpiArray
-        ":KpiRequest" -> ":ValidatedResultTopdown" : getKpiResult()
-        ":ValidatedResultTopdown" --> ":KpiRequest" : KpiResult
-        ":KpiRequest" -> ":ValidatedResultTopdown" : getTopdownResult()
-        ":ValidatedResultTopdown" --> ":KpiRequest" : topdownBjValues
+        ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getKpiResult()
+        ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : KpiResult
+        ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
+        ":ValidatedResultTopdown" --[#FF00FF]> ":KpiRequest" : topdownBjValues
     end
-    ":KpiRequest" -> ":ZeroMonthPeriod" : increment()
-    ":ZeroMonthPeriod" --> ":KpiRequest" : bjPeriod
+    ":KpiRequest" -[#0000FF]> ":ZeroMonthPeriod" : increment()
+    ":ZeroMonthPeriod" --[#FF00FF]> ":KpiRequest" : bjPeriod
 end
 
 loop
-       ":KpiRequest" -> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
+       ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
 end
 
 loop
-    ":KpiRequest" -> ":KpiRequest" : createOutputDataType(topdownKpiValues, topdownBjValues)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(topdownKpiValues, topdownBjValues)
 end
 
-":KpiRequest" -> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
-":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+":KpiRequest" -[#0000FF]> ":Stream" : Stream.concat(resultStream, resultStreamTopdown)
+":Stream" --[#FF00FF]> ":KpiRequest" : Stream<OutputDataType>
 end
 
-":KpiRequest" -> ":KpiRequest" : calculateBudgetKpis()
+":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBudgetKpis()
 group calculateBudgetKpis()
 loop NumberOfMonths
-    ":KpiRequest" -> ":KpiRequest" : validateQueryResult(BudgetData, tempPlanPeriod)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : validateQueryResult(BudgetData, tempPlanPeriod)
     loop kpiArray
-        ":KpiRequest" -> ":ValidatedResult" : getKpiResult()
-        ":ValidatedResult" --> ":KpiRequest" : monthlyKpiValues
+        ":KpiRequest" -[#0000FF]> ":ValidatedResult" : getKpiResult()
+        ":ValidatedResult" --[#FF00FF]> ":KpiRequest" : monthlyKpiValues
     end
-        ":KpiRequest" -> ":Period" : increment()
-        ":Period" -> ":KpiRequest" : tempPlanPeriod
+        ":KpiRequest" -[#0000FF]> ":Period" : increment()
+        ":Period" -[#0000FF]> ":KpiRequest" : tempPlanPeriod
 end
 
 loop NumberOfBj
-    ":KpiRequest" -> ":KpiRequest" : calculateBj(bjPeriod)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBj(bjPeriod)
     loop kpiArray
-        ":KpiRequest" -> ":ValidatedResult": getKpiResult()
-        ":ValidatedResult" --> ":KpiRequest": bjValues
+        ":KpiRequest" -[#0000FF]> ":ValidatedResult": getKpiResult()
+        ":ValidatedResult" --[#FF00FF]> ":KpiRequest": bjValues
     end
-    ":KpiRequest" -> ":ZeroMonthPeriod" : increment()
-    ":ZeroMonthPeriod" --> ":KpiRequest" : bjPeriod
+    ":KpiRequest" -[#0000FF]> ":ZeroMonthPeriod" : increment()
+    ":ZeroMonthPeriod" --[#FF00FF]> ":KpiRequest" : bjPeriod
 end
 
 loop kpiArray
-    ":KpiRequest" -> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
+    ":KpiRequest" -[#0000FF]> ":KpiRequest" : createOutputDataType(monthlyKpiValues, bjValues)
 end
 end
 
-":KpiRequest" -> ":Stream" : concat(entryTypeNull, entryTypeBudget)
-":Stream" --> ":KpiRequest" : Stream<OutputDataType>
+":KpiRequest" -[#0000FF]> ":Stream" : concat(entryTypeNull, entryTypeBudget)
+":Stream" --[#FF00FF]> ":KpiRequest" : Stream<OutputDataType>
 
-":KpiRequest" --> " " : Stream<OutputDataType>
+":KpiRequest" --[#FF00FF]> " " : Stream<OutputDataType>
 @enduml

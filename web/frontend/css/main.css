@@ -1,0 +1,46 @@
+#salesInsertForm{
+
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+#fixedcostsInsertForm{
+
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+#divforform{
+
+    margin-left: 4%;
+    margin-right: 20%;
+    margin-bottom: 5%;
+    background: rgba(104, 143, 191, 0.38)
+
+}
+
+#überschrift, #divformhorizontal{
+    text-align: left;
+    margin-left: 4%;
+}
+
+#jumbo
+{
+    position: fixed;
+    right: 0;
+    left: 0;
+
+}
+
+
+#indexTable{
+
+    position: absolute;
+    margin-top: 20em;
+
+}
+
