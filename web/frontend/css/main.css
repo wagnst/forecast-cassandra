@@ -23,24 +23,9 @@
 
 }
 
-#überschrift, #divformhorizontal{
+#insertheading, #divformhorizontal{
     text-align: left;
     margin-left: 4%;
 }
 
-#jumbo
-{
-    position: fixed;
-    right: 0;
-    left: 0;
-
-}
-
-
-#indexTable{
-
-    position: absolute;
-    margin-top: 20em;
-
-}
 

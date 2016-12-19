@@ -54,12 +54,12 @@
             <ul class="nav navbar-nav">
 
                 <li class="nav-item">
-                    <a href="index.html">Daten abfragen</a>
+                    <a href="index.html">Querying data</a>
                 </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown"
-                       role="button" aria-haspopup="true" aria-expanded="false">Daten
-                        einfügen<span class="caret"></span></a>
+                       role="button" aria-haspopup="true" aria-expanded="false">Insert data
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="insertsales.html">Sales</a>
                         </li>
@@ -106,9 +106,9 @@
     </form>
 </div>
 
-<div id="überschrift">
+<div id="insertheading">
     <h3>
-        Sales Daten einfügen:
+        Insert sales data:
     </h3>
 </div>
 
@@ -119,14 +119,14 @@
           method="post">
 
         <div class="form-group row ">
-            <label for="period" class="col-xs-4 col-form-label">Period:</label>
+            <label for="period" class="col-xs-4 col-form-label">Period* :</label>
             <div class="col-xs-3">
                 <input class="form-control" type="number" id="period"
                        name="period" required/><br/>
             </div>
         </div>
         <div class="form-group row ">
-            <label for="region" class="col-xs-4 col-form-label">Region:</label>
+            <label for="region" class="col-xs-4 col-form-label">Region* :</label>
             <div class="col-xs-5">
                 <select class="form-control" id="region"
                         name="region" required> </select>
@@ -159,7 +159,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="productMainGroup" class="col-xs-4 col-form-label">Product Main Group:</label>
+            <label for="productMainGroup" class="col-xs-4 col-form-label">Product Main Group* :</label>
             <div class="col-xs-5">
                 <select class="form-control" id="productMainGroup"
                         name="product_main_group" required>
@@ -169,7 +169,7 @@
         </div>
         <div class="form-group row">
             <label for="salesType"
-                   class="col-xs-4 col-form-label">Sales Type:</label>
+                   class="col-xs-4 col-form-label">Sales Type* :</label>
             <div class="col-xs-5">
                 <select class="form-control" id="salesType" name="sales_type"
                         required>
@@ -223,7 +223,7 @@
         </div>
         <div class="form-group row">
             <label for="planPeriod"
-                   class="col-xs-4 col-form-label">Plan Period:</label>
+                   class="col-xs-4 col-form-label">Plan Period* :</label>
             <div class="col-xs-3">
                 <input class="form-control" type="number" id="planPeriod"
                        name="plan_period" required/><br/>
@@ -231,7 +231,7 @@
         </div>
         <div class="form-group row">
             <label for="entryType"
-                   class="col-xs-4 col-form-label">Entry Type:</label>
+                   class="col-xs-4 col-form-label">Entry Type* :</label>
             <div class="col-xs-5">
                 <select class="form-control" id="entryType" name="entry_type"
                         required>
@@ -256,10 +256,13 @@
         </div>
         <div class="form-group row">
             <div class="modal-footer" id="buttons">
-                <button type="reset" class="btn btn-danger">Eingaben zurücksetzen
+                <div align="left">
+                    <p><i>* primary keys</i></p>
+                </div>
+                <button type="reset" class="btn btn-danger">Reset
                 </button>
                 <button type="submit" value="Submit" class="btn btn-success ">
-                    Eingaben absenden
+                    Submit
                 </button>
             </div>
         </div>

@@ -52,13 +52,17 @@
             <ul class="nav navbar-nav">
 
                 <li class="nav-item">
-                    <a href="index.html">Daten abfragen</a>
+                    <a href="index.html">Querying data</a>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Daten einfügen<span class="caret"></span></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown"
+                       role="button" aria-haspopup="true" aria-expanded="false">Insert data
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="insertsales.html">Sales</a></li>
-                        <li><a class="dropdown-item" href="insertfixedcosts.html">Fixed Costs</a></li>
+                        <li><a class="dropdown-item" href="insertsales.html">Sales</a>
+                        </li>
+                        <li><a class="dropdown-item"
+                               href="insertfixedcosts.html">Fixed Costs</a></li>
                     </ul>
                 </li>
             </ul>
@@ -67,7 +71,11 @@
     </div>
     <!-- /.container -->
 </nav>
-
+<div>
+    <p>
+        Klick on a table row to edit or delete data.
+    </p>
+</div>
 <div>
     <div>
         <table id="ForecastSalesTable" class="display" cellspacing="0" width="100%">
@@ -117,7 +125,6 @@
                 <h4 class="modal-title">Forecast Sales Daten</h4>
             </div>
             <div class="modal-body">
-                <h1>Bitte ändern Sie die Daten</h1>
                 <div class="from-group">
 
 
@@ -158,11 +165,11 @@
                         <label for="usercomment">USERCOMMENT:</label>
                         <input class="form-control" type="text" id="usercomment" readonly name="usercomment"/><br />
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                            <button type="submit" value="Submit" class="btn btn-success" >Save changes</button>
-                            <button id="deletebutton" type="button" class="btn btn-default">
+                            <button id="deletebutton" type="button" class="btn btn-danger">
                                 <span class="glyphicon glyphicon-trash" ></span> Delete
                             </button>
+                            <button type="submit" value="Submit" class="btn btn-success" >Save changes</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </form>
                 </div>

@@ -19,12 +19,28 @@
     <![endif]-->
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript"
             src="https://code.jquery.com/jquery-1.12.3.js"></script>
     <script type="text/javascript"
             src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 
 
 </head>
@@ -52,13 +68,17 @@
             <ul class="nav navbar-nav">
 
                 <li class="nav-item">
-                    <a href="index.html">Daten abfragen</a>
+                    <a href="index.html">Querying data</a>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Daten einfügen<span class="caret"></span></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown"
+                       role="button" aria-haspopup="true" aria-expanded="false">Insert data
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="insertsales.html">Sales</a></li>
-                        <li><a class="dropdown-item" href="insertfixedcosts.html">Fixed Costs</a></li>
+                        <li><a class="dropdown-item" href="insertsales.html">Sales</a>
+                        </li>
+                        <li><a class="dropdown-item"
+                               href="insertfixedcosts.html">Fixed Costs</a></li>
                     </ul>
                 </li>
             </ul>
@@ -76,7 +96,7 @@
                 <div class="col-xs-10 col-md-3">
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               >Backend</label>
+                        >Backend:</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    id="backendServer">
@@ -84,7 +104,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               >Area</label>
+                        >Area:</label>
                         <div class="col-lg-8">
                             <select class="form-control" id="kpiType">
                                 <option selected="selected">all</option>
@@ -95,7 +115,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                        >Keyspace</label>
+                        >Keyspace:</label>
                         <div class="col-lg-8">
                             <select class="form-control" id="keyspace">
 
@@ -107,7 +127,7 @@
                 <div class="col-xs-12 col-md-3">
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               >Plan-Year</label>
+                        >Plan-Year:</label>
                         <div class="col-lg-8">
 
                             <input type="text" class="form-control"
@@ -118,7 +138,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               >Period</label>
+                        >Period:</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    id="datepicker_period"
@@ -128,7 +148,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label"
-                               for="currency">Currency</label>
+                               for="currency">Currency:</label>
                         <div class="col-lg-8">
                             <input type="text" class="form-control"
                                    id="currency"
@@ -139,12 +159,12 @@
                 <div class="col-xs-1">
                     <div class="form-group">
                         <label class="col-lg-2 control-label"
-                               ></label>
+                        ></label>
                         <div class="col-lg-2">
                             <button type="button"
                                     id="startbutton"
                                     class="btn btn-default"
-                                    data-role="button" ><img
+                                    data-role="button"><img
                                     width="120px"
                                     height="120px"
                                     src="../img/fourschlag-logo.png"/>
@@ -154,12 +174,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-xs-4">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label"
+                        ></label>
+                        <div class="col-lg-8">
+                            <div>
+                            <p>
+                        To change or delete data, please use the TEST keyspace.
+                            </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </form>
 
-</div>
+
+    </div>
     </span>
 <span id="indexTable">
 

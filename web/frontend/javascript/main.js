@@ -8,7 +8,6 @@ const saleshtmlurl = 'forecastsales.html';
 var planYear;
 var currency;
 var productMainGroup;
-var region;
 var salesType;
 var planPeriod;
 var entryType;
@@ -35,7 +34,7 @@ window.addEventListener('load', function () {
 
     backend = $(location).attr('host');
 
-    if (document.getElementById("backendServer")){
+    if (document.getElementById("backendServer")) {
         document.getElementById("backendServer").value = backend;
     }
 
@@ -54,8 +53,15 @@ window.addEventListener('load', function () {
 
 
     var indexTable = $('#KpiTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'print'
+        ],
         "info": false,
+        cache: false,
         aaSorting: [],
+        "scrollY": "400px",
+        "scrollX": true,
         "lengthMenu": [[50, 100, 500, 1000, 5000, 10000, -1], [50, 100, 500, 1000, 5000, 10000, "All"]],
         "columns": [
             {"data": "ENTRY_TYPE"},
@@ -104,6 +110,7 @@ window.addEventListener('load', function () {
             "url": endpointScheme + query,
             "dataSrc": ""
         },
+        cache: false,
         "info": false,
         "paging": false,
         aaSorting: [],
@@ -137,7 +144,8 @@ window.addEventListener('load', function () {
     var forecastFixedCostsTable = $('#ForecastFixedcostsTable').DataTable({
         "ajax": {
             "url": endpointScheme + query,
-            "dataSrc": ""
+            "dataSrc": "",
+            cache: false
         },
 
         "info": false,
@@ -193,8 +201,8 @@ window.addEventListener('load', function () {
         period = document.getElementById('datepicker_period').value;
         keyspace = document.getElementById('keyspace').value;
         endpointPath = '/fourschlag/api/' + keyspace + '/';
-        if (data.ENTRY_TYPE == 'budget') {
-            if (data.FC_TYPE == 'sales') {
+        if (data.ENTRY_TYPE === 'budget') {
+            if (data.FC_TYPE === 'sales') {
 
                 salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/sales_type/' + data.SALES_TYPE + '/entry_type/budget' +
@@ -203,7 +211,7 @@ window.addEventListener('load', function () {
                 openNewTab(saleshtmlurl + salesurl);
 
             }
-            if (data.FC_TYPE == 'fixed costs') {
+            if (data.FC_TYPE === 'fixed costs') {
 
                 fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/entry_type/budget' + '/plan_year/' + planYear;
@@ -213,7 +221,7 @@ window.addEventListener('load', function () {
             }
         }
         else {
-            if (data.FC_TYPE == 'sales') {
+            if (data.FC_TYPE === 'sales') {
 
                 salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/forecast' +
@@ -222,7 +230,7 @@ window.addEventListener('load', function () {
                 openNewTab(saleshtmlurl + salesurl);
 
             }
-            if (data.FC_TYPE == 'fixed costs') {
+            if (data.FC_TYPE === 'fixed costs') {
 
                 fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/period/' + period + '/entry_type/forecast' +
@@ -244,7 +252,7 @@ window.addEventListener('load', function () {
         endpointPath = '/fourschlag/api/' + keyspace + '/forecast/';
         var mainPath = endpointScheme + backend + endpointPath + 'period/' + period + '/planyear/' + planYear + '/currency/' + currency + '/';
 
-        if (kpiType == 'all') {
+        if (kpiType === 'all') {
             $.ajax({
                 url: mainPath,
                 type: "GET"
@@ -255,7 +263,7 @@ window.addEventListener('load', function () {
                 alert("Data can't be loaded!")
             });
         }
-        if (kpiType == 'sales' || kpiType == 'fixedcosts') {
+        if (kpiType === 'sales' || kpiType == 'fixedcosts') {
             var urlother = mainPath + kpiType;
             $.ajax({
                 url: urlother,
@@ -273,143 +281,145 @@ window.addEventListener('load', function () {
 
 // Dropdowns
 
-    $(function(){
-        if($('body').is('.insert')){
+    $(function () {
+        if ($('body').is('.insert')) {
 
             //on change
             $('#region').change(function () {
                 region = document.getElementById('region').value;
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function (data) {
+                    console.log(data);
                     $("#subRegion").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#subRegion").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
             });
 
             $('#keyspace').change(function () {
                 keyspace = document.getElementById('keyspace').value;
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function (data) {
                     $("#region").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#region").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function (data) {
                     $("#productMainGroup").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#productMainGroup").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function (data) {
                     $("#sbu").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#sbu").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
             });
 
 
-
             // restliche
-            $.getJSON( endpointScheme + backend + dropdownMisc + 'sales_types', function(data){
-                $.each(data ,function(key, value){
+            $.getJSON(endpointScheme + backend + dropdownMisc + 'sales_types', function (data) {
+                $.each(data, function (key, value) {
                     var option = $('<option />').val(value).text(value);
                     $("#salesType").append(option);
                 });
 
-            }) .fail(function() {
-                alert( errormessageDropdown );
+            }).fail(function () {
+                alert(errormessageDropdown);
             });
 
-            $.getJSON( endpointScheme + backend + dropdownMisc + 'entry_types', function(data){
-                $.each(data ,function(key, value){
+            $.getJSON(endpointScheme + backend + dropdownMisc + 'entry_types', function (data) {
+                $.each(data, function (key, value) {
                     var option = $('<option />').val(value).text(value);
                     $("#entryType").append(option);
                 });
 
-            }) .fail(function() {
-                alert( errormessageDropdown );
+            }).fail(function () {
+                alert(errormessageDropdown);
             });
 
-            $.getJSON( endpointScheme + backend + dropdownMisc + 'currencies', function(data){
-                $.each(data ,function(key, value){
+            $.getJSON(endpointScheme + backend + dropdownMisc + 'currencies', function (data) {
+                $.each(data, function (key, value) {
                     var option = $('<option />').val(value).text(value);
                     $("#currency").append(option);
                 });
 
-            }) .fail(function() {
-                alert( errormessageDropdown );
+            }).fail(function () {
+                alert(errormessageDropdown);
             });
 
-            $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
-                $.each(data ,function(key, value){
+            $.getJSON(endpointScheme + backend + dropdownMisc + 'keyspaces', function (data) {
+                $.each(data, function (key, value) {
                     var option = $('<option />').val(value).text(value);
                     $("#keyspace").append(option);
                 });
 
-            })  .fail(function() {
-                alert( errormessageDropdown );
-            })  .done(function () {
+            }, 1000000).fail(function () {
+                alert(errormessageDropdown);
+            }).done(function () {
                 keyspace = document.getElementById('keyspace').value;
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function(data){
-                    $.each(data ,function(key, value){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function (data) {
+                    console.log(data);
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#region").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
-                }) .done(function () {
+                }, 1000).fail(function () {
+                    alert(errormessageDropdown);
+                }).done(function () {
                     region = document.getElementById('region').value;
-                    $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function(data){
+                    $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function (data) {
+                        console.log(data);
                         $("#subRegion").empty();
-                        $.each(data ,function(key, value){
+                        $.each(data, function (key, value) {
                             var option = $('<option />').val(value).text(value);
                             $("#subRegion").append(option);
                         });
 
-                    }) .fail(function() {
-                        alert( errormessageDropdown );
+                    }).fail(function () {
+                        alert(errormessageDropdown);
                     });
                 });
 
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function (data) {
                     $("#productMainGroup").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#productMainGroup").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
 
-                $.getJSON( endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function(data){
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function (data) {
                     $("#sbu").empty();
-                    $.each(data ,function(key, value){
+                    $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#sbu").append(option);
                     });
 
-                }) .fail(function() {
-                    alert( errormessageDropdown );
+                }).fail(function () {
+                    alert(errormessageDropdown);
                 });
 
             });
@@ -418,28 +428,26 @@ window.addEventListener('load', function () {
     });
 
 
-    $(function(){
-        if($('body').is('.index')){
-            $.getJSON( endpointScheme + backend + dropdownMisc + 'keyspaces', function(data){
-                $.each(data ,function(key, value){
+    $(function () {
+        if ($('body').is('.index')) {
+            $.getJSON(endpointScheme + backend + dropdownMisc + 'keyspaces', function (data) {
+                $.each(data, function (key, value) {
                     var option = $('<option />').val(value).text(value);
                     $("#keyspace").append(option);
                 });
 
-            })  .fail(function() {
-                alert( errormessageDropdown );
+            }).fail(function () {
+                alert(errormessageDropdown);
             })
         }
     });
-
-
 
 
 //Post Forms
 
     $('#salesInsertForm').submit(function (e) {
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace ;
+        endpointPath = '/fourschlag/api/' + keyspace;
 
         $.ajax({
             type: "POST",
@@ -462,7 +470,7 @@ window.addEventListener('load', function () {
 
     $('#fixedcostsInsertForm').submit(function (e) {
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace ;
+        endpointPath = '/fourschlag/api/' + keyspace;
 
         $.ajax({
             type: "POST",
@@ -529,32 +537,32 @@ window.addEventListener('load', function () {
 
     $('#deletebutton').on('click', function () {
 
-
-        planPeriod = document.getElementById('planPeriod').value;
         entryType = document.getElementById('entryType').value;
+        planPeriod = document.getElementById('planPeriod').value;
         period = document.getElementById('period').value;
 
-       if(entryType = 'sales') {
+        if (~query.indexOf('sales')) {
 
 
-        productMainGroup = document.getElementById('productMainGroup').value;
-        region = document.getElementById('region').value;
-        salesType = document.getElementById('salesType').value;
+            productMainGroup = document.getElementById('productMainGroup').value;
+            region = document.getElementById('region').value;
+            salesType = document.getElementById('salesType').value;
 
 
-        var url = endpointScheme + backend + endpointPath + "TEST" + "/sales" +'/product_main_group/' +productMainGroup + '/region/'
-            + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' +planPeriod+ '/';
+            var url = endpointScheme + backend + endpointPath + "TEST" + "/sales" + '/product_main_group/' + productMainGroup + '/region/'
+                + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' + planPeriod + '/';
 
-    }
-    if ( entryType = 'fixed costs'){
+        }
+        if (~query.indexOf('fixedcosts')) {
 
-        sbu = document.getElementById('sbu').value;
-        subregion = document.getElementById('subregion').value;
+            sbu = document.getElementById('sbu').value;
+            subregion = document.getElementById('subRegion').value;
 
 
-       var url = endpointScheme + backend + endpointPath + "TEST" + "/fixedcosts" +'/sbu/' +sbu+ '/subregion/'
-               + subregion + '/period/' + period +  '/entry_type/' + entryType + '/plan_period/' +planPeriod+ '/';
-    }
+            var url = endpointScheme + backend + endpointPath + "TEST" + "/fixedcosts" + '/sbu/' + sbu + '/subregion/'
+                + subregion + '/period/' + period + '/entry_type/' + entryType + '/plan_period/' + planPeriod + '/';
+            console.log(url)
+        }
 
 
         console.log(url);
@@ -563,10 +571,9 @@ window.addEventListener('load', function () {
             url: url,
             type: 'DELETE',
             statusCode: {
-                200: function(){
+                200: function () {
                     alert(successMessageDelete);
                     location.reload();
-
                 },
                 400: function () {
                     alert(errormessage)
@@ -577,12 +584,6 @@ window.addEventListener('load', function () {
             }
         })
     });
-
-
-
-
-
-
 
 
 // Modal
