@@ -7,7 +7,14 @@ const fixedcostshtmlurl = 'forecastfixedcosts.html';
 const saleshtmlurl = 'forecastsales.html';
 var planYear;
 var currency;
+var productMainGroup;
+var region;
+var salesType;
+var planPeriod;
+var entryType;
 var period;
+var sbu;
+var subregion;
 var keyspace;
 var endpointPath = '/fourschlag/api/';
 var kpiType;
@@ -22,6 +29,7 @@ const sucessmessageInsert = 'Data was successfully transmitted.';
 const sucessmessageModal = 'Data was successfully changed.';
 const errormessage = 'Error, bad parameters.';
 const errormessageDropdown = "Error, dropdown parameters aren't available!";
+const successMessageDelete = "The data has been successfully removed.";
 
 window.addEventListener('load', function () {
 
@@ -516,6 +524,66 @@ window.addEventListener('load', function () {
         });
         e.preventDefault();
     });
+
+    /*DELETE FORMS*/
+
+    $('#deletebutton').on('click', function () {
+
+
+        planPeriod = document.getElementById('planPeriod').value;
+        entryType = document.getElementById('entryType').value;
+        period = document.getElementById('period').value;
+
+       if(entryType = 'sales') {
+
+
+        productMainGroup = document.getElementById('productMainGroup').value;
+        region = document.getElementById('region').value;
+        salesType = document.getElementById('salesType').value;
+
+
+        var url = endpointScheme + backend + endpointPath + "TEST" + "/sales" +'/product_main_group/' +productMainGroup + '/region/'
+            + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' +planPeriod+ '/';
+
+    }
+    if ( entryType = 'fixed costs'){
+
+        sbu = document.getElementById('sbu').value;
+        subregion = document.getElementById('subregion').value;
+
+
+       var url = endpointScheme + backend + endpointPath + "TEST" + "/fixedcosts" +'/sbu/' +sbu+ '/subregion/'
+               + subregion + '/period/' + period +  '/entry_type/' + entryType + '/plan_period/' +planPeriod+ '/';
+    }
+
+
+        console.log(url);
+
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            statusCode: {
+                200: function(){
+                    alert(successMessageDelete);
+                    location.reload();
+
+                },
+                400: function () {
+                    alert(errormessage)
+                },
+                405: function () {
+                    alert("405")
+                }
+            }
+        })
+    });
+
+
+
+
+
+
+
 
 // Modal
 

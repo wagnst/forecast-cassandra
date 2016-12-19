@@ -127,13 +127,13 @@
                         <input class="form-control" type="number" id="period" readonly name="period" /><br />
                         <label for="region">REGION:</label>
                         <input class="form-control" type="text" id="region" readonly name="region" /><br />
-                        <label for="currency">CURRENCY</label>
+                        <label for="currency">CURRENCY:</label>
                         <input class="form-control" type="text" id="currency" readonly name="currency" /><br />
                         <label for="userid">USERID:</label>
                         <input class="form-control" type="text" id="userid" readonly name="userid"/><br />
                         <label for="entryts">ENTRY_TS:</label>
                         <input class="form-control" type="text" id="entryts" readonly name="entry_ts"/><br />
-                        <label for="productMainGroup">PRODUCT_MAIN_GROUP</label>
+                        <label for="productMainGroup">PRODUCT_MAIN_GROUP:</label>
                         <input class="form-control" type="text" id="productMainGroup" readonly name="product_main_group" /><br />
                         <label for="salesType">SALES_TYPE:</label>
                         <input class="form-control" type="text" id="salesType" readonly name="sales_type"/><br />
@@ -143,7 +143,7 @@
                         <input class="form-control" type="number" id="netSales" name="net_sales" /><br />
                         <label for="cm1">CM1:</label>
                         <input class="form-control" type="number" id="cm1" name="cm1"/><br />
-                        <label for="topdownSalesVolumes">TOPDOWN_ADJUST_SALES_VOLUMES</label>
+                        <label for="topdownSalesVolumes">TOPDOWN_ADJUST_SALES_VOLUMES:</label>
                         <input class="form-control" type="number" id="topdownSalesVolumes" name="topdown_adjust_sales_volumes" /><br />
                         <label for="topdownNetSales">TOPDOWN_ADJUST_NET_SALES:</label>
                         <input class="form-control" type="number" id="topdownNetSales" name="topdown_adjust_net_sales"/><br />
@@ -160,6 +160,9 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             <button type="submit" value="Submit" class="btn btn-success" >Save changes</button>
+                            <button id="deletebutton" type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-trash" ></span> Delete
+                            </button>
                         </div>
                     </form>
                 </div>
