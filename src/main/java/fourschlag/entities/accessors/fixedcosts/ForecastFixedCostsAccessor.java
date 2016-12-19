@@ -14,14 +14,17 @@ import fourschlag.entities.tables.kpi.fixedcosts.ForecastFixedCostsEntity;
 @Accessor
 public interface ForecastFixedCostsAccessor {
     /**
-     * Queries the table for a specific entry, but selects only fields that are need for KPI calculation
+     * Queries the table for a specific entry, but selects only fields that are
+     * need for KPI calculation
      *
-     * @param sbu primary key field sbu for where clause
-     * @param subregion primary key field subregion for where clause
-     * @param period primary key field period for where clause
+     * @param sbu        primary key field sbu for where clause
+     * @param subregion  primary key field subregion for where clause
+     * @param period     primary key field period for where clause
      * @param planPeriod primary key field plan_period for where clause
-     * @param entryType primary key field entry_type for where clause
-     * @return One database row mapped as ForecastFixedCostsEntity. Is null if no data was found.
+     * @param entryType  primary key field entry_type for where clause
+     *
+     * @return One database row mapped as ForecastFixedCostsEntity. Is null if
+     * no data was found.
      */
     @Query("SELECT fix_pre_man_cost, ship_cost, sell_cost, diff_act_pre_man_cost, idle_equip_cost, rd_cost, admin_cost_bu, admin_cost_od, admin_cost_company, other_op_cost_bu, other_op_cost_od, other_op_cost_company, spec_items, provisions, currency_gains, val_adjust_inventories, other_fix_cost, depreciation, cap_cost, equity_income, topdown_adjust_fix_costs, currency FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND plan_period = :plan_period AND entry_type = :entry_type")
     ForecastFixedCostsEntity getFixedCostsKpis(
@@ -33,16 +36,21 @@ public interface ForecastFixedCostsAccessor {
     );
 
     /**
-     * Queries the table for multiple entries, but selects only fields that are need for KPI calculation.
-     * The query is restricted by an EQ relation on the plan_period field.
+     * Queries the table for multiple entries, but selects only fields that are
+     * need for KPI calculation. The query is restricted by an EQ relation on
+     * the plan_period field.
      *
-     * @param sbu primary key field sbu for where clause
-     * @param subregion primary key field subregion for where clause
-     * @param period primary key field period for where clause
-     * @param entryType primary key field entry_type for where clause
-     * @param planPeriodFrom primary key field plan_period to start with for where clause
-     * @param planPeriodTo primary key field plan_period to end with for where clause
-     * @return Iterable of entities mapped as ForecastFixedCostsEntity. Is empty if no data was found.
+     * @param sbu            primary key field sbu for where clause
+     * @param subregion      primary key field subregion for where clause
+     * @param period         primary key field period for where clause
+     * @param entryType      primary key field entry_type for where clause
+     * @param planPeriodFrom primary key field plan_period to start with for
+     *                       where clause
+     * @param planPeriodTo   primary key field plan_period to end with for where
+     *                       clause
+     *
+     * @return Iterable of entities mapped as ForecastFixedCostsEntity. Is empty
+     * if no data was found.
      */
     @Query("SELECT fix_pre_man_cost, ship_cost, sell_cost, diff_act_pre_man_cost, idle_equip_cost, rd_cost, admin_cost_bu, admin_cost_od, admin_cost_company, other_op_cost_bu, other_op_cost_od, other_op_cost_company, spec_items, provisions, currency_gains, val_adjust_inventories, other_fix_cost, depreciation, cap_cost, equity_income, topdown_adjust_fix_costs, currency, plan_period FROM forecast_fixed_costs WHERE subregion = :subregion AND sbu = :sbu AND period = :period AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
     Result<ForecastFixedCostsEntity> getMultipleFixedCostsKpis(
@@ -56,7 +64,9 @@ public interface ForecastFixedCostsAccessor {
 
     /**
      * Queries the table for all distinct combinations of SBUs and subregions.
-     * @return Iterable of entities mapped as ForecastFixedCostsEntity with all combinations
+     *
+     * @return Iterable of entities mapped as ForecastFixedCostsEntity with all
+     * combinations
      */
     @Query("SELECT DISTINCT sbu, subregion FROM forecast_fixed_costs")
     Result<ForecastFixedCostsEntity> getDistinctSbuAndSubregions();
@@ -72,12 +82,14 @@ public interface ForecastFixedCostsAccessor {
     /**
      * Queries the table for a specific entry. Selects all fields.
      *
-     * @param sbu primary key field sbu for where clause
-     * @param subregion primary key field subregion for where clause
-     * @param period primary key field period for where clause
+     * @param sbu        primary key field sbu for where clause
+     * @param subregion  primary key field subregion for where clause
+     * @param period     primary key field period for where clause
      * @param planPeriod primary key field plan_period for where clause
-     * @param entryType primary key field entry_type for where clause
-     * @return One database row mapped as ForecastFixedCostsEntity. Is null if no data was found.
+     * @param entryType  primary key field entry_type for where clause
+     *
+     * @return One database row mapped as ForecastFixedCostsEntity. Is null if
+     * no data was found.
      */
     @Query("SELECT * FROM forecast_fixed_costs WHERE sbu = :sbu AND subregion = :subregion AND period = :period AND entry_type = :entry_type AND plan_period = :plan_period")
     ForecastFixedCostsEntity getSpecificForecastFixedCosts(
@@ -92,13 +104,17 @@ public interface ForecastFixedCostsAccessor {
      * Queries the table for multiple entries. Selects all fields.
      * The query is restricted by an EQ relation on the plan_period field.
      *
-     * @param sbu primary key field sbu for where clause
-     * @param subregion primary key field subregion for where clause
-     * @param period primary key field period for where clause
-     * @param entryType primary key field entry_type for where clause
-     * @param planPeriodFrom primary key field plan_period to start with for where clause
-     * @param planPeriodTo primary key field plan_period to end with for where clause
-     * @return Iterable of entities mapped as ForecastFixedCostsEntity. Is empty if no data was found.
+     * @param sbu            primary key field sbu for where clause
+     * @param subregion      primary key field subregion for where clause
+     * @param period         primary key field period for where clause
+     * @param entryType      primary key field entry_type for where clause
+     * @param planPeriodFrom primary key field plan_period to start with for
+     *                       where clause
+     * @param planPeriodTo   primary key field plan_period to end with for where
+     *                       clause
+     *
+     * @return Iterable of entities mapped as ForecastFixedCostsEntity. Is empty
+     * if no data was found.
      */
     @Query("SELECT * FROM forecast_fixed_costs WHERE subregion = :subregion AND sbu = :sbu AND period = :period AND entry_type = :entry_type AND plan_period >= :plan_period_from AND plan_period <= :plan_period_to")
     Result<ForecastFixedCostsEntity> getMultipleForecastFixedCosts(

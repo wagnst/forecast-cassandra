@@ -63,6 +63,7 @@ public abstract class KpiRequest extends Request {
      * Filters the Enum KeyPerformanceIndicators.
      *
      * @param fcType filter param fc_type (example: sales)
+     *
      * @return Array of KeyPerformanceIndicators
      */
     private KeyPerformanceIndicators[] filterKpiArray(String fcType) {
@@ -237,6 +238,7 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all the kpi values
      */
     protected abstract ValidatedResultTopdown validateTopdownQueryResult(KpiEntity result, Period tempPlanPeriod);
@@ -246,32 +248,39 @@ public abstract class KpiRequest extends Request {
      *
      * @param result         The query result that will be validated
      * @param tempPlanPeriod planPeriod of that query result
+     *
      * @return ValidatedResult with all kpi values
      */
     protected abstract ValidatedResult validateQueryResult(KpiEntity result, Period tempPlanPeriod);
 
     /**
-     * Queries entities from the actual table that are within a specific time window.
+     * Queries entities from the actual table that are within a specific time
+     * window.
      *
      * @param tempPlanPeriodFrom plan_period to begin with
-     * @param tempPlanPeriodTo plan_period to end with
+     * @param tempPlanPeriodTo   plan_period to end with
+     *
      * @return Map with mapped entities from the actual table
      */
     protected abstract Map<Integer, KpiEntity> getActualData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
 
     /**
-     * Queries entities from the forecast table table that are within a specific time window.
+     * Queries entities from the forecast table table that are within a specific
+     * time window.
      *
      * @param tempPlanPeriodFrom plan_period to begin with
-     * @param tempPlanPeriodTo plan_period to end with
+     * @param tempPlanPeriodTo   plan_period to end with
+     *
      * @return Map with mapped entities from the forecast table
      */
     protected abstract Map<Integer, KpiEntity> getForecastData(Period tempPlanPeriodFrom, Period tempPlanPeriodTo);
 
     /**
-     * Queries the database for budget data -> period = plan_period and entry_type = budget
+     * Queries the database for budget data -> period = plan_period and
+     * entry_type = budget
      *
      * @param tempPlanPeriod plan_period of data
+     *
      * @return Mapped entity with budget query results
      */
     protected abstract KpiEntity getBudgetData(Period tempPlanPeriod);
@@ -299,6 +308,7 @@ public abstract class KpiRequest extends Request {
      * @param entryType     Entry Type of that KPI entry
      * @param monthlyValues All the monthly kpi values
      * @param bjValues      The budget year values
+     *
      * @return Instance of OutputDataType
      */
     protected abstract OutputDataType createOutputDataType(KeyPerformanceIndicators kpi, EntryType entryType,

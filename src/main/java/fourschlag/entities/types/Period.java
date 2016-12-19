@@ -67,6 +67,7 @@ public class Period {
      * Creates an Period instance from a year. The month is set to 1.
      *
      * @param year year to create the instance from
+     *
      * @return Period instance
      */
     public static Period getPeriodByYear(int year) {
@@ -77,6 +78,7 @@ public class Period {
      * Checks if a value is a valid year. Year must be between 1900 and 2099.
      *
      * @param year year to be checked
+     *
      * @return True if year is valid; False if year is not valid
      */
     private boolean isYearValid(int year) {
@@ -87,6 +89,7 @@ public class Period {
      * Checks if a value is valid year. Month must be between 1 and 12
      *
      * @param month month to be checked
+     *
      * @return True if month is valid; False if month is not valid
      */
     protected boolean isMonthValid(int month) {
@@ -97,6 +100,7 @@ public class Period {
      * Checks if a period is valid. Period must be a six digit integer.
      *
      * @param period period to be checked
+     *
      * @return True if period is valid; False if period is not valid
      */
     private boolean isPeriodValid(int period) {
@@ -122,7 +126,8 @@ public class Period {
     }
 
     /**
-     * Increments the current period and creates a new instance so the current period is not changed.
+     * Increments the current period and creates a new instance so the current
+     * period is not changed.
      *
      * @return instance of Period
      */
@@ -139,6 +144,7 @@ public class Period {
      * WARNING: THIS METHOD IS NOT IMMUTABLE
      *
      * @param multiplier number of increments
+     *
      * @return this
      */
     public Period incrementMultipleTimes(int multiplier) {
@@ -152,6 +158,7 @@ public class Period {
      * Increments the period multiple times but does not change this instance
      *
      * @param multiplier number of increments
+     *
      * @return new instance of Period
      */
     public Period immutableIncrementMultipleTimes(int multiplier) {

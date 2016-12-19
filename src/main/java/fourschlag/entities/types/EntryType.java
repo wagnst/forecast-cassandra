@@ -22,6 +22,7 @@ public enum EntryType {
      * Searches the enum for a specific entry type by its name
      *
      * @param str name of the entry type
+     *
      * @return EntryType or null if nothing was found
      */
     public static EntryType getEntryTypeByString(String str) {

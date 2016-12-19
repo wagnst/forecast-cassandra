@@ -30,7 +30,8 @@ public class SalesRequest extends Request {
     }
 
     /**
-     * Inserts (if combination of primary keys does not exist) or updates a row in the forecast sales table
+     * Inserts (if combination of primary keys does not exist) or updates a row
+     * in the forecast sales table
      *
      * @return True IF process was successful; False IF it something went wrong
      */
@@ -118,10 +119,11 @@ public class SalesRequest extends Request {
      * Gets Budget Data from the forecast sales table
      *
      * @param productMainGroup productMainGroup in where clause
-     * @param region region in where clause
-     * @param salesType salesType in where clause
-     * @param planPeriodFrom plan period to begin with in where clause
-     * @param planPeriodTo plan period to end with in where clause
+     * @param region           region in where clause
+     * @param salesType        salesType in where clause
+     * @param planPeriodFrom   plan period to begin with in where clause
+     * @param planPeriodTo     plan period to end with in where clause
+     *
      * @return List with mapped entities
      */
     public List<ForecastSalesEntity> getBudgetForecastSales(String productMainGroup, String region, SalesType salesType, Period planPeriodFrom, Period planPeriodTo) {
@@ -136,7 +138,8 @@ public class SalesRequest extends Request {
     }
 
     /**
-     * Gets all distinct combinations of product main groups and regions in the fixed costs tables
+     * Gets all distinct combinations of product main groups and regions in the
+     * fixed costs tables
      *
      * @return Map with product main group as Key and Sets of regions as values
      */
@@ -148,7 +151,8 @@ public class SalesRequest extends Request {
     }
 
     /**
-     * Queries the database for all combinations of product main groups and regions and puts them in the productMap
+     * Queries the database for all combinations of product main groups and
+     * regions and puts them in the productMap
      */
     private void queryPmgAndRegions() {
         Result<ActualSalesEntity> entitiesFromActual = actualAccessor.getDistinctPmgAndRegions();

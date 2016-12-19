@@ -11,7 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Extends Request. Offers functionality to query the OrgStructure and Regions tables
+ * Extends Request. Offers functionality to query the OrgStructure and Regions
+ * tables
  */
 public class OrgStructureAndRegionRequest extends Request {
 
@@ -76,6 +77,7 @@ public class OrgStructureAndRegionRequest extends Request {
      * Gets all subregions for a specific region
      *
      * @param region region to filter for
+     *
      * @return List with subregions
      */
     public List<String> getSubregionsForRegion(String region) {
@@ -90,6 +92,7 @@ public class OrgStructureAndRegionRequest extends Request {
      * Method that finds the correct SBU of a product main group
      *
      * @param productMainGroup product main group for which the sbu is needed
+     *
      * @return SBU that corresponds with the given PMG
      */
     public String getSbuByPmg(String productMainGroup) {
@@ -114,6 +117,7 @@ public class OrgStructureAndRegionRequest extends Request {
      * Method that finds the correct region for a subregion
      *
      * @param subregion subregion for which the region is needed
+     *
      * @return region that corresponds with the given subregion
      */
     public String getRegionBySubregion(String subregion) {
@@ -137,7 +141,8 @@ public class OrgStructureAndRegionRequest extends Request {
      * Checks if the given parameters are valid for a Sales Entity
      *
      * @param productMainGroup product main group to be checked
-     * @param region region to be checked
+     * @param region           region to be checked
+     *
      * @return True IF parameters are valid; False if not
      */
     boolean checkSalesParams(String productMainGroup, String region) {
@@ -153,9 +158,10 @@ public class OrgStructureAndRegionRequest extends Request {
     /**
      * Checks if the given parameters are valid for a Fixed Costs Entity
      *
-     * @param sbu sbu to be checked
+     * @param sbu       sbu to be checked
      * @param subregion subregion to be checked
-     * @param region region to be checked
+     * @param region    region to be checked
+     *
      * @return True IF parameters are valid; False if not
      */
     boolean checkFixedCostsParams(String sbu, String subregion, String region) {

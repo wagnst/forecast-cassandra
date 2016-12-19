@@ -112,7 +112,8 @@ public class OutputDataType {
     }
 
     /**
-     * Sets all monthly values from a LinkedList. The values in the list must be in the correct order.
+     * Sets all monthly values from a LinkedList. The values in the list must be
+     * in the correct order.
      *
      * @param months List with the monthly values
      */
@@ -138,7 +139,8 @@ public class OutputDataType {
     }
 
     /**
-     * Sets the bj values from LinkedList. The values in the list must be in the correct order.
+     * Sets the bj values from LinkedList. The values in the list must be in the
+     * correct order.
      *
      * @param bjValues LinkedList with the bj values
      */

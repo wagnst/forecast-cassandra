@@ -49,10 +49,11 @@ public enum KeyPerformanceIndicators {
     }
 
     /**
-     * Because all units are stores with euro as the default currency, this method converts the currency in
-     * the unit to a desired currency.
+     * Because all units are stores with euro as the default currency, this
+     * method converts the currency in the unit to a desired currency.
      *
      * @param currency Desired currency
+     *
      * @return converted unit with the desired currency
      */
     public String convertUnitCurrency(Currency currency) {

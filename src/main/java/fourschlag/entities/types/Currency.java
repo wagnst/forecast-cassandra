@@ -16,9 +16,11 @@ public enum Currency {
     }
 
     /**
-     * This method searches the enum for a specific currency by a given abbreviation
+     * This method searches the enum for a specific currency by a given
+     * abbreviation
      *
      * @param abbreviation Actual Abbreviation
+     *
      * @return Currency or null if nothing was found
      */
     public static Currency getCurrencyByAbbreviation(String abbreviation) {

@@ -1,4 +1,3 @@
-
 package fourschlag.services.web.ws;
 
 import fourschlag.entities.types.EntryType;

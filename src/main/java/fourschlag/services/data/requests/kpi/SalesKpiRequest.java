@@ -119,6 +119,7 @@ public class SalesKpiRequest extends KpiRequest {
      *
      * @param tempPlanPeriod period of the desired cm1 value
      * @param toCurrency     desired return currency
+     *
      * @return cm1 value as double
      */
     private double getForecastCm1(Period tempPlanPeriod, String toCurrency) {
