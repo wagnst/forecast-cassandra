@@ -408,7 +408,7 @@ window.addEventListener('load', function () {
                     alert(errormessageDropdown);
                 });
 
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + '/sbus', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'sbus', function (data) {
                     $("#sbu").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -535,17 +535,18 @@ window.addEventListener('load', function () {
         entryType = document.getElementById('entryType').value;
         planPeriod = document.getElementById('planPeriod').value;
         period = document.getElementById('period').value;
+        var temparray = query.match('/api/(.*)/sales/');
+        keyspace = temparray[1];
+        console.log(keyspace);
 
         if (~query.indexOf('sales')) {
-
-            console.log('hier sales');
 
             productMainGroup = document.getElementById('productMainGroup').value;
             region = document.getElementById('region').value;
             salesType = document.getElementById('salesType').value;
 
 
-            var url = endpointScheme + backend + endpointPath + "TEST" + "/sales" + '/product_main_group/' + productMainGroup + '/region/'
+            var url = endpointScheme + backend + endpointPath + keyspace + "/sales" + '/product_main_group/' + productMainGroup + '/region/'
                 + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' + planPeriod ;
 
         }
@@ -557,7 +558,7 @@ window.addEventListener('load', function () {
             subregion = document.getElementById('subRegion').value;
 
 
-            var url = endpointScheme + backend + endpointPath + "TEST" + "/fixedcosts" + '/sbu/' + sbu + '/subregion/'
+            var url = endpointScheme + backend + endpointPath + keyspace + "/fixedcosts" + '/sbu/' + sbu + '/subregion/'
                 + subregion + '/period/' + period + '/entry_type/' + entryType + '/plan_period/' + planPeriod ;
             console.log(url)
         }
