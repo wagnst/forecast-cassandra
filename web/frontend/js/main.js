@@ -24,6 +24,7 @@ var query;
 var backend;
 var region;
 var dropdownMisc = '/fourschlag/api/misc/get/';
+var orgAndRegion = '/org_region/get/';
 const sucessmessageInsert = 'Data was successfully transmitted.';
 const sucessmessageModal = 'Data was successfully changed.';
 const errormessage = 'Error, bad parameters.';
@@ -100,7 +101,7 @@ window.addEventListener('load', function () {
         "columnDefs": [{
             "data": null,
             "targets": -1,
-            "defaultContent": '<button type="button" class="btn btn-primary" >Drilldown</button>'
+            "defaultContent": '<button type="button" class="btn btn-primary" id="drilldownbutton">Drilldown</button>'
         }]
     });
 
@@ -200,11 +201,11 @@ window.addEventListener('load', function () {
         currency = document.getElementById('currency').value;
         period = document.getElementById('datepicker_period').value;
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace + '/';
+        var tempPath = endpointPath + keyspace + '/';
         if (data.ENTRY_TYPE === 'budget') {
             if (data.FC_TYPE === 'sales') {
 
-                salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                salesurl = '?' + backend + tempPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/sales_type/' + data.SALES_TYPE + '/entry_type/budget' +
                     '/plan_year/' + planYear;
 
@@ -213,7 +214,7 @@ window.addEventListener('load', function () {
             }
             if (data.FC_TYPE === 'fixed costs') {
 
-                fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
+                fixedcosturl = '?' + backend + tempPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/entry_type/budget' + '/plan_year/' + planYear;
 
                 openNewTab(fixedcostshtmlurl + fixedcosturl);
@@ -223,7 +224,7 @@ window.addEventListener('load', function () {
         else {
             if (data.FC_TYPE === 'sales') {
 
-                salesurl = '?' + backend + endpointPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
+                salesurl = '?' + backend + tempPath + 'sales/' + 'product_main_group/' + data.PRODUCT_MAIN_GROUP + '/region/'
                     + data.REGION + '/period/' + period + '/sales_type/' + data.SALES_TYPE + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
 
@@ -232,7 +233,7 @@ window.addEventListener('load', function () {
             }
             if (data.FC_TYPE === 'fixed costs') {
 
-                fixedcosturl = '?' + backend + endpointPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
+                fixedcosturl = '?' + backend + tempPath + 'fixedcosts/' + 'sbu/' + data.SBU + '/subregion/'
                     + data.SUBREGION + '/period/' + period + '/entry_type/forecast' +
                     '/plan_year/' + planYear;
 
@@ -249,8 +250,8 @@ window.addEventListener('load', function () {
         currency = document.getElementById('currency').value;
         period = document.getElementById('datepicker_period').value;
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace + '/forecast/';
-        var mainPath = endpointScheme + backend + endpointPath + 'period/' + period + '/planyear/' + planYear + '/currency/' + currency + '/';
+        var temppath = endpointPath + keyspace + '/forecast/';
+        var mainPath = endpointScheme + backend + temppath + 'period/' + period + '/planyear/' + planYear + '/currency/' + currency + '/';
 
         if (kpiType === 'all') {
             $.ajax({
@@ -287,7 +288,7 @@ window.addEventListener('load', function () {
             //on change
             $('#region').change(function () {
                 region = document.getElementById('region').value;
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'subregions/region/' + region, function (data) {
                     console.log(data);
                     $("#subRegion").empty();
                     $.each(data, function (key, value) {
@@ -302,7 +303,7 @@ window.addEventListener('load', function () {
 
             $('#keyspace').change(function () {
                 keyspace = document.getElementById('keyspace').value;
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'regions', function (data) {
                     $("#region").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -312,7 +313,7 @@ window.addEventListener('load', function () {
                 }).fail(function () {
                     alert(errormessageDropdown);
                 });
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'product_main_groups', function (data) {
                     $("#productMainGroup").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -322,7 +323,7 @@ window.addEventListener('load', function () {
                 }).fail(function () {
                     alert(errormessageDropdown);
                 });
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'sbus', function (data) {
                     $("#sbu").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -376,7 +377,7 @@ window.addEventListener('load', function () {
                 alert(errormessageDropdown);
             }).done(function () {
                 keyspace = document.getElementById('keyspace').value;
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/regions', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'regions', function (data) {
                     console.log(data);
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -387,7 +388,7 @@ window.addEventListener('load', function () {
                     alert(errormessageDropdown);
                 }).done(function () {
                     region = document.getElementById('region').value;
-                    $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/subregions/region/' + region, function (data) {
+                    $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'subregions/region/' + region, function (data) {
                         console.log(data);
                         $("#subRegion").empty();
                         $.each(data, function (key, value) {
@@ -400,7 +401,7 @@ window.addEventListener('load', function () {
                     });
                 });
 
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/product_main_groups', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'product_main_groups', function (data) {
                     $("#productMainGroup").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -411,7 +412,7 @@ window.addEventListener('load', function () {
                     alert(errormessageDropdown);
                 });
 
-                $.getJSON(endpointScheme + backend + endpointPath + keyspace + '/org_region/get/sbus', function (data) {
+                $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + '/sbus', function (data) {
                     $("#sbu").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -447,11 +448,10 @@ window.addEventListener('load', function () {
 
     $('#salesInsertForm').submit(function (e) {
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace;
 
         $.ajax({
             type: "POST",
-            url: endpointScheme + endpointPath + "/sales/",
+            url: endpointScheme + backend + endpointPath + keyspace + "/sales/",
             data: $('#salesInsertForm').serialize(),
             statusCode: {
                 200: function () {
@@ -470,11 +470,10 @@ window.addEventListener('load', function () {
 
     $('#fixedcostsInsertForm').submit(function (e) {
         keyspace = document.getElementById('keyspace').value;
-        endpointPath = '/fourschlag/api/' + keyspace;
 
         $.ajax({
             type: "POST",
-            url: endpointScheme + endpointPath + "/fixedcosts/",
+            url: endpointScheme + backend + endpointPath + keyspace + "/fixedcosts/",
             data: $('#fixedcostsInsertForm').serialize(),
             statusCode: {
                 200: function () {
@@ -494,7 +493,7 @@ window.addEventListener('load', function () {
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/fixedcosts/",
+            url: endpointScheme + backend + endpointPath + "TEST/fixedcosts/",
             data: $('#fixedcostsModalForm').serialize(),
             statusCode: {
                 200: function () {
@@ -516,7 +515,7 @@ window.addEventListener('load', function () {
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/fourschlag/api/TEST/sales/",
+            url: endpointScheme + backend + endpointPath + "TEST/sales/",
             data: $('#salesModalForm').serialize(),
             statusCode: {
                 200: function () {
@@ -543,6 +542,7 @@ window.addEventListener('load', function () {
 
         if (~query.indexOf('sales')) {
 
+            console.log('hier sales');
 
             productMainGroup = document.getElementById('productMainGroup').value;
             region = document.getElementById('region').value;
@@ -550,22 +550,22 @@ window.addEventListener('load', function () {
 
 
             var url = endpointScheme + backend + endpointPath + "TEST" + "/sales" + '/product_main_group/' + productMainGroup + '/region/'
-                + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' + planPeriod + '/';
+                + region + '/period/' + period + '/sales_type/' + salesType + '/entry_type/' + entryType + '/plan_period/' + planPeriod ;
 
         }
         if (~query.indexOf('fixedcosts')) {
+
+            console.log('hier fixedcosts');
 
             sbu = document.getElementById('sbu').value;
             subregion = document.getElementById('subRegion').value;
 
 
             var url = endpointScheme + backend + endpointPath + "TEST" + "/fixedcosts" + '/sbu/' + sbu + '/subregion/'
-                + subregion + '/period/' + period + '/entry_type/' + entryType + '/plan_period/' + planPeriod + '/';
+                + subregion + '/period/' + period + '/entry_type/' + entryType + '/plan_period/' + planPeriod ;
             console.log(url)
         }
 
-
-        console.log(url);
 
         $.ajax({
             url: url,
