@@ -50,7 +50,7 @@ window.addEventListener('load', function () {
 
 
     var indexTable = $('#KpiTable').DataTable({
-        dom: 'Bfrtip',
+        dom: 'Blfrtip',
         buttons: [
             'csv', 'excel', 'print'
         ],
@@ -249,6 +249,7 @@ window.addEventListener('load', function () {
         var temppath = endpointPath + keyspace + '/forecast/';
         var mainPath = endpointScheme + backend + temppath + 'period/' + period + '/planyear/' + planYear + '/currency/' + currency + '/';
 
+
         if (kpiType === 'all') {
             $.ajax({
                 url: mainPath,
@@ -285,7 +286,6 @@ window.addEventListener('load', function () {
             $('#region').change(function () {
                 region = document.getElementById('region').value;
                 $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'subregions/region/' + region, function (data) {
-                    console.log(data);
                     $("#subRegion").empty();
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
@@ -374,7 +374,6 @@ window.addEventListener('load', function () {
             }).done(function () {
                 keyspace = document.getElementById('keyspace').value;
                 $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'regions', function (data) {
-                    console.log(data);
                     $.each(data, function (key, value) {
                         var option = $('<option />').val(value).text(value);
                         $("#region").append(option);
@@ -385,7 +384,6 @@ window.addEventListener('load', function () {
                 }).done(function () {
                     region = document.getElementById('region').value;
                     $.getJSON(endpointScheme + backend + endpointPath + keyspace + orgAndRegion + 'subregions/region/' + region, function (data) {
-                        console.log(data);
                         $("#subRegion").empty();
                         $.each(data, function (key, value) {
                             var option = $('<option />').val(value).text(value);
@@ -487,9 +485,12 @@ window.addEventListener('load', function () {
 
     $('#fixedcostsModalForm').submit(function (e) {
 
+        var temparray = query.match('/api/(.*)/fixedcosts/');
+        keyspace = temparray[1];
+
         $.ajax({
             type: "POST",
-            url: endpointScheme + backend + endpointPath + "TEST/fixedcosts/",
+            url: endpointScheme + backend + endpointPath + keyspace + "/fixedcosts/",
             data: $('#fixedcostsModalForm').serialize(),
             statusCode: {
                 200: function () {
@@ -507,11 +508,12 @@ window.addEventListener('load', function () {
     });
 
     $('#salesModalForm').submit(function (e) {
-
+        var temparray = query.match('/api/(.*)/sales/');
+        keyspace = temparray[1];
 
         $.ajax({
             type: "POST",
-            url: endpointScheme + backend + endpointPath + "TEST/sales/",
+            url: endpointScheme + backend + endpointPath + keyspace + "/sales/",
             data: $('#salesModalForm').serialize(),
             statusCode: {
                 200: function () {
@@ -535,12 +537,10 @@ window.addEventListener('load', function () {
         entryType = document.getElementById('entryType').value;
         planPeriod = document.getElementById('planPeriod').value;
         period = document.getElementById('period').value;
-        var temparray = query.match('/api/(.*)/sales/');
-        keyspace = temparray[1];
-        console.log(keyspace);
 
         if (~query.indexOf('sales')) {
-
+            var temparray = query.match('/api/(.*)/sales/');
+            keyspace = temparray[1];
             productMainGroup = document.getElementById('productMainGroup').value;
             region = document.getElementById('region').value;
             salesType = document.getElementById('salesType').value;
@@ -551,8 +551,8 @@ window.addEventListener('load', function () {
 
         }
         if (~query.indexOf('fixedcosts')) {
-
-            console.log('hier fixedcosts');
+            var temparray = query.match('/api/(.*)/fixedcosts/');
+            keyspace = temparray[1];
 
             sbu = document.getElementById('sbu').value;
             subregion = document.getElementById('subRegion').value;
@@ -560,7 +560,6 @@ window.addEventListener('load', function () {
 
             var url = endpointScheme + backend + endpointPath + keyspace + "/fixedcosts" + '/sbu/' + sbu + '/subregion/'
                 + subregion + '/period/' + period + '/entry_type/' + entryType + '/plan_period/' + planPeriod ;
-            console.log(url)
         }
 
 
