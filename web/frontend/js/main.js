@@ -239,7 +239,11 @@ window.addEventListener('load', function () {
         }
     });
 
+
+
     $('#startbutton').on('click', function () {
+        indexTable.clear().draw();
+        $('#KpiTable tbody').append('<span id="spinner" class="glyphicon glyphicon-refresh spinning bigsymbol"></span>');
         planYear = document.getElementById('datepicker_planYear').value;
         backend = document.getElementById('backendServer').value;
         kpiType = document.getElementById('kpiType').value;
