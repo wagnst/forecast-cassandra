@@ -1,0 +1,28 @@
+@startuml
+hide footbox
+
+participant  ":SalesKpiRequest"
+participant  ":ActualSalesAccessor"
+participant  ":PeriodMap"
+participant  ":Map"
+participant  ":SalesEntity"
+":SalesKpiRequest" -[#0000FF]> ":ActualSalesAccessor" : getMultipleSalesKpis()
+":ActualSalesAccessor" --[#FF00FF]> ":SalesKpiRequest" : MultipleSalesKpis
+":SalesKpiRequest" -[#0000FF]> ":PeriodMap" : new PeriodMap()
+":PeriodMap" --[#FF00FF]> ":SalesKpiRequest" : new PeriodMap
+loop queryResult has salesKpi
+":SalesKpiRequest" -[#0000FF]> ":Map" : put(period, entity)
+end
+
+loop
+    alt period == null
+        ":SalesKpiRequest" -[#0000FF]> ":Map" : put(period,salesKPIs)
+    else else
+        ":SalesKpiRequest" -[#0000FF]> ":Map" : get(period)
+        ":Map" --[#FF00FF]> ":SalesKpiRequest" : period
+        ":SalesKpiRequest" -[#0000FF]> ":SalesEntity" : setCm1(forecastCm1)
+    end
+end
+":Map" --[#FF00FF]> ":SalesKpiRequest" : Map<Integer, KpiEntity>
+
+@enduml

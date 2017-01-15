@@ -1,5 +1,8 @@
 @startuml
 hide footbox
+
+title __Sequenzdiagramm für KpiRequest__\n\n
+
 participant  " "
 participant  ":KpiRequest"
 participant  ":Period"
@@ -12,7 +15,6 @@ participant  ":ZeroMonthPeriod"
 ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateActualForecastKpis()
 group calculateActualForecastKpis()
 ":KpiRequest" -[#0000FF]> ":KpiRequest" : getActualData(tempPlanPeriod, currentPeriod)
-":KpiRequest" --[#FF00FF]> ":KpiRequest" : ActualData
 alt if actualData has current period
     ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(currentPeriod, Period)
     else else
@@ -20,7 +22,6 @@ alt if actualData has current period
     ":Period" --[#FF00FF]> ":KpiRequest" : Period
     ":KpiRequest" -[#0000FF]> ":KpiRequest" : getForecastData(Period, tempPlanPeriod)
 end
-    ":KpiRequest" --[#FF00FF]> ":KpiRequest" : ForecastData
 
 loop
 ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getTopdownResult()
@@ -39,7 +40,7 @@ loop For actual and forecast data
    end
 end
 
-loop Number of bj
+loop Number of Bj
     ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBjTopdown(Period)
     loop kpiArray
         ":KpiRequest" -[#0000FF]> ":ValidatedResultTopdown" : getKpiResult()
@@ -72,10 +73,10 @@ loop NumberOfMonths
         ":ValidatedResult" --[#FF00FF]> ":KpiRequest" : monthlyKpiValues
     end
         ":KpiRequest" -[#0000FF]> ":Period" : increment()
-        ":Period" -[#0000FF]> ":KpiRequest" : tempPlanPeriod
+        ":Period" --[#FF00FF]> ":KpiRequest" : tempPlanPeriod
 end
 
-loop NumberOfBj
+loop Number Of Bj
     ":KpiRequest" -[#0000FF]> ":KpiRequest" : calculateBj(bjPeriod)
     loop kpiArray
         ":KpiRequest" -[#0000FF]> ":ValidatedResult": getKpiResult()
