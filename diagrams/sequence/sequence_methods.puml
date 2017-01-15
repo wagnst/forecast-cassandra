@@ -1,6 +1,9 @@
 @startuml
 
 hide footbox
+title __Sequenzdiagramm für die Methoden__\n\n
+
+
 participant  ":ForecastWS"
 participant  ":SalesService"
 participant  ":FixedCostsService"
