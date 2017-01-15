@@ -5,8 +5,8 @@ http://plantuml.com/class-diagram '/
 
 title
  <b>Class_diagram of <u>FourSchlag</u> project</b>
- <i>Description:</i> Reduced package / class dependencies of <i>SALES</i> KPI calculations
- <i>Version:</i> <b>DRAFT</b>, 13th Dec 2016
+ <i>Description:</i> Reduced package
+ <i>Version:</i> <b>DRAFT(final)</b>, 13th Dec 2016
  <i>Author:</i> Mei Yuan
 end title
 
@@ -219,7 +219,7 @@ package fourschlag {
         package fourschlag.services.web {
             package fourschlag.services.web.ws {
             'TODO: methoden bei den Webservices hinzufügen
-                Class ForecastFixedCostsWS{
+                Class ForecastFixedCostsWS {
                     +Response : getForecastFixedCosts()
                     +Response : getOneForecastFixedCost()
                     +Response : getMultipleForecastFixedCosts()
@@ -228,7 +228,7 @@ package fourschlag {
                     +Response : deleteForecastFixedCosts()
                 }
 
-                Class ForecastSalesWS{
+                Class ForecastSalesWS {
                     +Response : getForecastSales()
                     +Response : getOneForecastSales()
                     +Response : getBudgetForecastSales()
@@ -240,6 +240,13 @@ package fourschlag {
                     +Response : getKPIs()
                     +Response : getSalesKPIs()
                     +Response : getFixedCostsKPIs()
+                }
+
+                Class ForecastWSWithKeyspace {
+                    +Response : getKPIs()
+                    +Response : getSalesKPIs()
+                    +Response : getFixedCostsKPIs()
+
                 }
 
                 Class MiscWS {
@@ -258,15 +265,14 @@ package fourschlag {
                 Class ParameterValidator
             }
 
-            Class Params
 
             namespace fourschlag.services.web.ws{
             .ForecastFixedCostsWS *-- CassandraConnection : use
             .ForecastSalesWS *-- CassandraConnection : use
-            .ForecastWS *-- CassandraConnection : use
+            .ForecastWS *-- ForecastWSWithKeyspace : use
             .ForecastWS o-- OutputDataTypeComparator : use
-            .MiscWS *-- Params
-            .ForecastFixedCostsWS *-- CassandraConnection : use
+            .ForecastWSWithKeyspace *-- CassandraConnection : use
+            .MiscWS *-- KeyspaceNames : use
             .OrgStructureAndRegionWS *-- CassandraConnection : use
             }
         }
@@ -276,5 +282,5 @@ package fourschlag {
             fourschlag.services.data.requests *-- fourschlag.entities.accessors : use
             fourschlag.services.data.requests *-- CassandraConnection : use
             fourschlag.services.web.ws *-- fourschlag.services.data.service : use
-}
+
 @enduml
